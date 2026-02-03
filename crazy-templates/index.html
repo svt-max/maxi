@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pro-Flow Invoice Suite</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@1,400&family=JetBrains+Mono&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="mainCanvas"></canvas>
+
+    <div class="persona-dock">
+        <div class="dock-scroll">
+            <button class="dock-btn active" data-id="plumber">💧 Plumber</button>
+            <button class="dock-btn" data-id="baker">🎂 Baker</button>
+            <button class="dock-btn" data-id="developer">💻 Dev</button>
+            <button class="dock-btn" data-id="cleaner">✨ Cleaner</button>
+            <button class="dock-btn" data-id="copywriter">✍️ Copy</button>
+            <button class="dock-btn" data-id="marketer">📈 Growth</button>
+            <button class="dock-btn" data-id="constructor">🏗️ Build</button>
+            <button class="dock-btn" data-id="lawyer">⚖️ Legal</button>
+            <button class="dock-btn" data-id="trainer">💪 Trainer</button>
+            <button class="dock-btn" data-id="qa">🛡️ QA</button>
+        </div>
+        <div class="dock-fade"></div>
+    </div>
+
+    <div class="app-container">
+        <div class="header">
+            <div class="brand" id="brandName">LUXE FLOW</div>
+            <div class="inv-num">#8821</div>
+        </div>
+
+        <div class="content-area">
+            <div class="glass-panel" id="glassPanel">
+                
+                <div id="dynamicContent">
+                    <div id="defaultView">
+                        <span class="label">Total Outstanding</span>
+                        <div class="amount-wrapper">
+                            <div class="amount" id="amountDisplay">$2,450.00</div>
+                        </div>
+                    </div>
+                    
+                    <div id="bakerView" class="hidden-view">
+                        <div class="cake-photo">
+                            <div class="photo-overlay"></div>
+                            <span style="position:relative; z-index:10; font-weight:bold; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,0.5);">Birthday Delight</span>
+                        </div>
+                    </div>
+
+                    <div id="devView" class="hidden-view">
+                        <div class="code-block" id="codeBlock">
+                            <span class="c-1">const</span> <span class="c-2">payment</span> = <span class="c-3">await</span> stripe.<span class="c-4">charge</span>({<br>
+                            &nbsp;&nbsp;amt: <span class="c-5">450000</span>,<br>
+                            &nbsp;&nbsp;cur: <span class="c-2">'usd'</span><br>
+                            });
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-list" id="detailsList"></div>
+            </div>
+        </div>
+
+        <div class="control-area">
+            <div class="instruction" id="instruct">Stabilize to View</div>
+            
+            <div class="flow-control" id="track">
+                <div class="flow-fill" id="fill"></div>
+                <div class="flow-knob" id="knob">➔</div>
+            </div>
+
+            <div class="pay-seal" id="payBtn">
+                <div class="pay-ring" id="payRing"></div>
+                <div id="payIcon">✓</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="receipt-modal" id="receipt">
+        <div class="success-icon">✓</div>
+        <h2>Paid in Full</h2>
+        <p class="receipt-sub">Receipt sent to your email.</p>
+        <button class="btn-share" onclick="location.reload()">Create New</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

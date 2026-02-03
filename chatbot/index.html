@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Training Roadmap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide-icons"></script>
+    <style>
+        /* Use Custom Fonts */
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6, .font-header {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Simple transition for slides */
+        .slide {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
+        }
+        .slide-hidden {
+            opacity: 0;
+            transform: translateX(100%);
+            pointer-events: none;
+            position: absolute;
+        }
+        .slide-hidden-prev {
+            opacity: 0;
+            transform: translateX(-100%);
+            pointer-events: none;
+            position: absolute;
+        }
+        .slide-visible {
+            opacity: 1;
+            transform: translateX(0);
+            position: relative;
+        }
+        /* Ensure slide container has a consistent height */
+        #slides-container {
+            position: relative;
+            min-height: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+        /* Adjust min-height for medium and larger screens */
+        @media (min-width: 768px) {
+            #slides-container {
+                min-height: 450px;
+            }
+        }
+        /* Fix for Quiz Carousel Track */
+        #quiz-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .quiz-slide {
+            width: 100%;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4 md:p-8">
+
+    <div id="presentation-container" tabindex="0" class="w-full max-w-6xl bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-200 focus:outline-none">
+        
+        <div class="p-6 md:p-8 flex justify-between items-center border-b border-gray-200">
+            <div class="flex items-center gap-2">
+                <img src="../images/Max.png" alt="MaxCredible AI Logo" class="h-8 w-auto object-contain">
+                <span class="text-2xl font-bold text-sky-700 font-header">MaxCredible</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-2xl font-bold text-gray-700 font-header">KONE</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Kone_Logo_2023.svg/1024px-Kone_Logo_2023.svg.png" alt="KONE Logo" class="h-8 w-auto object-contain">
+            </div>
+        </div>
+
+        <div id="slides-container">
+
+            <div id="slide-0" class="slide slide-visible p-0">
+                <div class="relative w-full h-full min-h-[500px] flex items-center justify-center">
+                    <img src="../images/knowledgehub.svg" 
+                         alt="AI assistant preview on phone screens" 
+                         class="absolute inset-0 w-full h-full object-cover"
+                         data-fallback="https://placehold.co/1280x500?text=Image+Not+Found">
+                    <div class="absolute inset-0 bg-black opacity-40"></div>
+                    <div class="relative z-10 text-center p-8">
+                        <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
+                            Bringing Your KONE AI Assistant to Life
+                        </h1>
+                        <p class="text-2xl text-gray-200">Our Simple 3-Step Journey Together</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="slide-1" class="slide slide-hidden p-8 md:p-12">
+            <div class="flex flex-col justify-center h-full gap-6">
+                
+                <div data-target-slide="2" class="step-tile flex items-center gap-6 p-6 bg-gray-50 rounded-lg shadow-sm border border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 bg-white rounded-full flex items-center justify-center overflow-hidden border border-gray-200">
+                        <img src="../images/logo-AI.png" alt="MaxCredible" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">Step 1. Start with the MaxCredible Brain</h3>
+                    </div>
+                </div>
+                
+                <div data-target-slide="3" class="step-tile flex items-center gap-6 p-6 bg-gray-50 rounded-lg shadow-sm border border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 bg-white rounded-full flex items-center justify-center overflow-hidden border border-gray-200 p-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Kone_Logo_2023.svg/1024px-Kone_Logo_2023.svg.png" alt="KONE" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">Step 2. Add the "KONE Way"</h3>
+                    </div>
+                </div>
+                
+                <div data-target-slide="4" class="step-tile flex items-center gap-6 p-6 bg-gray-50 rounded-lg shadow-sm border border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 bg-white rounded-full flex items-center justify-center overflow-hidden border border-gray-200 p-1">
+                        <img src="../images/learning.png" alt="Learning" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">Step 3. Grow with Your AI Teammate</h3>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+            <div id="slide-2" class="slide slide-hidden p-8 md:p-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="flex flex-col justify-center">
+                        <span class="text-sm font-semibold uppercase text-sky-600">Step 1</span>
+                        <h2 class="text-3xl font-bold text-gray-900 mt-1 mb-4">Start with an Expert "Brain"</h2>
+                        <p class="text-lg text-gray-700 leading-relaxed">
+                            We begin by giving the AI its core knowledge. It starts as an expert in all things <strong>credit management</strong> and understands the complete logic of the <strong>MaxCredible</strong> platform. This gives your team a powerful, intelligent partner from day one.
+                        </p>
+                    </div>
+                    <div class="w-full flex items-center justify-center min-h-[380px]">
+                        <img src="../images/Fin in Max.svg" 
+                             alt="Maxcredible Interface or Knowledge Base Diagram" 
+                             class="w-full h-auto max-h-[380px] rounded-lg object-contain"
+                             data-fallback="https://placehold.co/600x400?text=Image+Not+Found">
+                    </div>
+                </div>
+            </div>
+
+            <div id="slide-3" class="slide slide-hidden p-8 md:p-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="w-full flex flex-col items-center justify-center bg-gray-50 p-8 rounded-lg shadow-lg border border-gray-200 min-h-[380px]">
+                        <div class="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-lg p-12 text-center bg-white">
+                            <i data-lucide="upload-cloud" class="w-16 h-16 text-gray-400"></i>
+                            <p class="text-xl text-gray-700 font-semibold mt-4">Drag & drop your files</p>
+                            <p class="text-gray-500">It's that easy</p>
+                        </div>
+                        <div class="w-full mt-6">
+                            <h4 class="font-semibold text-gray-800 mb-3">Your KONE Knowledge</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="flex items-center gap-2 bg-sky-100 text-sky-800 text-sm font-medium px-4 py-2 rounded-full">
+                                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                                    policy.pdf
+                                    <i data-lucide="x" class="w-4 h-4 cursor-pointer hover:text-sky-600"></i>
+                                </span>
+                                <span class="flex items-center gap-2 bg-sky-100 text-sky-800 text-sm font-medium px-4 py-2 rounded-full">
+                                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                                    creditmanagement_strategy.pdf
+                                    <i data-lucide="x" class="w-4 h-4 cursor-pointer hover:text-sky-600"></i>
+                                </span>
+                                <span class="flex items-center gap-2 bg-sky-100 text-sky-800 text-sm font-medium px-4 py-2 rounded-full">
+                                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                                    thecompanyway.pdf
+                                    <i data-lucide="x" class="w-4 h-4 cursor-pointer hover:text-sky-600"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="text-sm font-semibold uppercase text-sky-600">Step 2</span>
+                        <h2 class="text-3xl font-bold text-gray-900 mt-1 mb-4">Make It Uniquely KONE</h2>
+                        <p class="text-lg text-gray-700 leading-relaxed">
+                            This step is simple and powerful. We just feed the AI your unique KONE documents—your specific <strong>policies, instructions,</strong> and <strong>strategy guides</strong>. The AI doesn't just read them; it <strong>learns</strong> them. It understands <strong>why</strong> things are done the KONE way, becoming a true, trusted extension of your team.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="slide-4" class="slide slide-hidden p-8 md:p-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="flex flex-col justify-center">
+                        <span class="text-sm font-semibold uppercase text-sky-600">Step 3</span>
+                        <h2 class="text-3xl font-bold text-gray-900 mt-1 mb-4">Welcome to the Future</h2>
+                        <p class="text-lg text-gray-700 leading-relaxed">
+                            This is just the beginning. The long-term roadmap evolves your AI from an assistant into a fully proactive partner. Imagine it providing <strong>advanced training, offering proactive instructions, automating tests,</strong> and running <strong>continuous compliance checks</strong>. This isn't just a tool; it's a new way to grow, scale, and lead.
+                        </p>
+                    </div>
+                    <div class="w-full flex flex-col items-center justify-center bg-sky-900 p-8 rounded-lg shadow-lg min-h-[380px]">
+                        <div class="w-full max-w-md mx-auto relative">
+                            <div class="relative overflow-hidden bg-white rounded-lg shadow-xl">
+                                <div id="quiz-track">
+                                    <div class="quiz-slide p-6" data-question="1">
+                                        <p class="text-sm font-medium text-gray-500">KNOWLEDGE QUIZ (1/3)</p>
+                                        <h3 class="text-lg font-bold text-gray-900 mt-2 mb-4">Do key account clients go straight to collection?</h3>
+                                        <div class="flex flex-col gap-3">
+                                            <button class="quiz-answer text-left w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all flex items-center gap-3" data-points="1">
+                                                <i data-lucide="circle" class="w-5 h-5 text-gray-400"></i>
+                                                <span>Never</span>
+                                            </button>
+                                            <button class="quiz-answer text-left w-full p-3 bg-red-100 text-red-900 rounded-lg border border-red-300 flex items-center gap-3" data-points="0">
+                                                <i data-lucide="x" class="w-5 h-5 text-red-600"></i>
+                                                <span>Always</span>
+                                            </button>
+                                            <button class="quiz-answer text-left w-full p-3 bg-green-100 text-green-900 rounded-lg border border-green-300 flex items-center gap-3" data-points="3">
+                                                <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                                                <span>Only after signoff</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="quiz-slide p-6" data-question="2">
+                                        <p class="text-sm font-medium text-gray-500">KNOWLEDGE QUIZ (2/3)</p>
+                                        <h3 class="text-lg font-bold text-gray-900 mt-2 mb-4">Do you still rescue bad payers out of elevators?</h3>
+                                        <div class="flex flex-col gap-3">
+                                            <button class="quiz-answer text-left w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all flex items-center gap-3" data-points="1">
+                                                <i data-lucide="circle" class="w-5 h-5 text-gray-400"></i>
+                                                <span>Yes, but they pay extra</span>
+                                            </button>
+                                            <button class="quiz-answer text-left w-full p-3 bg-red-100 text-red-900 rounded-lg border border-red-300 flex items-center gap-3" data-points="0">
+                                                <i data-lucide="circle" class="w-5 h-5 text-red-600"></i>
+                                                <span>No, they should ony take stairs</span>
+                                            </button>
+                                            <button class="quiz-answer text-left w-full p-3 bg-green-100 text-green-900 rounded-lg border border-green-300 flex items-center gap-3" data-points="3">
+                                                <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                                                <span>AI will handle the negotiation</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="quiz-slide p-6" data-question="3">
+                                        <p class="text-sm font-medium text-gray-500">KNOWLEDGE QUIZ (3/3)</p>
+                                        <h3 class="text-lg font-bold text-gray-900 mt-2 mb-4">What is the correct action for an overdue invoice (Ref: KONE-Pol-11A)?</h3>
+                                        <div class="flex flex-col gap-3">
+                                            <button class="quiz-answer text-left w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all flex items-center gap-3" data-points="1">
+                                                <i data-lucide="circle" class="w-5 h-5 text-gray-400"></i>
+                                                <span>Send a (manual) last reminder.</span>
+                                            </button>
+                                            <button class="quiz-answer text-left w-full p-3 bg-red-100 text-red-900 rounded-lg border border-red-300 flex items-center gap-3" data-points="0">
+                                                <i data-lucide="x" class="w-5 h-5 text-red-600"></i>
+                                                <span>Call customer after 3 days.</span>
+                                            </button>
+                                            <button class="quiz-answer text-left w-full p-3 bg-green-100 text-green-900 rounded-lg border border-green-300 flex items-center gap-3" data-points="3">
+                                                <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                                                <span>Escalate to CFO .</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="quiz-results-slide" class="quiz-slide p-6">
+                                        <p class="text-sm font-medium text-gray-500">KNOWLEDGE QUIZ</p>
+                                        <div class="flex flex-col items-center justify-center text-center h-full py-8">
+                                            <i id="quiz-icon" data-lucide="trophy" class="w-20 h-20 text-yellow-400"></i>
+                                            <h3 id="quiz-title" class="text-2xl font-bold text-gray-900 mt-4 mb-2">Excellent!</h3>
+                                            <p id="quiz-score-text" class="text-lg text-gray-700 mb-6">You scored 9 / 9</p>
+                                            <button id="quiz-reset-btn" class="py-2 px-5 rounded-lg font-semibold bg-sky-600 text-white shadow-sm hover:bg-sky-700 transition-all font-header">
+                                                Try Again?
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="quiz-prev-btn" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed">
+                                <i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i>
+                            </button>
+                            <button id="quiz-next-btn" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed">
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-600"></i>
+                            </button>
+                            <div id="quiz-dot-container" class="flex justify-center gap-2 mt-4">
+                                <button data-quiz-slide="0" class="quiz-dot w-2 h-2 bg-white rounded-full transition-all"></button>
+                                <button data-quiz-slide="1" class="quiz-dot w-2 h-2 bg-white/50 rounded-full transition-all"></button>
+                                <button data-quiz-slide="2" class="quiz-dot w-2 h-2 bg-white/50 rounded-full transition-all"></button>
+                                <button data-quiz-slide="3" class="quiz-dot w-2 h-2 bg-white/50 rounded-full transition-all"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="slide-5" class="slide slide-hidden p-8 md:p-12">
+                <div class="flex flex-col items-center justify-center text-center h-full min-h-[450px]">
+                    <h2 class="text-4xl font-bold text-sky-800 mb-6">Ready to start the journey?</h2>
+                    <p class="text-xl text-gray-700">I'm here to answer any questions:</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-4">Friso van de Beeten</p>
+                    <p class="text-xl text-gray-600 mb-6">CEO of MaxCredible</p>
+                    <a href="mailto:f.vandebeeten@maxcredible.com" class="text-lg text-sky-600 hover:underline font-semibold">
+                        f.vandebeeten@maxcredible.com
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bg-gray-100 p-6 flex items-center justify-between border-t border-gray-200">
+            <div id="dot-container" class="flex gap-2">
+                <button data-slide="0" class="dot w-3 h-3 bg-sky-600 rounded-full transition-all"></button>
+                <button data-slide="1" class="dot w-3 h-3 bg-gray-300 rounded-full transition-all"></button>
+                <button data-slide="2" class="dot w-3 h-3 bg-gray-300 rounded-full transition-all"></button>
+                <button data-slide="3" class="dot w-3 h-3 bg-gray-300 rounded-full transition-all"></button>
+                <button data-slide="4" class="dot w-3 h-3 bg-gray-300 rounded-full transition-all"></button>
+                <button data-slide="5" class="dot w-3 h-3 bg-gray-300 rounded-full transition-all"></button>
+            </div>
+            
+            <div class="flex gap-3">
+                <button id="prev-btn" class="py-2 px-5 rounded-lg font-semibold bg-white text-gray-700 border border-gray-300 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-header">
+                    Prev
+                </button>
+                <button id="next-btn" class="py-2 px-5 rounded-lg font-semibold bg-sky-600 text-white shadow-sm hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-header">
+                    Next
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Handle image errors globally
+            function setImageFallback(img) {
+                if (!img.dataset.fallback) return;
+                img.onerror = null; // Prevent infinite loop
+                img.src = img.dataset.fallback;
+            }
+            document.querySelectorAll('img[data-fallback]').forEach(img => {
+                img.addEventListener('error', function() {
+                    setImageFallback(this);
+                });
+            });
+
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            } else {
+                console.warn('Lucide-icons script failed to load or is not in use.');
+            }
+
+            // --- MAIN SLIDEDECK LOGIC ---
+            let currentSlide = 0;
+            const totalSlides = 6; // Total slides from 0-5
+
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            const nextBtn = document.getElementById('next-btn');
+            const prevBtn = document.getElementById('prev-btn');
+            const stepTiles = document.querySelectorAll('.step-tile');
+            const presentationContainer = document.getElementById('presentation-container');
+
+            function showSlide(slideIndex, direction = 'next') {
+                slides.forEach((slide, index) => {
+                    const slideElement = document.getElementById(`slide-${index}`);
+                    if (!slideElement) return; // Guard clause
+
+                    slideElement.classList.remove('slide-visible', 'slide-hidden', 'slide-hidden-prev');
+
+                    if (index === slideIndex) {
+                        slideElement.classList.add('slide-visible');
+                    } else if (index < slideIndex) {
+                        slideElement.classList.add('slide-hidden-prev');
+                    } else {
+                        slideElement.classList.add('slide-hidden');
+                    }
+                });
+
+                // Update dots
+                dots.forEach((dot, index) => {
+                    if (index === slideIndex) {
+                        dot.classList.remove('bg-gray-300');
+                        dot.classList.add('bg-sky-600');
+                    } else {
+                        dot.classList.add('bg-gray-300');
+                        dot.classList.remove('bg-sky-600');
+                    }
+                });
+
+                // Update button states
+                prevBtn.disabled = slideIndex === 0;
+                nextBtn.disabled = slideIndex === totalSlides - 1;
+
+                currentSlide = slideIndex;
+            }
+
+            function goToNext() {
+                if (currentSlide < totalSlides - 1) {
+                    showSlide(currentSlide + 1, 'next');
+                }
+            }
+
+            function goToPrev() {
+                if (currentSlide > 0) {
+                    showSlide(currentSlide - 1, 'prev');
+                }
+            }
+
+            nextBtn.addEventListener('click', goToNext);
+            prevBtn.addEventListener('click', goToPrev);
+
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const slideIndex = parseInt(dot.dataset.slide, 10);
+                    showSlide(slideIndex, slideIndex > currentSlide ? 'next' : 'prev');
+                });
+            });
+
+            stepTiles.forEach(tile => {
+                tile.addEventListener('click', () => {
+                    const slideIndex = parseInt(tile.dataset.targetSlide, 10);
+                    if (!isNaN(slideIndex)) {
+                        showSlide(slideIndex, slideIndex > currentSlide ? 'next' : 'prev');
+                    }
+                });
+            });
+
+            presentationContainer.addEventListener('keydown', (e) => {
+                // Prevent keyboard nav from conflicting with quiz
+                if (document.activeElement === presentationContainer) { 
+                    if (e.key === 'ArrowRight') {
+                        goToNext();
+                    } else if (e.key === 'ArrowLeft') {
+                        goToPrev();
+                    }
+                }
+            });
+
+            showSlide(0); // Initialize first main slide
+
+            // --- NEW: QUIZ CAROUSEL LOGIC ---
+            let currentQuizSlide = 0;
+            const totalQuizSlides = 4; // 3 questions + 1 results slide
+            const quizTrack = document.getElementById('quiz-track');
+            const quizNextBtn = document.getElementById('quiz-next-btn');
+            const quizPrevBtn = document.getElementById('quiz-prev-btn');
+            const quizDots = document.querySelectorAll('.quiz-dot');
+            const quizAnswerButtons = document.querySelectorAll('.quiz-answer');
+            const quizResetBtn = document.getElementById('quiz-reset-btn');
+
+            let quizScores = { 1: 0, 2: 0, 3: 0 };
+            let totalQuizScore = 0;
+
+            function showQuizSlide(index) {
+                if (!quizTrack) return; // Guard clause
+                
+                quizTrack.style.transform = `translateX(-${index * 100}%)`;
+
+                // Update quiz dots
+                quizDots.forEach((dot, i) => {
+                    if (i === index) {
+                        dot.classList.remove('bg-white/50');
+                        dot.classList.add('bg-white');
+                    } else {
+                        dot.classList.add('bg-white/50');
+                        dot.classList.remove('bg-white');
+                    }
+                });
+
+                // Update quiz button states
+                quizPrevBtn.disabled = index === 0;
+                quizNextBtn.disabled = index === totalQuizSlides - 1;
+
+                currentQuizSlide = index;
+
+                // If this is the results slide, calculate and show results
+                if (index === totalQuizSlides - 1) {
+                    calculateAndShowResults();
+                }
+            }
+
+            function calculateAndShowResults() {
+                // Sum the scores
+                totalQuizScore = quizScores[1] + quizScores[2] + quizScores[3];
+
+                // Get the elements
+                const iconEl = document.getElementById('quiz-icon');
+                const titleEl = document.getElementById('quiz-title');
+                const scoreEl = document.getElementById('quiz-score-text');
+                
+                // Update text
+                scoreEl.textContent = `You scored ${totalQuizScore} / 9`;
+
+                // Update visual
+                if (totalQuizScore >= 7) {
+                    titleEl.textContent = 'Excellent!';
+                    iconEl.setAttribute('data-lucide', 'trophy');
+                    iconEl.className = 'w-20 h-20 text-yellow-400'; // Gold
+                } else if (totalQuizScore >= 4) {
+                    titleEl.textContent = 'Good Job!';
+                    iconEl.setAttribute('data-lucide', 'medal');
+                    iconEl.className = 'w-20 h-20 text-yellow-500'; // Silver/Bronze
+                } else {
+                    titleEl.textContent = 'Keep Learning!';
+                    iconEl.setAttribute('data-lucide', 'book-open');
+                    iconEl.className = 'w-20 h-20 text-gray-500';
+                }
+                
+                // Re-initialize Lucide icons to draw the new icon
+                lucide.createIcons();
+            }
+
+            // --- Quiz Event Listeners ---
+
+            quizNextBtn.addEventListener('click', () => {
+                if (currentQuizSlide < totalQuizSlides - 1) {
+                    showQuizSlide(currentQuizSlide + 1);
+                }
+            });
+
+            quizPrevBtn.addEventListener('click', () => {
+                if (currentQuizSlide > 0) {
+                    showQuizSlide(currentQuizSlide - 1);
+                }
+            });
+
+            quizDots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const slideIndex = parseInt(dot.dataset.quizSlide, 10);
+                    showQuizSlide(slideIndex);
+                });
+            });
+
+            quizAnswerButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const points = parseInt(button.dataset.points, 10);
+                    const questionContainer = button.closest('[data-question]');
+                    const questionNumber = questionContainer.dataset.question;
+
+                    // Prevent re-answering
+                    if (questionContainer.dataset.answered === 'true') {
+                        return;
+                    }
+                    questionContainer.dataset.answered = 'true';
+                    
+                    // Store the score
+                    quizScores[questionNumber] = points;
+                    
+                    // Disable all buttons in this group
+                    const buttonsInGroup = questionContainer.querySelectorAll('.quiz-answer');
+                    buttonsInGroup.forEach(btn => {
+                        btn.disabled = true;
+                        // Add a visual cue for "unselected"
+                        if (btn !== button) {
+                            btn.classList.add('opacity-50', 'hover:bg-transparent');
+                        }
+                    });
+                    
+                    // Auto-advance after a short delay
+                    setTimeout(() => {
+                        if (currentQuizSlide < totalQuizSlides - 1) {
+                            showQuizSlide(currentQuizSlide + 1);
+                        }
+                    }, 500); // 500ms delay
+                });
+            });
+
+            quizResetBtn.addEventListener('click', () => {
+                // Reset scores
+                quizScores = { 1: 0, 2: 0, 3: 0 };
+                totalQuizScore = 0;
+                
+                // Reset "answered" status
+                document.querySelectorAll('[data-question]').forEach(container => {
+                    container.dataset.answered = 'false';
+                });
+                
+                // Re-enable all buttons
+                quizAnswerButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'hover:bg-transparent');
+                });
+                
+                // Go back to first question
+                showQuizSlide(0);
+            });
+
+            showQuizSlide(0); // Initialize first quiz slide
+        });
+    </script>
+
+</body>
+</html>

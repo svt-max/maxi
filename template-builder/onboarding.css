@@ -1,0 +1,278 @@
+/* onboarding.css */
+
+/* --- Base --- */
+body {
+    background-color: #050505; 
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- Utilities --- */
+.label-tiny {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 6px;
+    display: block;
+    letter-spacing: 0.05em;
+}
+
+.input-dark {
+    width: 100%;
+    background-color: #111;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.input-dark:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+
+/* --- Scrollbars --- */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
+
+.custom-scrollbar-light::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar-light::-webkit-scrollbar-track { background: #f1f1f1; }
+.custom-scrollbar-light::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+
+/* --- Animations --- */
+@keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+}
+.animate-blob { animation: blob 15s infinite ease-in-out; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fade-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+/* --- Patterns --- */
+.pattern-grid {
+    background-image: linear-gradient(to right, #222 1px, transparent 1px), linear-gradient(to bottom, #222 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+}
+
+.bg-pattern-mesh {
+    background-image: radial-gradient(#ffffff 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.2;
+}
+
+.bg-pattern-gradient {
+    background: linear-gradient(135deg, rgba(59,130,246,0.8) 0%, rgba(147,51,234,0.8) 100%);
+}
+
+/* --- Invoice Paper Styles --- */
+#invoice-paper {
+    font-family: 'Inter', sans-serif;
+    color: #1f2937;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.invoice-table th {
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    padding: 12px 0;
+    border-bottom: 2px solid #f3f4f6;
+    letter-spacing: 0.05em;
+}
+
+.invoice-table td {
+    padding: 16px 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f9fafb;
+    color: #111;
+}
+
+/* Minimal Table Style */
+.table-minimal th { border-bottom: 1px solid #e5e7eb; font-weight: 500; }
+.table-minimal td { border-bottom: none; padding: 10px 0; }
+.table-minimal .invoice-total-row td { border-top: 1px solid #e5e7eb; }
+
+/* Bold Table Style */
+.table-bold th { background: #f3f4f6; padding-left: 10px; color: #111; font-weight: 800; }
+.table-bold td { padding-left: 10px; border-bottom: 1px solid #e5e7eb; font-weight: 500; }
+.table-bold .invoice-total-row td { background: #111; color: white !important; }
+.table-bold .invoice-total-row .total-label { color: #ccc; }
+
+.invoice-total-row td {
+    border-top: 2px solid #e5e7eb;
+    border-bottom: none;
+    padding-top: 20px;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* --- Hotkeys (Email Responses) --- */
+.hotkey-btn {
+    border: 1px solid #e5e7eb;
+    background: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b5563;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.hotkey-btn:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background: #eff6ff;
+}
+
+/* --- Flow Visualizer --- */
+.flow-node-glass {
+    background: rgba(20, 20, 20, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 10px 30px -10px rgba(0,0,0,0.5);
+}
+
+.step-input-group:hover .step-icon {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    box-shadow: 0 0 15px rgba(59,130,246,0.3);
+}
+
+/* --- NEW: High-Impact Header Patterns --- */
+.pattern-warning-stripe {
+    background: repeating-linear-gradient(
+        45deg,
+        #F59E0B,
+        #F59E0B 10px,
+        #D97706 10px,
+        #D97706 20px
+    );
+}
+
+.pattern-tech-mesh {
+    background-color: #0F172A;
+    background-image: linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent);
+    background-size: 50px 50px;
+}
+
+/* --- NEW: Table Styles --- */
+/* Elevated Table */
+.table-elevated { border-collapse: separate; border-spacing: 0 8px; }
+.table-elevated th { padding: 0 16px; border: none; font-size: 0.7rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; }
+.table-elevated tbody tr { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s; }
+.table-elevated tbody tr:hover { transform: scale(1.01); }
+.table-elevated td { padding: 16px; border: none; font-weight: 500; }
+.table-elevated td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+.table-elevated td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+.table-elevated .invoice-total-row td { background: transparent; box-shadow: none; border-top: 1px solid #e5e7eb; border-radius: 0; padding-top: 24px; font-size: 1.25rem; color: #111; }
+
+/* Card Table (Mobile-ish look on Desktop) */
+.table-card { border-collapse: collapse; }
+.table-card th { display: none; } /* Hide headers for card view */
+.table-card tbody tr { display: block; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 12px; padding: 16px; background: #fafafa; }
+.table-card td { display: flex; justify-content: space-between; padding: 4px 16px; border: none; font-size: 0.9rem; }
+.table-card td::before { content: attr(data-label); font-weight: 600; color: #6b7280; font-size: 0.75rem; text-transform: uppercase; margin-right: auto; }
+.table-card .invoice-total-row { border: none; background: transparent; padding: 0; }
+.table-card .invoice-total-row td { justify-content: flex-end; font-size: 1.5rem; font-weight: 800; padding: 20px 0 0 0; }
+.table-card .invoice-total-row td::before { content: "TOTAL DUE"; margin-right: 20px; align-self: center; }
+
+/* --- NEW: Gravitational Hotkeys --- */
+.hotkey-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.hotkey-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: left;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy spring */
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hotkey-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+    z-index: 10;
+}
+
+.hotkey-card .icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* Primary Action */
+.hotkey-primary { background: #eff6ff; border-color: #bfdbfe; }
+.hotkey-primary:hover { background: #dbeafe; border-color: #3b82f6; }
+.hotkey-primary .icon-box { background: #2563eb; color: white; }
+
+/* Danger/Negative */
+.hotkey-danger:hover { border-color: #ef4444; background: #fef2f2; }
+.hotkey-danger .icon-box { background: #fee2e2; color: #ef4444; }
+
+/* Neutral/Info */
+.hotkey-neutral:hover { border-color: #9ca3af; background: #f9fafb; }
+.hotkey-neutral .icon-box { background: #f3f4f6; color: #4b5563; }
+
+/* Warning */
+.hotkey-warning:hover { border-color: #f59e0b; background: #fffbeb; }
+.hotkey-warning .icon-box { background: #fef3c7; color: #d97706; }
+
+/* Smooth device toggling */
+.ease-spring {
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hide scrollbar in mobile preview to look clean */
+#preview-container-wrapper {
+    scrollbar-width: none; 
+    -ms-overflow-style: none;
+}
+#preview-container-wrapper::-webkit-scrollbar { 
+    display: none; 
+}
+
+/* --- Pulse Rings Animation --- */
+.pulse-ring-circle {
+    transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.pulse-card {
+    background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.05);
+}

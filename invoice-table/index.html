@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice & Debtor List Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0) 0, transparent 50%);
+        }
+
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Tabs */
+        .tab-active { 
+            border-bottom: 2px solid #2563eb; 
+            color: #2563eb; 
+            font-weight: 600; 
+        }
+        .tab-inactive { 
+            border-bottom: 2px solid transparent; 
+            color: #64748b; 
+        }
+        .tab-inactive:hover { 
+            color: #1e293b; 
+            border-bottom: 2px solid #cbd5e1; 
+        }
+
+        /* Smooth Accordion */
+        .accordion-content { 
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            overflow: hidden; 
+            max-height: 0; 
+        }
+        .accordion-content.open { 
+            max-height: 2000px; 
+        } 
+
+        /* Slick Row Hover Effect */
+        .slick-row {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+        .slick-row:hover {
+            background-color: #ffffff !important;
+            transform: translateY(-2px) scale(1.001);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            border-left-color: #3b82f6;
+            z-index: 10;
+        }
+
+        /* Button Interactions */
+        .btn-interactive {
+            transition: all 0.2s ease;
+        }
+        .btn-interactive:active {
+            transform: scale(0.96);
+        }
+        
+        /* Highlight Animation */
+        @keyframes highlightPulse {
+            0% { background-color: #dbeafe; transform: scale(1.02); z-index: 20; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+            50% { background-color: #eff6ff; }
+            100% { background-color: transparent; transform: scale(1); z-index: auto; box-shadow: none; }
+        }
+        .row-highlight {
+            animation: highlightPulse 2.5s ease-out;
+        }
+
+        /* --- NEW STYLES FOR AVATARS & BADGES --- */
+
+        /* Avatar Circle */
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+        .slick-row:hover .avatar-circle {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        /* Risk Badges */
+        .badge-risk {
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+        }
+        .risk-low { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .risk-med { background-color: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+        .risk-high { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        /* Copy ID Interaction */
+        .copy-trigger {
+            position: relative;
+            cursor: copy;
+            display: inline-flex;
+            align-items: center;
+        }
+        .copy-icon {
+            opacity: 0;
+            transition: opacity 0.2s;
+            margin-left: 6px;
+            font-size: 10px;
+            color: #64748b;
+        }
+        .copy-trigger:hover .copy-icon {
+            opacity: 1;
+        }
+        .copy-trigger:active {
+            color: #2563eb;
+        }
+
+        /* Row entrance animation */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-row {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        /* --- BULK ACTION STYLES --- */
+        
+        /* Custom Checkbox */
+        .custom-checkbox {
+            appearance: none;
+            background-color: #fff;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.15em;
+            height: 1.15em;
+            border: 2px solid #cbd5e1;
+            border-radius: 0.35em;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .custom-checkbox::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em white;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        .custom-checkbox:checked {
+            background-color: #2563eb;
+            border-color: #2563eb;
+        }
+        .custom-checkbox:checked::before {
+            transform: scale(1);
+        }
+
+        /* Floating Bar Visible State */
+        #bulk-action-bar {
+            pointer-events: none; /* Pass through when invisible */
+        }
+        #bulk-action-bar.active {
+            transform: translate(-50%, 0); /* Center X, Reset Y */
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden bg-slate-50">
+
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 pt-6 px-6 shadow-sm z-30 flex flex-col gap-4">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex flex-row items-center gap-4">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vTwjDMTj7FH3tmeLj6H24PRhLO_U0yBPfQtT0bW_Ku8iPo63LMD5ZeZeaWe8Kdt78d1JxkXz8T27NG5/pub?w=691&h=249" 
+                     alt="Powered by MaxCredible" 
+                     class="h-12 w-auto object-contain hover:scale-105 transition-transform duration-300">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Accounts Receivable Ledger</h1>
+                    <p class="text-slate-500 text-sm mt-0.5">Generate random invoice data for testing</p>
+                </div>
+            </div>
+
+            <div class="flex gap-3 self-end md:self-center">
+                <button onclick="generateData()" class="btn-interactive px-5 py-2.5 text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg shadow-lg shadow-blue-500/20 font-medium text-sm flex items-center">
+                    <i class="fas fa-sync-alt mr-2"></i> Generate Dataset
+                </button>
+                
+                <div class="relative">
+                    <button id="exportBtn" onclick="toggleExportMenu(event)" class="btn-interactive px-5 py-2.5 text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-lg font-medium text-sm shadow-sm flex items-center">
+                        <i class="fas fa-download mr-2 text-slate-400"></i> Export <i class="fas fa-chevron-down ml-2 text-xs opacity-50"></i>
+                    </button>
+                    <div id="exportMenu" class="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-100 z-50 transform origin-top-right transition-all duration-200 hidden opacity-0 translate-y-2">
+                        <div class="p-1">
+                            <a href="#" onclick="downloadCSV()" class="block px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-lg transition-colors">
+                                <i class="fas fa-file-csv mr-2 w-4"></i> Standard CSV
+                            </a>
+                            <a href="#" onclick="downloadMaxCredibleImport()" class="block px-4 py-2.5 text-sm text-green-700 hover:bg-green-50 rounded-lg transition-colors font-medium">
+                                <i class="fas fa-file-import mr-2 w-4"></i> MaxCredible Import
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex gap-8 mt-2">
+            <button id="tab-invoices" onclick="switchTab('invoices')" class="tab-active pb-3 text-sm px-2 transition-all duration-300 hover:text-blue-700">
+                All Invoices
+            </button>
+            <button id="tab-debtors" onclick="switchTab('debtors')" class="tab-inactive pb-3 text-sm px-2 transition-all duration-300">
+                Debtors Roll-up
+            </button>
+            <button id="tab-config" onclick="switchTab('config')" class="tab-inactive pb-3 text-sm px-2 transition-all duration-300">
+                Configuration & Calculation
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-auto p-6 scroll-smooth bg-gradient-to-br from-slate-50 to-slate-100">
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Invoices</div>
+                    <div class="p-2 bg-slate-50 rounded-lg text-slate-400"><i data-lucide="layers" class="w-4 h-4"></i></div>
+                </div>
+                <div class="text-3xl font-bold text-slate-800" id="totalCount">0</div>
+            </div>
+            
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-slate-400 text-xs font-bold uppercase tracking-wider">Net Balance</div>
+                    <div class="p-2 bg-blue-50 rounded-lg text-blue-500"><i data-lucide="wallet" class="w-4 h-4"></i></div>
+                </div>
+                <div class="text-3xl font-bold text-slate-800" id="netBalance">$0.00</div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-slate-400 text-xs font-bold uppercase tracking-wider">Positive Value</div>
+                    <div class="p-2 bg-green-50 rounded-lg text-green-500"><i data-lucide="trending-up" class="w-4 h-4"></i></div>
+                </div>
+                <div class="text-3xl font-bold text-green-600" id="positiveTotal">$0.00</div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-slate-400 text-xs font-bold uppercase tracking-wider">Credits / Returns</div>
+                    <div class="p-2 bg-red-50 rounded-lg text-red-500"><i data-lucide="trending-down" class="w-4 h-4"></i></div>
+                </div>
+                <div class="text-3xl font-bold text-red-600" id="negativeTotal">$0.00</div>
+            </div>
+        </div>
+
+        <div id="view-invoices" class="flex-col gap-6 h-[calc(100vh-340px)] flex animate-fade-in">
+            
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+                <input type="text" id="filter-inv-id" onkeyup="applyInvoiceFilters()" placeholder="Filter ID..." class="w-full text-xs p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow">
+                <input type="text" id="filter-inv-date" onkeyup="applyInvoiceFilters()" placeholder="Date (YYYY-MM-DD)" class="w-full text-xs p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow">
+                <input type="text" id="filter-inv-due" onkeyup="applyInvoiceFilters()" placeholder="Due Date" class="w-full text-xs p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow">
+                <input type="text" id="filter-inv-debtor" onkeyup="applyInvoiceFilters()" placeholder="Debtor Name/ID" class="w-full text-xs p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow">
+                <select id="filter-inv-type" onchange="applyInvoiceFilters()" class="w-full text-xs p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white transition-shadow cursor-pointer">
+                    <option value="">All Types</option>
+                    <option value="Invoice">Invoice</option>
+                    <option value="Credit Note">Credit Note</option>
+                    <option value="Unallocated Payment">Payment</option>
+                </select>
+                <input type="text" id="filter-inv-desc" onkeyup="applyInvoiceFilters()" placeholder="Description..." class="w-full text-xs p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow">
+                <input type="text" id="filter-inv-overdue" onkeyup="applyInvoiceFilters()" placeholder="Days Overdue..." class="w-full text-xs p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow">
+                <input type="text" id="filter-inv-amount" onkeyup="applyInvoiceFilters()" placeholder="Amount..." class="w-full text-xs p-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow">
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl shadow-lg shadow-slate-200/50 overflow-hidden flex flex-col flex-1">
+                <div class="overflow-auto flex-1">
+                    <table class="w-full text-left border-collapse relative">
+                        <thead class="sticky top-0 z-20 shadow-sm bg-slate-50/95 backdrop-blur">
+                            <tr class="border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wide">
+                                <th class="p-4 whitespace-nowrap">ID</th>
+                                <th class="p-4 whitespace-nowrap">Date</th>
+                                <th class="p-4 whitespace-nowrap">Due Date</th>
+                                <th class="p-4 whitespace-nowrap">Debtor (Click to View)</th>
+                                <th class="p-4 whitespace-nowrap">Type</th>
+                                <th class="p-4 whitespace-nowrap">Description</th>
+                                <th class="p-4 text-center whitespace-nowrap">Days Overdue</th>
+                                <th class="p-4 text-right whitespace-nowrap">Inv Amount</th>
+                                <th class="p-4 text-right whitespace-nowrap">Outstanding</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoiceTableBody" class="text-sm text-slate-700 divide-y divide-slate-100">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="bg-slate-50 border-t border-slate-200 p-3 text-xs text-slate-500 text-center font-medium" id="invoiceFooter">
+                    Showing all records
+                </div>
+            </div>
+        </div>
+
+        <div id="view-debtors" class="hidden flex-col gap-6">
+             <div class="bg-white border border-slate-200 rounded-xl shadow-lg shadow-slate-200/50 overflow-hidden flex flex-col">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 z-20 shadow-sm bg-slate-50/95 backdrop-blur">
+                            <tr class="border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wide">
+                                <th class="p-4 w-14"></th> 
+                                <th class="p-4">Debtor Name</th>
+                                <th class="p-4 text-right">Inv Count</th>
+                                <th class="p-4 text-right">Cred/Pay Count</th>
+                                <th class="p-4 text-right">Total Count</th>
+                                <th class="p-4 text-right text-green-600">Inv Total</th>
+                                <th class="p-4 text-right text-red-600">Cred/Pay Total</th>
+                                <th class="p-4 text-right font-bold text-slate-800">Net Total</th>
+                            </tr>
+                            <tr class="bg-white border-b border-slate-200">
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2"><input type="text" id="filter-debt-name" onkeyup="applyDebtorFilters()" placeholder="Filter Name or ID..." class="w-full text-xs p-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"></td>
+                                <td colspan="6" class="p-2 text-center text-xs text-slate-400 italic">Filters apply to Debtor Name</td>
+                            </tr>
+                        </thead>
+                        <tbody id="debtorTableBody" class="text-sm text-slate-700 divide-y divide-slate-100">
+                            </tbody>
+                    </table>
+                </div>
+             </div>
+        </div>
+
+        <div id="view-config" class="hidden flex-col gap-6 max-w-5xl mx-auto">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-lg shadow-slate-200/50">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                        <div class="p-2 bg-blue-50 text-blue-600 rounded-lg mr-3"><i class="fas fa-layer-group"></i></div>
+                        Volume Settings
+                    </h3>
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Number of Invoices (Max 200)</label>
+                            <input type="number" id="cfg-invoice-count" value="150" min="1" max="200" class="w-full p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Number of Debtors (Max 20)</label>
+                            <input type="number" id="cfg-debtor-count" value="5" min="1" max="20" class="w-full p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-lg shadow-slate-200/50">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                        <div class="p-2 bg-green-50 text-green-600 rounded-lg mr-3"><i class="fas fa-euro-sign"></i></div>
+                        Financial Settings
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Currency</label>
+                        <select id="cfg-currency" class="w-full p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:outline-none bg-white">
+                            <option value="EUR" selected>Euro (EUR)</option>
+                            <option value="USD">US Dollar (USD)</option>
+                            <option value="GBP">British Pound (GBP)</option>
+                            <option value="CHF">Swiss Franc (CHF)</option>
+                            <option value="SEK">Swedish Krona (SEK)</option>
+                            <option value="NOK">Norwegian Krone (NOK)</option>
+                            <option value="DKK">Danish Krone (DKK)</option>
+                            <option value="ZAR">South African Rand (ZAR)</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Min Amount</label>
+                            <input type="number" id="cfg-min-amount" value="100" class="w-full p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Max Amount</label>
+                            <input type="number" id="cfg-max-amount" value="5000" class="w-full p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6 pt-4 border-t border-slate-100">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-medium text-slate-700">Credit Notes / Negatives</label>
+                                <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs font-bold" id="credit-percent-display">20%</span>
+                            </div>
+                            <input type="range" id="cfg-credit-chance" min="0" max="50" value="20" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blue-600 hover:accent-blue-700" oninput="document.getElementById('credit-percent-display').innerText = this.value + '%'">
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="block text-sm font-medium text-slate-700">Partial Payments</span>
+                                <span class="text-xs text-slate-500">Allow outstanding < invoice</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="cfg-partial-pay" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-lg shadow-slate-200/50">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                        <div class="p-2 bg-orange-50 text-orange-500 rounded-lg mr-3"><i class="fas fa-calendar-alt"></i></div>
+                        Timeline
+                    </h3>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Due Date Range (Days)</label>
+                            <div class="flex items-center gap-3">
+                                <input type="number" id="cfg-min-days" value="14" class="w-full p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:outline-none transition-all" placeholder="Min">
+                                <span class="text-slate-300 font-bold">to</span>
+                                <input type="number" id="cfg-max-days" value="60" class="w-full p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:outline-none transition-all" placeholder="Max">
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 ml-1">Days added to Invoice Date to determine Due Date.</p>
+                        </div>
+                        
+                        <div class="mt-auto pt-4">
+                             <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-700 flex items-start">
+                                <i class="fas fa-info-circle mr-2 mt-0.5 text-blue-500"></i> 
+                                <span>Changes applied immediately upon clicking "Generate Dataset".</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="bulk-action-bar" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-6 z-50 transition-all duration-300 translate-y-24 opacity-0">
+        <div class="flex items-center gap-3 border-r border-slate-700 pr-6">
+            <div class="bg-blue-600 text-xs font-bold px-2 py-1 rounded text-white" id="selected-count">0</div>
+            <span class="text-sm font-medium">Debtors Selected</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="exportSelectedDebtors()" class="btn-interactive hover:bg-slate-800 p-2 rounded-lg text-slate-300 hover:text-white transition-colors flex flex-col items-center gap-1 group" title="Export Selected">
+                <i class="fas fa-download text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium opacity-0 group-hover:opacity-100 absolute -top-8 bg-slate-800 px-2 py-1 rounded transition-opacity">Export</span>
+            </button>
+            <button onclick="alert('Mock: Email campaign triggered!')" class="btn-interactive hover:bg-slate-800 p-2 rounded-lg text-slate-300 hover:text-white transition-colors flex flex-col items-center gap-1 group" title="Send Reminder">
+                <i class="fas fa-envelope text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium opacity-0 group-hover:opacity-100 absolute -top-8 bg-slate-800 px-2 py-1 rounded transition-opacity">Email</span>
+            </button>
+            <button onclick="deselectAll()" class="btn-interactive hover:bg-slate-800 p-2 rounded-lg text-slate-300 hover:text-red-400 transition-colors flex flex-col items-center gap-1 group" title="Clear Selection">
+                <i class="fas fa-times text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium opacity-0 group-hover:opacity-100 absolute -top-8 bg-slate-800 px-2 py-1 rounded transition-opacity">Clear</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Default Configuration
+        let activeTab = 'invoices'; 
+        
+        // Data Storage
+        let fullInvoiceData = [];     
+        let fullDebtorData = [];      
+        let filteredInvoiceData = []; 
+        let filteredDebtorData = [];  
+        let selectedDebtorIds = new Set();
+        
+        // Currency Storage
+        let selectedCurrency = "EUR";
+
+        // Data Generators
+        const companyAdjectives = ["Global", "Prime", "Alpha", "Omega", "Blue", "Red", "Green", "Star", "Nexus", "Cyber", "Dynamic", "Future", "Smart", "Rapid", "Grand", "First", "Elite", "Silver", "Golden", "Bright"];
+        const companyNouns = ["Tech", "Solutions", "Systems", "Holdings", "Group", "Partners", "Enterprises", "Industries", "Logistics", "Ventures", "Consulting", "Media", "Works", "Labs", "Energy", "Software", "Designs", "Connect"];
+        const companySuffixes = ["Corp", "Inc", "Ltd", "LLC", "GmbH", "BV", "Plc", "Co"];
+        const firstNames = ["Sarah", "John", "Michael", "Emma", "David", "Lisa", "James", "Maria", "Robert", "Jennifer", "William", "Linda", "Richard", "Patricia", "Joseph", "Barbara", "Thomas", "Elizabeth"];
+        const lastNames = ["Samson", "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas"];
+        const cities = ["Amsterdam", "Rotterdam", "Utrecht", "Eindhoven", "Groningen", "Tilburg", "Almere", "Breda", "Nijmegen", "Haarlem"];
+        const streets = ["Main Street", "Church Road", "Station Square", "High Street", "Park Avenue", "Industrial Way", "Harbor View", "Market Square"];
+        const positiveDescriptions = ["Consulting Services", "Software License Q3", "Maintenance Fee", "Server Hosting", "Product Shipment", "Onsite Support", "API Usage Overage", "Quarterly Retainer", "Development Hours", "Hardware Lease", "Training Session"];
+        const negativeDescriptions = ["Credit Note Overcharge", "Refund Service Outage", "Return Damaged Goods", "Discount Application", "SLA Penalty Credit", "Volume Rebate", "Adjustment Billing Error", "Goodwill Credit", "Retrospective Discount"];
+
+        function randomDate(start, end) {
+            return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+        }
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(num) + ' ' + selectedCurrency;
+        }
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+            
+            // UI Toggle
+            document.getElementById('view-invoices').classList.add('hidden');
+            document.getElementById('view-debtors').classList.add('hidden');
+            document.getElementById('view-config').classList.add('hidden');
+            
+            const targetView = document.getElementById('view-' + tabName);
+            targetView.classList.remove('hidden');
+            
+            if(tabName === 'invoices') targetView.classList.add('flex'); 
+
+            ['invoices', 'debtors', 'config'].forEach(t => {
+                const btn = document.getElementById('tab-' + t);
+                if(t === tabName) {
+                    btn.className = 'tab-active pb-3 text-sm px-2 transition-all duration-300 hover:text-blue-700';
+                } else {
+                    btn.className = 'tab-inactive pb-3 text-sm px-2 transition-all duration-300';
+                }
+            });
+        }
+
+        function toggleExportMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('exportMenu');
+            
+            if (menu.classList.contains('hidden')) {
+                // Open
+                menu.classList.remove('hidden');
+                setTimeout(() => {
+                    menu.classList.remove('opacity-0', 'translate-y-2');
+                    menu.classList.add('opacity-100', 'translate-y-0');
+                }, 10);
+            } else {
+                // Close
+                closeExportMenu();
+            }
+        }
+
+        function closeExportMenu() {
+            const menu = document.getElementById('exportMenu');
+            if (!menu.classList.contains('hidden')) {
+                menu.classList.remove('opacity-100', 'translate-y-0');
+                menu.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    menu.classList.add('hidden');
+                }, 200);
+            }
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            const menu = document.getElementById('exportMenu');
+            const btn = document.getElementById('exportBtn');
+            // Ensure we aren't clicking inside the menu or the button
+            if (menu && !menu.classList.contains('hidden') && !menu.contains(event.target) && !btn.contains(event.target)) {
+                closeExportMenu();
+            }
+        }
+
+        function toggleDebtorRow(debtorId) {
+            const row = document.getElementById(`details-${debtorId}`);
+            const icon = document.getElementById(`icon-${debtorId}`);
+            
+            if (row.classList.contains('hidden')) {
+                row.classList.remove('hidden');
+                setTimeout(() => row.querySelector('div').classList.add('open'), 10);
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                row.querySelector('div').classList.remove('open');
+                setTimeout(() => row.classList.add('hidden'), 300);
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-right');
+            }
+        }
+
+        // Jump to Debtor from Invoice Tab
+        function jumpToDebtor(debtorId) {
+            switchTab('debtors');
+            document.getElementById('filter-debt-name').value = '';
+            applyDebtorFilters();
+
+            setTimeout(() => {
+                const row = document.getElementById('row-' + debtorId);
+                if(row) {
+                    row.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    row.classList.add('row-highlight');
+                    
+                    const details = document.getElementById('details-' + debtorId);
+                    if(details && details.classList.contains('hidden')) {
+                        toggleDebtorRow(debtorId);
+                    }
+                    
+                    setTimeout(() => row.classList.remove('row-highlight'), 2000);
+                }
+            }, 100);
+        }
+
+        // Jump to Invoice from Debtor Detail Tab
+        function jumpToInvoice(invoiceId) {
+            switchTab('invoices');
+            
+            // We need to ensure the filters don't hide the row
+            document.getElementById('filter-inv-id').value = ''; 
+            document.getElementById('filter-inv-debtor').value = '';
+            applyInvoiceFilters();
+
+            setTimeout(() => {
+                // Find the row (we need IDs on invoice rows)
+                const row = document.getElementById('inv-row-' + invoiceId);
+                if(row) {
+                    row.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    row.classList.add('row-highlight');
+                    setTimeout(() => row.classList.remove('row-highlight'), 2000);
+                }
+            }, 100);
+        }
+
+        function generateUniqueCompanyName(existingNames) {
+            let name;
+            do {
+                const adj = companyAdjectives[Math.floor(Math.random() * companyAdjectives.length)];
+                const noun = companyNouns[Math.floor(Math.random() * companyNouns.length)];
+                const suff = companySuffixes[Math.floor(Math.random() * companySuffixes.length)];
+                name = `${adj} ${noun} ${suff}`;
+            } while (existingNames.includes(name));
+            return name;
+        }
+
+        function generateDebtors(count) {
+            const list = [];
+            const usedNames = [];
+            const rndStr = () => `random string-${Math.floor(Math.random() * 5000)}`;
+            
+            for (let i = 0; i < count; i++) {
+                const fname = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const lname = lastNames[Math.floor(Math.random() * lastNames.length)];
+                
+                const type = Math.random() > 0.6 ? 'Consumer' : 'Business';
+                let name;
+                
+                if (type === 'Consumer') {
+                    name = `${fname} ${lname}`;
+                } else {
+                    name = generateUniqueCompanyName(usedNames);
+                    usedNames.push(name);
+                }
+
+                const city = cities[Math.floor(Math.random() * cities.length)];
+                const safeName = name.replace(/[^a-zA-Z]/g, '').toLowerCase();
+
+                // --- NEW: Generate Custom Debtor Data ONCE here ---
+                const customData = {
+                    text: {},
+                    amount: {}
+                };
+                for(let t=1; t<=25; t++) {
+                    let keyNum = String(t).padStart(2, '0');
+                    customData.text[`custom-text-field-${keyNum}_debtor`] = rndStr();
+                }
+                for(let a=1; a<=5; a++) {
+                    let keyNum = String(a).padStart(2, '0');
+                    customData.amount[`custom-amount-field-${keyNum}_debtor`] = (Math.random() * 10000);
+                }
+                
+                list.push({
+                    name: name,
+                    id: `DBT-${String(i + 1).padStart(4, '0')}`,
+                    contact: `${fname} ${lname}`,
+                    type: type,
+                    gender: Math.random() > 0.5 ? 'Male' : 'Female',
+                    email: `${fname.toLowerCase()}.${lname.toLowerCase()}@${type === 'Business' ? safeName + '.com' : 'emailprovider.com'}`,
+                    phone: `00316${Math.floor(10000000 + Math.random() * 90000000)}`,
+                    city: city,
+                    street: `${streets[Math.floor(Math.random() * streets.length)]}`,
+                    houseNumber: Math.floor(Math.random() * 100) + 1,
+                    zip: `${Math.floor(Math.random() * 9000) + 1000} ${String.fromCharCode(65+Math.floor(Math.random()*26))}${String.fromCharCode(65+Math.floor(Math.random()*26))}`,
+                    vat: type === 'Business' ? `NL${Math.floor(Math.random() * 900000000)}B01` : '',
+                    coc: type === 'Business' ? `${Math.floor(Math.random() * 80000000) + 10000000}` : '',
+                    duns: type === 'Business' ? `${Math.floor(Math.random() * 900000000)}` : '',
+                    customData: customData 
+                });
+            }
+            return list;
+        }
+
+        function generateData() {
+            let invoiceCount = parseInt(document.getElementById('cfg-invoice-count').value) || 150;
+            let debtorCount = parseInt(document.getElementById('cfg-debtor-count').value) || 5;
+            const minAmount = parseFloat(document.getElementById('cfg-min-amount').value) || 100;
+            const maxAmount = parseFloat(document.getElementById('cfg-max-amount').value) || 5000;
+            const creditChancePercent = parseInt(document.getElementById('cfg-credit-chance').value) || 0;
+            const creditChance = creditChancePercent / 100;
+            const allowPartial = document.getElementById('cfg-partial-pay').checked;
+            const minDays = parseInt(document.getElementById('cfg-min-days').value) || 14;
+            const maxDays = parseInt(document.getElementById('cfg-max-days').value) || 60;
+            
+            // Get Currency
+            selectedCurrency = document.getElementById('cfg-currency').value;
+
+            if (invoiceCount > 200) { invoiceCount = 200; document.getElementById('cfg-invoice-count').value = 200; }
+            if (debtorCount > 20) { debtorCount = 20; document.getElementById('cfg-debtor-count').value = 20; }
+
+            const generatedDebtors = generateDebtors(debtorCount);
+            fullInvoiceData = [];
+            
+            const startDate = new Date();
+            startDate.setFullYear(startDate.getFullYear() - 1);
+            const endDate = new Date();
+            const today = new Date();
+
+            for (let i = 1; i <= invoiceCount; i++) {
+                const debtor = generatedDebtors[Math.floor(Math.random() * generatedDebtors.length)];
+                
+                let amount = Math.floor(Math.random() * (maxAmount - minAmount + 1)) + minAmount;
+                amount += Math.round(Math.random() * 99) / 100;
+
+                const isNegative = Math.random() < creditChance;
+                let description, type;
+
+                if (isNegative) {
+                    amount = amount * -1;
+                    if (Math.random() < 0.30) {
+                        type = "Unallocated Payment";
+                        description = "Payment received - awaiting allocation";
+                    } else {
+                        type = "Credit Note";
+                        description = negativeDescriptions[Math.floor(Math.random() * negativeDescriptions.length)];
+                    }
+                } else {
+                    description = positiveDescriptions[Math.floor(Math.random() * positiveDescriptions.length)];
+                    type = "Invoice";
+                }
+
+                let outstanding = amount;
+                if (type === "Invoice" && allowPartial && Math.random() < 0.3) {
+                    const percentLeft = Math.random() * 0.8 + 0.1; 
+                    outstanding = Math.round(amount * percentLeft * 100) / 100;
+                }
+
+                const dateObj = randomDate(startDate, endDate);
+                const terms = Math.floor(Math.random() * (maxDays - minDays + 1)) + minDays; 
+                const dueDateObj = new Date(dateObj);
+                dueDateObj.setDate(dueDateObj.getDate() + terms);
+
+                const diffTime = today - dueDateObj;
+                const daysOverdue = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+                fullInvoiceData.push({
+                    id: type === "Unallocated Payment" ? `PAY-${10000 + i}` : `INV-${10000 + i}`,
+                    numericId: 10000 + i,
+                    dateObj: dateObj,
+                    date: dateObj.toISOString().split('T')[0],
+                    dueDate: dueDateObj.toISOString().split('T')[0],
+                    daysOverdue: daysOverdue,
+                    debtor: debtor,
+                    debtorName: debtor.name,
+                    debtorId: debtor.id,
+                    type: type,
+                    description: description,
+                    amount: amount,
+                    outstanding: outstanding
+                });
+            }
+
+            let totalNet = 0, totalPos = 0, totalNeg = 0;
+            fullInvoiceData.forEach(row => {
+                if (row.amount > 0) {
+                    totalPos += row.amount;
+                    totalNet += row.outstanding; 
+                } else {
+                    totalNeg += row.amount;
+                    totalNet += row.amount; 
+                }
+            });
+
+            document.getElementById('totalCount').textContent = fullInvoiceData.length;
+            document.getElementById('netBalance').textContent = formatCurrency(totalNet);
+            document.getElementById('positiveTotal').textContent = formatCurrency(totalPos);
+            document.getElementById('negativeTotal').textContent = formatCurrency(totalNeg);
+
+            fullDebtorData = generatedDebtors.map(debtor => {
+                const debtorInvoices = fullInvoiceData.filter(inv => inv.debtorId === debtor.id);
+                
+                const invCount = debtorInvoices.filter(i => i.amount > 0).length;
+                const credCount = debtorInvoices.filter(i => i.amount < 0).length;
+                const invTotal = debtorInvoices.filter(i => i.amount > 0).reduce((sum, i) => sum + i.amount, 0);
+                const credTotal = debtorInvoices.filter(i => i.amount < 0).reduce((sum, i) => sum + i.amount, 0);
+                const netTotal = debtorInvoices.reduce((sum, i) => {
+                    return sum + (i.amount > 0 ? i.outstanding : i.amount);
+                }, 0);
+
+                return {
+                    ...debtor,
+                    invCount,
+                    credCount,
+                    totalCount: invCount + credCount,
+                    invTotal,
+                    credTotal,
+                    netTotal: netTotal,
+                    invoices: debtorInvoices.sort((a,b) => b.dateObj - a.dateObj)
+                };
+            });
+
+            filteredInvoiceData = [...fullInvoiceData];
+            filteredDebtorData = [...fullDebtorData];
+            
+            // Reset selection on regeneration
+            selectedDebtorIds.clear();
+            updateBulkActionBar();
+
+            applyInvoiceFilters(); 
+            applyDebtorFilters();  
+        }
+
+        function applyInvoiceFilters() {
+            const idVal = document.getElementById('filter-inv-id').value.toLowerCase();
+            const dateVal = document.getElementById('filter-inv-date').value.toLowerCase();
+            const dueVal = document.getElementById('filter-inv-due').value.toLowerCase();
+            const debtorVal = document.getElementById('filter-inv-debtor').value.toLowerCase();
+            const typeVal = document.getElementById('filter-inv-type').value;
+            const descVal = document.getElementById('filter-inv-desc').value.toLowerCase();
+            const overdueVal = document.getElementById('filter-inv-overdue').value.toLowerCase();
+            const amountVal = document.getElementById('filter-inv-amount').value.toLowerCase();
+
+            filteredInvoiceData = fullInvoiceData.filter(row => {
+                if (idVal && !row.id.toLowerCase().includes(idVal)) return false;
+                if (dateVal && !row.date.toLowerCase().includes(dateVal)) return false;
+                if (dueVal && !row.dueDate.toLowerCase().includes(dueVal)) return false;
+                if (debtorVal && !(row.debtorName.toLowerCase().includes(debtorVal) || row.debtorId.toLowerCase().includes(debtorVal))) return false;
+                if (typeVal && row.type !== typeVal) return false;
+                if (descVal && !row.description.toLowerCase().includes(descVal)) return false;
+                if (overdueVal && !String(row.daysOverdue).includes(overdueVal)) return false;
+                if (amountVal && !String(row.amount.toFixed(2)).includes(amountVal)) return false;
+                return true;
+            });
+
+            renderInvoiceTable();
+        }
+
+        function applyDebtorFilters() {
+            const nameVal = document.getElementById('filter-debt-name').value.toLowerCase();
+
+            filteredDebtorData = fullDebtorData.filter(row => {
+                if (nameVal && !(row.name.toLowerCase().includes(nameVal) || row.id.toLowerCase().includes(nameVal))) return false;
+                return true;
+            });
+
+            renderDebtorTable();
+        }
+
+        function renderInvoiceTable() {
+            const tbody = document.getElementById('invoiceTableBody');
+            tbody.innerHTML = '';
+            
+            const displayLimit = 500;
+            const dataToRender = filteredInvoiceData.slice(0, displayLimit);
+
+            dataToRender.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.id = `inv-row-${row.id}`; 
+                tr.className = "slick-row border-b border-slate-100 last:border-0";
+                
+                const amountClass = row.amount < 0 ? 'text-red-600 font-medium' : 'text-slate-700';
+                const overdueClass = row.daysOverdue > 0 ? 'text-red-600 font-bold' : 'text-slate-400';
+                const overdueText = row.daysOverdue > 0 ? `${row.daysOverdue}` : 'Current';
+                
+                let iconName = 'file-text';
+                let iconColor = 'text-slate-400';
+                let typeBadge = '';
+
+                if (row.amount > 0) {
+                     typeBadge = '<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold shadow-sm">Invoice</span>';
+                     iconName = 'file-text';
+                     iconColor = 'text-blue-400';
+                } else if (row.type === 'Unallocated Payment') {
+                     typeBadge = '<span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold shadow-sm">Payment</span>';
+                     iconName = 'credit-card';
+                     iconColor = 'text-green-500';
+                } else {
+                     typeBadge = '<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold shadow-sm">Credit</span>';
+                     iconName = 'file-minus';
+                     iconColor = 'text-red-400';
+                }
+
+                tr.innerHTML = `
+                    <td class="p-4 whitespace-nowrap font-mono text-xs text-slate-500">
+                        <i data-lucide="${iconName}" class="w-4 h-4 mr-2 align-text-bottom inline-block ${iconColor}"></i>
+                        ${row.id}
+                    </td>
+                    <td class="p-4 whitespace-nowrap">${row.date}</td>
+                    <td class="p-4 text-slate-600 whitespace-nowrap">${row.dueDate}</td>
+                    <td class="p-4 whitespace-nowrap group">
+                        <div onclick="jumpToDebtor('${row.debtorId}')" class="font-medium text-slate-900 cursor-pointer hover:text-blue-600 hover:underline decoration-blue-300 underline-offset-2 transition-all flex items-center">
+                            ${row.debtorName}
+                            <i data-lucide="external-link" class="w-3 h-3 ml-1.5 opacity-0 group-hover:opacity-100 text-blue-400"></i>
+                        </div>
+                        <div class="text-xs text-slate-400">${row.debtorId}</div>
+                    </td>
+                    <td class="p-4 whitespace-nowrap">${typeBadge}</td>
+                    <td class="p-4 text-slate-600 min-w-[200px]">${row.description}</td>
+                    <td class="p-4 text-center ${overdueClass} whitespace-nowrap">${overdueText}</td>
+                    <td class="p-4 text-right ${amountClass} whitespace-nowrap">${formatCurrency(row.amount)}</td>
+                    <td class="p-4 text-right font-semibold text-slate-800 whitespace-nowrap">${formatCurrency(row.outstanding)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+
+            const footer = document.getElementById('invoiceFooter');
+            if (filteredInvoiceData.length > displayLimit) {
+                footer.textContent = `Showing first ${displayLimit} of ${filteredInvoiceData.length} records`;
+            } else {
+                footer.textContent = `Showing ${filteredInvoiceData.length} records`;
+            }
+        }
+
+        /* --- UPDATED DEBTOR TABLE RENDERER --- */
+        function renderDebtorTable() {
+            const tbody = document.getElementById('debtorTableBody');
+            tbody.innerHTML = '';
+            
+            // Add Header Checkbox if not exists
+            const headerRow = document.querySelector('#view-debtors thead tr');
+            if(!document.getElementById('header-checkbox-cell')) {
+                const th = document.createElement('th');
+                th.id = 'header-checkbox-cell';
+                th.className = "p-4 w-10";
+                th.innerHTML = `<input type="checkbox" onclick="toggleSelectAll(this)" class="custom-checkbox">`;
+                headerRow.insertBefore(th, headerRow.firstElementChild);
+            }
+
+            // Helpers
+            const stringToColor = (str) => {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
+                return `hsl(${Math.abs(hash) % 360}, 70%, 90%)`;
+            };
+            const stringToDarkColor = (str) => {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
+                return `hsl(${Math.abs(hash) % 360}, 70%, 30%)`;
+            };
+            const getInitials = (name) => name.match(/(\b\S)?/g).join("").match(/(^\S|\S$)?/g).join("").toUpperCase().substring(0, 2);
+            
+            window.copyToClipboard = (text, event) => {
+                event.stopPropagation();
+                navigator.clipboard.writeText(text);
+            };
+
+            filteredDebtorData.forEach((debtor, index) => {
+                const tr = document.createElement('tr');
+                tr.id = `row-${debtor.id}`; 
+                const isSelected = selectedDebtorIds.has(debtor.id);
+                tr.className = `slick-row cursor-pointer border-b border-slate-100 transition-all bg-white animate-row ${isSelected ? 'bg-blue-50/50' : ''}`;
+                tr.style.animationDelay = `${index * 0.05}s`;
+                
+                tr.onclick = (e) => {
+                    if(e.target.type !== 'checkbox') toggleDebtorRow(debtor.id);
+                };
+                
+                const netTotalClass = debtor.netTotal < 0 ? 'text-red-600' : 'text-slate-900';
+                
+                // Risk Badge
+                let riskBadge = '';
+                if (debtor.netTotal > 5000) riskBadge = `<span class="badge-risk risk-high">High Risk</span>`;
+                else if (debtor.netTotal > 1000) riskBadge = `<span class="badge-risk risk-med">Medium</span>`;
+                else riskBadge = `<span class="badge-risk risk-low">Good Standing</span>`;
+
+                const initials = getInitials(debtor.name);
+                const bgCol = stringToColor(debtor.name);
+                const txtCol = stringToDarkColor(debtor.name);
+
+                tr.innerHTML = `
+                    <td class="p-4 w-10 text-center" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="custom-checkbox row-checkbox" 
+                               value="${debtor.id}" 
+                               onchange="toggleRowSelection('${debtor.id}')"
+                               ${isSelected ? 'checked' : ''}>
+                    </td>
+                    <td class="p-4 text-center text-slate-300 w-14 group-hover:text-blue-500">
+                        <i id="icon-${debtor.id}" class="fas fa-chevron-right transition-transform duration-200"></i>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center">
+                            <div class="avatar-circle shadow-sm border border-white" style="background-color: ${bgCol}; color: ${txtCol};">
+                                ${initials}
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                    ${debtor.name}
+                                    ${riskBadge}
+                                </div>
+                                <div class="text-xs text-slate-400 font-mono mt-0.5 copy-trigger hover:text-blue-500" 
+                                     onclick="copyToClipboard('${debtor.id}', event)" title="Click to copy ID">
+                                    ${debtor.id} <i class="far fa-copy copy-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4 text-right text-slate-600">
+                        <div class="font-medium">${debtor.invCount}</div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wide">Inv</div>
+                    </td>
+                    <td class="p-4 text-right text-slate-600">
+                        <div class="font-medium">${debtor.credCount}</div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wide">Cred</div>
+                    </td>
+                    <td class="p-4 text-right font-medium text-slate-800">
+                        <span class="bg-slate-100 px-2 py-1 rounded text-xs text-slate-600 border border-slate-200">${debtor.totalCount}</span>
+                    </td>
+                    <td class="p-4 text-right text-green-600 font-medium text-xs">${formatCurrency(debtor.invTotal)}</td>
+                    <td class="p-4 text-right text-red-600 font-medium text-xs">${formatCurrency(debtor.credTotal)}</td>
+                    <td class="p-4 text-right font-bold ${netTotalClass} text-sm">${formatCurrency(debtor.netTotal)}</td>
+                `;
+                tbody.appendChild(tr);
+
+                // Detail Row
+                const detailRow = document.createElement('tr');
+                detailRow.id = `details-${debtor.id}`;
+                detailRow.className = "hidden bg-slate-50/80 shadow-inner";
+                
+                let innerRows = debtor.invoices.map(inv => {
+                     let typeStyle = '';
+                     if(inv.type === 'Unallocated Payment') typeStyle = 'text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md text-[10px] uppercase font-bold tracking-wide border border-blue-100';
+                     else if(inv.type === 'Credit Note') typeStyle = 'text-red-600 bg-red-50 px-2 py-0.5 rounded-md text-[10px] uppercase font-bold tracking-wide border border-red-100';
+                     else typeStyle = 'text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-md text-[10px] uppercase font-bold tracking-wide';
+
+                    return `
+                    <tr onclick="jumpToInvoice('${inv.id}')" class="border-b border-slate-100 last:border-0 text-xs text-slate-600 hover:bg-white transition-all cursor-pointer group">
+                        <td class="p-3 pl-8 font-mono group-hover:text-blue-600 transition-colors">${inv.id}</td>
+                        <td class="p-3">${inv.date}</td>
+                        <td class="p-3 text-slate-400">${inv.dueDate}</td>
+                        <td class="p-3"><span class="${typeStyle}">${inv.type}</span></td>
+                        <td class="p-3 text-right ${inv.amount < 0 ? 'text-red-600' : 'text-slate-700'} font-mono font-medium">${formatCurrency(inv.amount)}</td>
+                    </tr>`;
+                }).join('');
+
+                detailRow.innerHTML = `
+                    <td colspan="9" class="p-0">
+                        <div class="accordion-content pl-20 pr-6 py-4">
+                             <div class="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm">
+                                <table class="w-full">
+                                    <thead class="bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        <tr>
+                                            <th class="p-3 pl-8 text-left">Invoice ID</th>
+                                            <th class="p-3 text-left">Date</th>
+                                            <th class="p-3 text-left">Due Date</th>
+                                            <th class="p-3 text-left">Type</th>
+                                            <th class="p-3 text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${innerRows}</tbody>
+                                </table>
+                             </div>
+                        </div>
+                    </td>`;
+                tbody.appendChild(detailRow);
+            });
+            lucide.createIcons();
+            updateBulkActionBar();
+        }
+
+        /* --- BULK ACTION LOGIC --- */
+        function toggleRowSelection(debtorId) {
+            if (selectedDebtorIds.has(debtorId)) {
+                selectedDebtorIds.delete(debtorId);
+            } else {
+                selectedDebtorIds.add(debtorId);
+            }
+            renderDebtorTable();
+        }
+
+        function toggleSelectAll(checkbox) {
+            if (checkbox.checked) {
+                filteredDebtorData.forEach(d => selectedDebtorIds.add(d.id));
+            } else {
+                selectedDebtorIds.clear();
+            }
+            renderDebtorTable();
+        }
+
+        function deselectAll() {
+            selectedDebtorIds.clear();
+            renderDebtorTable();
+            const headerBox = document.querySelector('#header-checkbox-cell input');
+            if(headerBox) headerBox.checked = false;
+        }
+
+        function updateBulkActionBar() {
+            const bar = document.getElementById('bulk-action-bar');
+            const countEl = document.getElementById('selected-count');
+            
+            countEl.textContent = selectedDebtorIds.size;
+            
+            if (selectedDebtorIds.size > 0) {
+                bar.classList.add('active');
+            } else {
+                bar.classList.remove('active');
+            }
+        }
+
+        function exportSelectedDebtors() {
+            const selectedData = filteredDebtorData.filter(d => selectedDebtorIds.has(d.id));
+            if(selectedData.length === 0) return;
+            let csvContent = "Debtor ID,Debtor Name,Net Total\n";
+            selectedData.forEach(d => {
+                csvContent += `${d.id},"${d.name}",${d.netTotal.toFixed(2)}\n`;
+            });
+            triggerDownload(csvContent, `selected_debtors_${selectedData.length}.csv`);
+            deselectAll();
+        }
+
+        /* --- EXPORT FUNCTIONS --- */
+        function downloadMaxCredibleImport() {
+            // Full Column List
+            const columns = [
+                'id', 'account-manager', 'base-currency', 'business-or-consumer', 'business-unit',
+                'chamber-of-commerce-number', 'city', 'contact', 'contact-gender', 'country',
+                'credit-limit', 'currency',
+                'custom-amount-field-01_debtor', 'custom-amount-field-01_invoice',
+                'custom-amount-field-02_debtor', 'custom-amount-field-02_invoice',
+                'custom-amount-field-03_debtor', 'custom-amount-field-03_invoice',
+                'custom-amount-field-04_debtor', 'custom-amount-field-04_invoice',
+                'custom-amount-field-05_debtor', 'custom-amount-field-05_invoice',
+                'custom-date-field-01_debtor', 'custom-date-field-01_invoice',
+                'custom-date-field-02_debtor', 'custom-date-field-02_invoice',
+                'custom-date-field-03_debtor', 'custom-date-field-04_debtor', 'custom-date-field-05_debtor',
+                'custom-text-field-01_debtor', 'custom-text-field-01_invoice',
+                'custom-text-field-02_debtor', 'custom-text-field-02_invoice',
+                'custom-text-field-03_debtor', 'custom-text-field-03_invoice',
+                'custom-text-field-04_debtor', 'custom-text-field-05_debtor', 'custom-text-field-06_debtor',
+                'custom-text-field-07_debtor', 'custom-text-field-08_debtor', 'custom-text-field-09_debtor',
+                'custom-text-field-10_debtor', 'custom-text-field-11_debtor', 'custom-text-field-12_debtor',
+                'custom-text-field-13_debtor', 'custom-text-field-14_debtor', 'custom-text-field-15_debtor',
+                'custom-text-field-16_debtor', 'custom-text-field-17_debtor', 'custom-text-field-18_debtor',
+                'custom-text-field-19_debtor', 'custom-text-field-20_debtor', 'custom-text-field-21_debtor',
+                'custom-text-field-22_debtor', 'custom-text-field-23_debtor', 'custom-text-field-24_debtor',
+                'custom-text-field-25_debtor',
+                'customer-name', 'customer-number', 'date-of-birth', 'debt-collection-interest', 'description',
+                'description_line', 'due-date', 'e-mail', 'external-id_debtor', 'external-id_invoice',
+                'external-link_debtor', 'external-link_invoice', 'fax-number', 'field-manager', 'house-number',
+                'house-number-suffix', 'iban', 'initials', 'invoice-amount', 'invoice-base-amount', 'invoice-date',
+                'invoice-e-mail', 'invoice-number', 'language', 'line-number', 'mobile-phone-number',
+                'number-of-pieces', 'outstanding-amount', 'outstanding-base-amount', 'payment-date',
+                'payment-ledger', 'payment-terms', 'phone-number', 'post-office-box',
+                'post-office-box-postal-city', 'post-office-box-postal-code', 'post-office-box-postal-country',
+                'postal-code', 'price-per-pieces', 'project-manager', 'reminder-e-mail', 'segment',
+                'sepa-authorization-reference', 'sms-number', 'startdate', 'street', 'total-amount',
+                'total-vat-amount', 'vat-amount', 'vat-amount-per-piece', 'vat-number', 'vat-percentage',
+                'vat-percentage_line', 'whatsapp-number', 'd-u-n-s-number', 'super-debtor', 'Collector'
+            ];
+
+            let csvContent = columns.join(",") + "\n";
+
+            fullInvoiceData.forEach(row => {
+                const absAmount = Math.abs(row.amount);
+                const absOutstanding = Math.abs(row.outstanding);
+                const baseAmount = (absAmount / 1.21);
+                const vatAmount = (absAmount - baseAmount);
+                const outstandingBase = (absOutstanding / 1.21);
+                const customerNum = row.debtorId.replace('DBT-', '');
+                const invNum = row.numericId;
+                const accountManager = "Manager" + (parseInt(customerNum) % 9 + 1);
+                const initials = row.debtor.contact.split(' ').map(n => n[0].toUpperCase()).join('');
+                
+                const fmtMoney = (val) => `"${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}"`;
+                const fmtInt = (val) => Math.round(val);
+                const rndStr = () => `random string-${Math.floor(Math.random() * 5000)}`;
+
+                const fieldMap = {
+                    'id': row.id,
+                    'account-manager': accountManager,
+                    'base-currency': selectedCurrency, 
+                    'business-or-consumer': row.debtor.type,
+                    'business-unit': Math.random() > 0.5 ? 'profile ' + (parseInt(customerNum) % 5 + 1) : '4', 
+                    'chamber-of-commerce-number': row.debtor.coc,
+                    'city': row.debtor.city,
+                    'contact': row.debtor.contact,
+                    'contact-gender': row.debtor.gender,
+                    'country': 'The Netherlands',
+                    'credit-limit': fmtMoney(50000),
+                    'currency': selectedCurrency,
+                    'custom-text-field-01_debtor': 'Closed on wednesdays',
+                    'custom-text-field-01_invoice': 'Can call John', 
+                    'customer-name': row.debtorName,
+                    'customer-number': customerNum,
+                    'date-of-birth': '1989-08-26', 
+                    'debt-collection-interest': '8',
+                    'description': row.description,
+                    'description_line': row.description, 
+                    'due-date': row.dueDate,
+                    'e-mail': row.debtor.email,
+                    'external-id_debtor': row.debtorId,
+                    'external-id_invoice': row.id,
+                    'external-link_debtor': 'https://docs.google.com/drawings/d/1TRHLEpYOSMGq5E8AWBOelNx7_MBui2EMGsizcDRUOz4/edit?usp=drive_link',
+                    'external-link_invoice': 'https://docs.google.com/document/d/11m3iJ1IMJ5gqhRmWSFyzjX4d42H6eij5uYtySBCaMNw/edit',
+                    'fax-number': row.debtor.phone,
+                    'field-manager': 'Simone Sun',
+                    'house-number': fmtInt(row.debtor.houseNumber),
+                    'house-number-suffix': '',
+                    'iban': row.debtor.iban || '',
+                    'initials': initials,
+                    'invoice-amount': fmtMoney(absAmount),
+                    'invoice-base-amount': fmtMoney(baseAmount),
+                    'invoice-date': row.date,
+                    'invoice-e-mail': row.debtor.email,
+                    'invoice-number': invNum,
+                    'language': 'Dutch',
+                    'line-number': '1',
+                    'mobile-phone-number': row.debtor.phone,
+                    'number-of-pieces': '1',
+                    'outstanding-amount': fmtMoney(absOutstanding),
+                    'outstanding-base-amount': fmtMoney(outstandingBase),
+                    'payment-terms': '14',
+                    'phone-number': row.debtor.phone,
+                    'post-office-box': '',
+                    'post-office-box-postal-city': '',
+                    'post-office-box-postal-code': '',
+                    'post-office-box-postal-country': '',
+                    'postal-code': row.debtor.zip,
+                    'price-per-pieces': fmtMoney(5), 
+                    'project-manager': 'John Doe',
+                    'reminder-e-mail': row.debtor.email,
+                    'segment': 'Outdoor tools',
+                    'sepa-authorization-reference': 'K10050DE67M10F1R23BL00D7KP',
+                    'sms-number': row.debtor.phone,
+                    'startdate': row.date,
+                    'street': row.debtor.street,
+                    'total-amount': fmtMoney(absAmount),
+                    'total-vat-amount': fmtMoney(vatAmount),
+                    'vat-amount': fmtMoney(vatAmount),
+                    'vat-amount-per-piece': fmtMoney(vatAmount),
+                    'vat-number': row.debtor.vat,
+                    'vat-percentage': '21',
+                    'vat-percentage_line': '21',
+                    'whatsapp-number': row.debtor.phone,
+                    'd-u-n-s-number': row.debtor.duns,
+                    'super-debtor': '',
+                    'Collector': 'Janine'
+                };
+
+                // Use Stored Debtor Data
+                for(let i=2; i<=25; i++) {
+                    let keyNum = String(i).padStart(2, '0');
+                    fieldMap[`custom-text-field-${keyNum}_debtor`] = row.debtor.customData.text[`custom-text-field-${keyNum}_debtor`];
+                    if(i <= 3) fieldMap[`custom-text-field-${keyNum}_invoice`] = rndStr();
+                }
+                for(let i=1; i<=5; i++) {
+                    let keyNum = String(i).padStart(2, '0');
+                    fieldMap[`custom-amount-field-${keyNum}_debtor`] = fmtMoney(row.debtor.customData.amount[`custom-amount-field-${keyNum}_debtor`]);
+                    fieldMap[`custom-amount-field-${keyNum}_invoice`] = fmtMoney(Math.random() * 5000);
+                }
+
+                const rowArray = columns.map(col => {
+                    let val = (fieldMap[col] !== undefined && fieldMap[col] !== null) ? fieldMap[col] : "";
+                    if (typeof val === 'string') {
+                        if (val.startsWith('"') && val.endsWith('"')) return val;
+                        if (val.includes(",") || val.includes('"')) {
+                            val = val.replace(/"/g, '""');
+                            return `"${val}"`;
+                        }
+                    }
+                    return val;
+                });
+
+                csvContent += rowArray.join(",") + "\n";
+            });
+
+            triggerDownload(csvContent, "MaxCredible_Import_File.csv");
+        }
+
+        function downloadCSV() {
+            if (activeTab === 'invoices') downloadInvoicesCSV();
+            else if (activeTab === 'debtors') downloadDebtorsCSV();
+            else downloadInvoicesCSV();
+        }
+
+        function downloadInvoicesCSV() {
+            let csvContent = "Invoice ID,Date,Due Date,Days Overdue,Debtor Name,Debtor ID,Type,Description,Amount,Outstanding\n";
+            filteredInvoiceData.forEach(row => {
+                csvContent += [
+                    row.id, row.date, row.dueDate, row.daysOverdue,
+                    `"${row.debtorName}"`, row.debtorId, row.type,
+                    `"${row.description}"`, row.amount.toFixed(2), row.outstanding.toFixed(2)
+                ].join(",") + "\n";
+            });
+            triggerDownload(csvContent, "invoices_list_filtered.csv");
+        }
+
+        function downloadDebtorsCSV() {
+            let csvContent = "Debtor ID,Debtor Name,Invoice Count,Credit/Pay Count,Total Count,Invoice Total,Credit/Pay Total,Net Total\n";
+            filteredDebtorData.forEach(d => {
+                csvContent += [
+                    d.id, `"${d.name}"`, d.invCount, d.credCount, d.totalCount,
+                    d.invTotal.toFixed(2), d.credTotal.toFixed(2), d.netTotal.toFixed(2)
+                ].join(",") + "\n";
+            });
+            triggerDownload(csvContent, "debtors_rollup_filtered.csv");
+        }
+
+        function triggerDownload(content, filename) {
+            const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", filename);
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Init
+        generateData();
+    </script>
+</body>
+</html>

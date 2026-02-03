@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible - Next Gen Onboarding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="onboarding.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: { 500: '#3b82f6', 600: '#2563eb' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#050505] text-white antialiased overflow-hidden selection:bg-blue-500 selection:text-white font-sans" style="background-color: #050505;">
+
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-blue-600/10 rounded-full blur-[150px] animate-blob"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-purple-600/10 rounded-full blur-[150px] animate-blob animation-delay-4000"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
+    </div>
+
+    <nav class="w-full px-8 py-6 flex justify-between items-center fixed top-0 z-50">
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="window.location.reload()">
+            <div class="w-10 h-10 bg-[#111] border border-white/10 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg relative overflow-hidden">
+                <div class="absolute inset-0 bg-blue-500/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <span class="relative z-10">M</span>
+            </div>
+            <span class="text-lg font-bold tracking-tight text-white/90">MaxCredible</span>
+        </div>
+    </nav>
+
+    <section id="entry-section" class="min-h-screen flex flex-col items-center justify-center relative z-10 transition-all duration-1000 px-6">
+        <div class="text-center max-w-5xl mx-auto mb-12 relative z-10 flex flex-col items-center">
+            
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 backdrop-blur-md mb-8 shadow-[0_0_20px_rgba(59,130,246,0.3)] animate-fade-in">
+                <i class="ph-fill ph-lightning text-blue-400"></i>
+                <span class="text-xs font-bold text-blue-100 uppercase tracking-wide">Avg. Speedup: 3.5x</span>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-6 leading-tight">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-purple-600 drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]">Start Collecting.</span><br/>
+                <span class="text-gray-500">Not just invoicing.</span>
+            </h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl my-10">
+                <div class="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all duration-300 cursor-default">
+                    <div class="w-12 h-12 rounded-xl bg-[#111] border border-white/10 flex items-center justify-center text-white text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform shadow-lg shadow-blue-900/20">
+                        <i class="ph-duotone ph-currency-dollar text-blue-400"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mb-1">1. Define Value</h3>
+                    <p class="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">What are you owed?</p>
+                </div>
+
+                <div class="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all duration-300 cursor-default">
+                    <div class="w-12 h-12 rounded-xl bg-[#111] border border-white/10 flex items-center justify-center text-white text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform shadow-lg shadow-purple-900/20">
+                        <i class="ph-duotone ph-user-focus text-purple-400"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mb-1">2. Select Client</h3>
+                    <p class="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Who is paying you?</p>
+                </div>
+
+                <div class="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-green-500/50 hover:bg-green-500/5 transition-all duration-300 cursor-default">
+                    <div class="w-12 h-12 rounded-xl bg-[#111] border border-white/10 flex items-center justify-center text-white text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform shadow-lg shadow-green-900/20">
+                        <i class="ph-duotone ph-paint-brush-broad text-green-400"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mb-1">3. Design & Send</h3>
+                    <p class="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Look professional instantly.</p>
+                </div>
+            </div>
+
+            <div class="relative group cursor-pointer" onclick="enterStudio()">
+                <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-75 transition duration-500 group-hover:duration-200 animate-pulse"></div>
+                
+                <button class="relative px-12 py-6 bg-white text-black rounded-2xl font-bold text-sm uppercase tracking-wider flex items-center gap-4 shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 overflow-hidden">
+                    
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-400/50 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="ph-bold ph-rocket-launch text-lg"></i>
+                    </div>
+
+                    <div class="flex flex-col items-start text-left">
+                        <span class="leading-none text-[10px] text-gray-500 font-bold mb-1 group-hover:text-blue-600 transition-colors">Free Guest Mode</span>
+                        <span class="leading-none text-base font-extrabold text-gray-900">Start Collecting Now</span>
+                    </div>
+
+                    <i class="ph-bold ph-arrow-right text-xl text-gray-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 ml-2"></i>
+                </button>
+            </div>
+            
+            <p class="mt-8 text-[10px] text-gray-600 uppercase tracking-widest font-bold opacity-60 hover:opacity-100 transition-opacity cursor-default">
+                <i class="ph-fill ph-lock-key mr-1"></i> No Signup Required
+            </p>
+        </div>
+    </section>
+
+    <section id="studio-section" class="fixed inset-0 z-20 translate-y-[110%] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col bg-[#050505] pointer-events-none">
+        
+        <header class="h-16 border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl flex items-center justify-between px-6 shrink-0 z-30">
+            <div class="flex items-center gap-4">
+                <button onclick="exitStudio()" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 transition-all">
+                    <i class="ph-bold ph-arrow-left"></i>
+                </button>
+                <div class="h-4 w-px bg-white/10"></div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] text-gray-500">Draft / Untitled Project</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div class="flex bg-[#111] rounded-lg p-1 border border-white/10 mr-4">
+                    <button onclick="setViewMode('invoice')" id="view-btn-invoice" class="px-4 py-1.5 text-xs font-bold rounded-md bg-white/10 text-white transition-all">Template</button>
+                    <button onclick="setViewMode('email')" id="view-btn-email" class="px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-white transition-all">Communication</button>
+                    <button onclick="setViewMode('flow')" id="view-btn-flow" class="px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-white transition-all">Automation</button>
+                </div>
+                <button class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors shadow-lg shadow-blue-900/20 flex items-center gap-2" onclick="deployJourney()">
+                    Deploy Workflow <i class="ph-bold ph-rocket-launch"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden relative">
+            
+            <div class="w-[440px] bg-[#0A0A0A] border-r border-white/5 flex flex-col overflow-hidden shrink-0 z-20 shadow-2xl relative">
+                
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-6 pb-24 space-y-6" id="config-container">
+                    
+                    <div id="config-invoice-group" class="space-y-6 animate-fade-in">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-bold text-white">Template Builder</h3>
+                            <button onclick="randomizeData()" class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"><i class="ph-bold ph-magic-wand"></i> Auto-Fill</button>
+                        </div>
+
+                        <div class="border border-white/10 rounded-xl bg-[#111] overflow-hidden">
+                            <button class="w-full px-4 py-3 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-gray-400 hover:bg-white/5 transition-colors" onclick="toggleAccordion('acc-sender')">
+                                Sender Information <i class="ph-bold ph-caret-down"></i>
+                            </button>
+                            <div id="acc-sender" class="p-4 border-t border-white/5 space-y-3">
+                                <input type="text" id="inp-sender-name" placeholder="Your Company Name" class="input-dark" oninput="updateInvoiceState()">
+                                <input type="text" id="inp-sender-address" placeholder="Street Address" class="input-dark" oninput="updateInvoiceState()">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <input type="text" id="inp-sender-city" placeholder="City/State" class="input-dark" oninput="updateInvoiceState()">
+                                    <input type="text" id="inp-sender-tax" placeholder="Tax/VAT ID" class="input-dark" oninput="updateInvoiceState()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border border-white/10 rounded-xl bg-[#111] overflow-hidden">
+                            <button class="w-full px-4 py-3 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-gray-400 hover:bg-white/5 transition-colors" onclick="toggleAccordion('acc-brand')">
+                                Design & Branding <i class="ph-bold ph-caret-down"></i>
+                            </button>
+                            
+                            <div id="acc-brand" class="p-4 border-t border-white/5 space-y-4">
+                                
+                                <div>
+                                    <label class="label-tiny">Visual Theme</label>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <button onclick="setTheme('modern')" id="btn-theme-modern" class="theme-btn px-2 py-2 rounded-lg border border-blue-500 bg-blue-500/20 text-white text-[10px] font-bold transition-all">
+                                            Modern
+                                        </button>
+                                        <button onclick="setTheme('swiss')" id="btn-theme-swiss" class="theme-btn px-2 py-2 rounded-lg border border-white/10 hover:bg-white/5 text-gray-400 text-[10px] font-bold transition-all">
+                                            Swiss
+                                        </button>
+                                        <button onclick="setTheme('legal')" id="btn-theme-legal" class="theme-btn px-2 py-2 rounded-lg border border-white/10 hover:bg-white/5 text-gray-400 text-[10px] font-bold transition-all">
+                                            Legal
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="label-tiny">Dynamic Hero Banner</label>
+                                    <div class="grid grid-cols-2 gap-2 mb-2">
+                                        <button onclick="setDesignPattern('none')" class="h-8 border border-white/10 rounded text-[10px] text-gray-400 hover:bg-white/5 hover:text-white">Clean / Minimal</button>
+                                        <button onclick="setDesignPattern('mesh')" class="h-8 border border-white/10 rounded text-[10px] text-gray-400 hover:bg-white/5 hover:text-white bg-[#1e293b]">Tech Mesh</button>
+                                        <button onclick="setDesignPattern('gradient')" class="h-8 border border-white/10 rounded text-[10px] text-gray-400 hover:bg-white/5 hover:text-white bg-gradient-to-r from-blue-900 to-purple-900">Brand Gradient</button>
+                                        <button onclick="setDesignPattern('warning')" class="h-8 border border-white/10 rounded text-[10px] text-gray-400 hover:bg-white/5 hover:text-white bg-[repeating-linear-gradient(45deg,#444,#444_5px,#555_5px,#555_10px)]">Urgent / Warning</button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="label-tiny">Template Width</label>
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-[10px] text-gray-500">Slim</span>
+                                        <input type="range" min="500" max="1000" value="700" class="flex-1 h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="updateWidth(this.value)">
+                                        <span class="text-[10px] text-gray-500">Wide</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="label-tiny">Table Architecture</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                            <button onclick="setTableStyle('minimal')" class="h-8 border border-white/10 rounded text-[10px] text-gray-400 hover:bg-white/5 hover:text-white">Minimal</button>
+                                            <button onclick="setTableStyle('bold')" class="h-8 border border-white/10 rounded text-[10px] text-gray-400 hover:bg-white/5 hover:text-white font-bold">Bold</button>
+                                            <button onclick="setTableStyle('elevated')" class="h-8 border border-white/10 rounded text-[10px] text-gray-400 hover:bg-white/5 hover:text-white">Elevated</button>
+                                            <button onclick="setTableStyle('card')" class="h-8 border border-white/10 rounded text-[10px] text-gray-400 hover:bg-white/5 hover:text-white">Card View</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="border border-white/10 rounded-xl bg-[#111] overflow-hidden">
+                            <button class="w-full px-4 py-3 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-gray-400 hover:bg-white/5 transition-colors" onclick="toggleAccordion('acc-client')">
+                                Client (Payer) <i class="ph-bold ph-caret-down"></i>
+                            </button>
+                            <div id="acc-client" class="p-4 border-t border-white/5 space-y-3">
+                                <div class="relative">
+                                    <input type="text" id="inp-client-company" placeholder="Company Name" class="input-dark pr-8" oninput="updateInvoiceState(); simulateClientLookup(this.value)">
+                                    <div id="client-lookup-badge" class="absolute right-3 top-2.5 text-xs"></div>
+                                </div>
+                                <input type="text" id="inp-client-email" placeholder="Billing Email" class="input-dark" oninput="updateInvoiceState()">
+                                <input type="text" id="inp-client-address" placeholder="Client Address" class="input-dark" oninput="updateInvoiceState()">
+                            </div>
+                        </div>
+
+                        <div class="border border-white/10 rounded-xl bg-[#111] overflow-hidden">
+                            <button class="w-full px-4 py-3 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-gray-400 hover:bg-white/5 transition-colors" onclick="toggleAccordion('acc-items')">
+                                Line Items <i class="ph-bold ph-caret-down"></i>
+                            </button>
+                            <div id="acc-items" class="p-4 border-t border-white/5 space-y-3">
+                                <div id="line-items-container" class="space-y-2"></div>
+                                <button onclick="addLineItem()" class="w-full py-2 border border-dashed border-white/20 rounded-lg text-xs text-gray-500 hover:text-white hover:border-white/40 transition-all">
+                                    + Add Line Item
+                                </button>
+                                <button onclick="toggleAssetLocker()" class="w-full mt-2 py-3 border border-gray-700 bg-gray-800/50 hover:bg-gray-800 hover:border-blue-500/50 text-gray-300 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 group">
+                                    <div class="w-4 h-4 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i class="ph-bold ph-lock-key"></i>
+                                    </div>
+                                    Attach Asset Locker (Pay-to-Download)
+                                </button>
+                                <div class="pt-3 flex justify-between items-center border-t border-white/5">
+                                    <span class="text-xs text-gray-400">Total Amount</span>
+                                    <span class="text-lg font-bold font-mono text-white" id="config-total-display">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-white/10 rounded-xl bg-[#111] overflow-hidden">
+                            <button class="w-full px-4 py-3 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-gray-400 hover:bg-white/5 transition-colors" onclick="toggleAccordion('acc-footer')">
+                                Bank Details <i class="ph-bold ph-caret-down"></i>
+                            </button>
+                            <div id="acc-footer" class="p-4 border-t border-white/5 space-y-3 hidden">
+                                <input type="text" id="inp-bank-name" placeholder="Bank Name" class="input-dark" oninput="updateInvoiceState()">
+                                <input type="text" id="inp-bank-iban" placeholder="IBAN / Account Number" class="input-dark font-mono" oninput="updateInvoiceState()">
+                                <input type="text" id="inp-bank-swift" placeholder="SWIFT / BIC" class="input-dark font-mono" oninput="updateInvoiceState()">
+                                <textarea id="inp-footer-note" rows="2" placeholder="Thank you message..." class="input-dark" oninput="updateInvoiceState()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="config-email-group" class="space-y-6 hidden animate-fade-in">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-bold text-white">Communication Logic</h3>
+                            <span class="text-[10px] text-green-400 border border-green-500/30 bg-green-500/10 px-2 py-0.5 rounded">Active</span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="label-tiny">Tone of Voice</label>
+                                <input type="range" min="0" max="100" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="updateEmailTone(this.value)">
+                                <div class="flex justify-between text-[10px] text-gray-500 mt-1">
+                                    <span>Apologetic</span>
+                                    <span>Neutral</span>
+                                    <span>Assertive</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="label-tiny">Subject Line</label>
+                                <div class="relative">
+                                    <input type="text" id="inp-email-subject" class="input-dark pr-8" value="Invoice #INV-001 from MaxCredible" oninput="renderEmail()">
+                                    <i class="ph-bold ph-magic-wand absolute right-2 top-2.5 text-purple-400 cursor-pointer hover:scale-110 transition-transform" title="AI Generate" onclick="aiGenerateSubject()"></i>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-white/5 pt-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <label class="label-tiny mb-0">Smart Hotkeys</label>
+                                    <span class="text-[9px] bg-blue-500 text-white px-1.5 py-0.5 rounded font-bold">AI ENHANCED</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mb-3 leading-relaxed">
+                                    The system automatically generates high-conversion response buttons based on the invoice context.
+                                    <br><br>
+                                    <span class="text-white">Enabled:</span> Pay Now, Pay Later, Dispute, Call Me, Installments.
+                                </p>
+                                <div class="p-3 bg-white/5 border border-white/10 rounded-lg">
+                                    <div class="flex items-center gap-2 text-green-400 text-[10px] font-bold">
+                                        <i class="ph-fill ph-check-circle"></i> "Gravitational" Pull Active
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="config-flow-group" class="space-y-6 hidden animate-fade-in">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-bold text-white">Automation Strategy</h3>
+                            <span class="text-[10px] text-blue-400 border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 rounded">Visualizer</span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-[#111] border border-white/10 rounded-xl p-4">
+                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Email Sequence</h4>
+                                <div id="flow-steps-container" class="space-y-3 relative">
+                                    <div class="absolute left-[15px] top-4 bottom-4 w-0.5 bg-gray-800 -z-10"></div>
+                                </div>
+                                <button onclick="addFlowStep()" class="mt-4 w-full py-2 border-2 border-dashed border-gray-800 rounded-lg text-xs font-bold text-gray-500 hover:text-white hover:border-gray-600 transition-all flex items-center justify-center gap-2">
+                                    <i class="ph-bold ph-plus"></i> Add Email Reminder
+                                </button>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-500/20">
+                                <div class="flex gap-3">
+                                    <i class="ph-fill ph-shield-check text-blue-400 text-xl"></i>
+                                    <div>
+                                        <h5 class="text-sm font-bold text-white mb-1">Email-Only Protocol</h5>
+                                        <p class="text-xs text-blue-200/70 leading-relaxed">
+                                            This workflow is strictly limited to email communication to ensure professional compliance.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="p-6 border-t border-white/5 bg-[#050505] relative z-20">
+                     <button id="main-action-btn" onclick="setViewMode('email')" class="w-full bg-white text-black py-4 rounded-xl font-bold shadow-[0_0_30px_-5px_rgba(255,255,255,0.3)] hover:shadow-[0_0_40px_-5px_rgba(255,255,255,0.5)] flex items-center justify-center gap-2 group transition-all transform active:scale-95">
+                        Proceed to Communication <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1 bg-[#080808] relative flex flex-col items-center justify-center p-8 overflow-hidden">
+                
+                <div class="absolute inset-0 z-0 opacity-20 pattern-grid"></div>
+                
+                <div id="stage-invoice" class="relative z-10 w-full flex flex-col items-center transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
+                    
+                    <div class="w-full max-w-[700px] flex items-center justify-between mb-6 px-2 animate-fade-in">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Live Web View</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        </div>
+                        
+                        <div class="bg-[#111] border border-white/10 p-1 rounded-lg flex items-center gap-1 backdrop-blur-md shadow-xl">
+                            <button onclick="setPreviewMode('desktop')" id="btn-mode-desktop" class="p-2 rounded-md bg-white/10 text-white transition-all shadow-sm">
+                                <i class="ph-bold ph-desktop"></i>
+                            </button>
+                            <button onclick="setPreviewMode('mobile')" id="btn-mode-mobile" class="p-2 rounded-md text-gray-500 hover:text-white hover:bg-white/5 transition-all">
+                                <i class="ph-bold ph-device-mobile"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="preview-container-wrapper" class="relative transition-all duration-500 ease-spring" style="width: 100%; max-width: 700px;">
+                        
+                        <div id="mobile-frame-overlay" class="absolute -inset-4 border-[12px] border-[#222] rounded-[3rem] opacity-0 pointer-events-none transition-opacity duration-300 shadow-2xl z-20">
+                             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#222] rounded-b-xl"></div>
+                        </div>
+
+                        <div class="bg-white text-gray-900 rounded-sm shadow-2xl min-h-[800px] relative overflow-hidden flex flex-col transition-all duration-300" id="invoice-paper">
+                             </div>
+                    </div>
+
+                    <p class="text-center text-[10px] text-gray-500 mt-8 opacity-50 animate-fade-in">
+                        <i class="ph-fill ph-check-circle text-green-500"></i> Responsive "Smart Invoice" Technology
+                    </p>
+                </div>
+
+                <div id="stage-email" class="absolute z-10 w-full flex justify-center transition-all duration-700 translate-y-[100vh] opacity-0">
+                    <div class="bg-[#1A1A1A] rounded-xl border border-white/10 shadow-2xl overflow-hidden flex flex-col h-[750px] transition-all duration-300" id="email-frame" style="max-width: 700px; width: 100%;">
+                        <div class="bg-[#222] px-4 py-3 flex items-center gap-4 border-b border-white/5 shrink-0">
+                            <div class="flex gap-1.5">
+                                <div class="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+                            </div>
+                            <div class="flex-1 bg-[#111] rounded px-3 py-1 text-[10px] text-gray-500 flex justify-between items-center font-mono">
+                                <span id="email-preview-subject">Subject: Invoice #INV-001</span>
+                                <i class="ph-bold ph-lock-key text-gray-600"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 bg-white overflow-y-auto custom-scrollbar-light p-0" id="email-body-content">
+                            </div>
+                    </div>
+                </div>
+
+                <div id="stage-flow" class="absolute z-10 w-full max-w-[800px] h-full transition-all duration-700 translate-y-[100vh] opacity-0 flex items-center justify-center pointer-events-none">
+                    <div class="relative w-full h-[600px] flex items-center justify-center">
+                        <div class="absolute top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-blue-900 to-transparent"></div>
+                        <div id="flow-visual-container" class="relative z-10 w-full h-full flex flex-col items-center justify-center gap-12 py-10">
+                            </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500">
+        <div class="bg-black/90 backdrop-blur-xl absolute inset-0"></div>
+        <div class="relative bg-[#111] border border-white/10 rounded-3xl p-10 max-w-md text-center shadow-2xl transform scale-95 transition-transform duration-500" id="success-card">
+            <div class="w-20 h-20 bg-gradient-to-tr from-green-500 to-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_50px_rgba(16,185,129,0.5)]">
+                <i class="ph-bold ph-check text-4xl text-white"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-white mb-2">Workflow Live</h2>
+            <p class="text-gray-400 mb-8 leading-relaxed">Your payment logic is now active. We'll handle the rest.</p>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                    <p class="text-[10px] text-gray-500 uppercase">Est. Speedup</p>
+                    <p class="text-xl font-bold text-white">3.5x</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                    <p class="text-[10px] text-gray-500 uppercase">Projected ROI</p>
+                    <p class="text-xl font-bold text-white">240%</p>
+                </div>
+            </div>
+            <button onclick="window.location.reload()" class="w-full bg-white text-black font-bold py-3.5 rounded-xl hover:bg-gray-200 transition-colors pointer-events-auto">
+                Create Another
+            </button>
+        </div>
+    </div>
+    
+    <section id="customer-view" class="fixed inset-0 z-[60] bg-[#f3f4f6] translate-y-[100%] transition-transform duration-700 flex flex-col items-center justify-center pointer-events-none">
+        
+        <div class="absolute top-0 w-full p-6 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-gray-200 z-10">
+            <div class="flex items-center gap-3">
+                 <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                 <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                 <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                 <span class="ml-2 text-xs font-bold text-gray-400 uppercase tracking-widest">Customer View Simulation</span>
+            </div>
+            <button onclick="endSimulation()" class="text-xs font-bold text-gray-500 hover:text-red-500 transition-colors">
+                <i class="ph-bold ph-x"></i> Exit Simulation
+            </button>
+        </div>
+
+        <div class="relative w-full max-w-2xl h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col mt-10">
+             <div class="bg-gray-50 border-b border-gray-100 p-4 flex items-center justify-between shrink-0">
+                <div>
+                    <h2 class="font-bold text-gray-900 text-sm" id="sim-subject-line">Invoice Received</h2>
+                    <p class="text-xs text-gray-500">To: <span id="sim-client-email">client@example.com</span></p>
+                </div>
+                <div class="text-xs text-gray-400">Just now</div>
+            </div>
+
+            <div id="sim-content-area" class="flex-1 overflow-y-auto custom-scrollbar-light relative">
+                </div>
+
+                <div id="sim-processing-overlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 z-20">
+                    <div class="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+                    <p class="text-sm font-bold text-gray-500 animate-pulse">Processing Payment...</p>
+                </div>
+            
+                <div id="sim-success-overlay" class="absolute inset-0 bg-white flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500 z-30 overflow-hidden">
+                
+                <script>
+                    function handleTilt(e, card) {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left; // x position within the element.
+                        const y = e.clientY - rect.top;  // y position within the element.
+                        
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        
+                        const rotateX = ((y - centerY) / centerY) * -10; // Max rotation deg
+                        const rotateY = ((x - centerX) / centerX) * 10;
+
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                    }
+
+                    function resetTilt(card) {
+                        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+                    }
+                </script>
+
+                <style>
+                    @keyframes invoice-fly {
+                        0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+                        20% { transform: translateY(4px) scale(0.95) rotate(-3deg); opacity: 1; }
+                        50% { opacity: 1; }
+                        100% { transform: translate(120px, -150px) scale(0.8) rotate(20deg); opacity: 0; }
+                    }
+                    @keyframes invoice-reset {
+                        0%, 60% { opacity: 0; transform: translateY(20px) scale(0.8); }
+                        100% { opacity: 1; transform: translateY(0) scale(1); }
+                    }
+                    @keyframes shimmer {
+                        0% { transform: translateX(-150%); }
+                        100% { transform: translateX(150%); }
+                    }
+                    .animate-fly { animation: invoice-fly 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+                    .animate-appear { animation: invoice-reset 2.5s ease-out infinite; }
+                    .animate-shimmer { animation: shimmer 2.5s infinite linear; }
+                </style>
+
+                <div class="absolute inset-0 pointer-events-none">
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-tr from-blue-100/40 to-purple-100/40 rounded-full blur-3xl animate-pulse"></div>
+                </div>
+
+                <div class="relative w-full max-w-xs mx-auto p-1 z-20 transition-transform duration-100 ease-out" 
+                     onmousemove="handleTilt(event, this)" 
+                     onmouseleave="resetTilt(this)">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl opacity-60 blur-md"></div>
+                    
+                    <div class="relative bg-white/90 backdrop-blur-xl rounded-xl p-6 text-center shadow-2xl border border-white/50 overflow-hidden group">
+                        
+                        <div class="flex items-center justify-center gap-2 mb-4">
+                            <div class="px-2 py-1 bg-green-100 text-green-700 rounded text-[10px] font-bold uppercase tracking-wide">
+                                <i class="ph-bold ph-check"></i> Paid
+                            </div>
+                            <div class="w-px h-3 bg-gray-300"></div>
+                            <div class="text-[10px] text-gray-400 font-medium">12s duration</div>
+                        </div>
+
+                        <div class="h-28 w-full bg-gradient-to-b from-gray-50 to-white rounded-lg mb-6 relative flex items-center justify-center border border-dashed border-gray-200 overflow-hidden shadow-inner">
+                            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                            
+                            <div class="absolute animate-appear">
+                                <div class="w-12 h-16 bg-white border border-gray-200 rounded shadow-sm flex flex-col items-center justify-center gap-1.5 p-1">
+                                    <div class="w-6 h-1 bg-gray-200 rounded-full"></div>
+                                    <div class="w-8 h-1 bg-gray-100 rounded-full"></div>
+                                    <div class="w-8 h-1 bg-gray-100 rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <div class="absolute animate-fly">
+                                <div class="w-12 h-16 bg-white border border-blue-400 rounded shadow-lg flex flex-col items-center justify-center gap-1.5 p-1 relative z-10">
+                                    <div class="absolute inset-0 bg-blue-50/50"></div>
+                                    <div class="w-6 h-1 bg-blue-300 rounded-full"></div>
+                                    <div class="w-8 h-1 bg-gray-200 rounded-full"></div>
+                                    <i class="ph-fill ph-paper-plane-tilt text-blue-600 text-xl absolute bottom-[-10px] right-[-10px] bg-white rounded-full p-1 shadow-sm border border-gray-100"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-1">Your Turn.</h3>
+                        <p class="text-xs text-gray-500 mb-6 px-4">
+                            You just saw the speed. Now capture the value.
+                        </p>
+
+                        <button onclick="transitionToSignup()" class="relative w-full overflow-hidden bg-black text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all group-hover:ring-2 ring-offset-2 ring-blue-500/20">
+                            
+                            <div class="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent z-10"></div>
+                            
+                            <div class="relative z-20 flex items-center justify-center gap-3">
+                                <span class="text-sm">Start Collecting Free</span> 
+                                <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </div>
+                        </button>
+                        
+                        <div class="mt-4 flex items-center justify-center gap-1.5 opacity-60">
+                             <i class="ph-fill ph-lock-key text-gray-400 text-xs"></i>
+                             <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">No Credit Card Needed</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <button onclick="window.location.reload()" class="relative z-10 mt-8 text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors">
+                    Restart Experience
+                </button>
+            </div>
+            <div id="sim-response-overlay" class="absolute inset-0 bg-white flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500 z-30 overflow-hidden">
+                
+                <style>
+                    @keyframes msg-float {
+                        0% { transform: translateY(20px) scale(0.8); opacity: 0; }
+                        20% { transform: translateY(0) scale(1); opacity: 1; }
+                        80% { transform: translateY(0) scale(1); opacity: 1; }
+                        100% { transform: translateY(-40px) scale(0.9); opacity: 0; }
+                    }
+                    @keyframes ripple {
+                        0% { transform: scale(1); opacity: 0.6; }
+                        100% { transform: scale(2.5); opacity: 0; }
+                    }
+                    .animate-msg { animation: msg-float 3s ease-in-out infinite; }
+                    .animate-ripple { animation: ripple 2s linear infinite; }
+                </style>
+
+                <div class="absolute inset-0 pointer-events-none">
+                    <div class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-gradient-to-tl from-purple-100/50 to-pink-100/50 rounded-full blur-3xl animate-pulse"></div>
+                </div>
+
+                <div class="relative w-full max-w-xs mx-auto p-1 z-20 transition-transform duration-100 ease-out" 
+                     onmousemove="handleTilt(event, this)" 
+                     onmouseleave="resetTilt(this)">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl opacity-60 blur-md"></div>
+                    
+                    <div class="relative bg-white/90 backdrop-blur-xl rounded-xl p-6 text-center shadow-2xl border border-white/50 overflow-hidden group">
+                        
+                        <div class="flex items-center justify-center gap-2 mb-4">
+                            <div class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-[10px] font-bold uppercase tracking-wide">
+                                <i class="ph-bold ph-paper-plane-right"></i> Sent
+                            </div>
+                            <div class="w-px h-3 bg-gray-300"></div>
+                            <div class="text-[10px] text-gray-400 font-medium">Instant Update</div>
+                        </div>
+
+                        <div class="h-28 w-full bg-gradient-to-b from-gray-50 to-white rounded-lg mb-6 relative flex items-center justify-center border border-dashed border-gray-200 overflow-hidden shadow-inner">
+                            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#a5b4fc_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                            
+                            <div class="absolute left-6 w-8 h-8 rounded-full bg-gray-200 border-2 border-white shadow-sm flex items-center justify-center z-10">
+                                <i class="ph-fill ph-user text-gray-400"></i>
+                            </div>
+
+                            <div class="absolute right-6 w-8 h-8 rounded-full bg-indigo-100 border-2 border-indigo-200 shadow-sm flex items-center justify-center z-10">
+                                <div class="absolute inset-0 bg-indigo-400 rounded-full animate-ripple -z-10"></div>
+                                <i class="ph-fill ph-check text-indigo-600"></i>
+                            </div>
+
+                            <div class="absolute animate-msg flex flex-col items-center">
+                                <div class="px-3 py-1.5 bg-indigo-600 text-white text-[10px] font-bold rounded-lg shadow-lg shadow-indigo-500/30 flex items-center gap-1.5">
+                                    <span>Will pay Friday</span>
+                                    <i class="ph-bold ph-thumbs-up"></i>
+                                </div>
+                                <div class="w-1 h-1 bg-indigo-600 rounded-full mt-0.5"></div>
+                                <div class="w-0.5 h-0.5 bg-indigo-600 rounded-full mt-0.5"></div>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-1">Update Delivered.</h3>
+                        <p class="text-xs text-gray-500 mb-6 px-2">
+                            We notified the sender instantly. No need for awkward follow-up emails.
+                        </p>
+
+                        <button onclick="transitionToSignup()" class="relative w-full overflow-hidden bg-[#111] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all group-hover:ring-2 ring-offset-2 ring-indigo-500/20">
+                            <div class="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent z-10"></div>
+                            
+                            <div class="relative z-20 flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-magic-wand text-indigo-400"></i>
+                                <span class="text-sm">Automate My Communications</span> 
+                            </div>
+                        </button>
+                        
+                        <div class="mt-4 flex items-center justify-center gap-1.5 opacity-60">
+                             <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Stop Chasing Manual Payments</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <button onclick="window.location.reload()" class="relative z-10 mt-8 text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors">
+                    Restart Experience
+                </button>
+            </div>
+            </div>
+        </div>
+    </section>
+    <script src="onboarding.js"></script>
+</body>
+</html>

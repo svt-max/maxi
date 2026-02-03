@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible | Feature Flow</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="scroll-progress-container">
+        <div class="scroll-progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="ambient-background">
+        <div class="blob b-1"></div>
+        <div class="blob b-2"></div>
+        <div class="blob b-3"></div>
+    </div>
+
+    <nav class="top-nav">
+        <div class="nav-content">
+            <img src="Logo_redish.svg" alt="MaxCredible" class="nav-logo" onerror="this.style.display='none'; document.getElementById('txt-logo').style.display='block'">
+            <div id="txt-logo" class="text-logo" style="display:none;">MaxCredible</div>
+
+            <div class="nav-links">
+                <a href="#intro" class="n-link">Start</a>
+                <a href="#interest" class="n-link">Interest</a>
+                <a href="#segmentation" class="n-link">Segmentation</a>
+                <a href="#dashboard" class="n-link">Dashboard</a>
+            </div>
+            
+            <button class="nav-cta" onclick="window.location.href='#intro'">Get Started</button>
+        </div>
+    </nav>
+
+    <main class="snap-container" id="mainContainer">
+        
+        <section id="intro" class="snap-section hero">
+            <div class="content-wrapper">
+                <div class="brand-pill">Platform Tour</div>
+                <h1 class="hero-title">Credit Logic,<br>Reimagined.</h1>
+                <p class="hero-sub">Scroll to see the transformation.</p>
+                <div class="scroll-indicator">
+                    <div class="mouse"><div class="wheel"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="interest" class="snap-section">
+            <div class="feature-card wide-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Revenue Recovery</div>
+                    <h2>Interest Logic Engine</h2>
+                    <p id="int-desc">Smart Netting detects when a balance is purely interest and shields the customer.</p>
+                </div>
+
+                <div class="visual-cycle interest-demo stagger-2" id="interest-visual" data-step="0">
+                    <div class="status-deck">
+                        <div class="s-badge" id="badge-netting">
+                            <i class="fa-solid fa-scale-balanced"></i> <span>Smart Netting</span>
+                            <div class="s-sub">Disabled</div>
+                        </div>
+                        <div class="s-badge" id="badge-shield">
+                            <i class="fa-solid fa-shield-halved"></i> <span>Shield Protocol</span>
+                            <div class="s-sub">Disabled</div>
+                        </div>
+                    </div>
+
+                    <div class="invoice-stack">
+                        <div class="inv-item">
+                            <div class="inv-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                            <div class="inv-data">
+                                <div class="inv-top"><span>Invoice #1024</span> <span class="inv-date">Feb 01</span></div>
+                                <div class="inv-amount">€ 500.00</div>
+                                <div class="inv-tag tag-red" id="tag-inv-int">+ € 12.50 Interest</div>
+                            </div>
+                        </div>
+                        <div class="inv-item">
+                            <div class="inv-icon"><i class="fa-solid fa-credit-card"></i></div>
+                            <div class="inv-data">
+                                <div class="inv-top"><span>Late Payment</span> <span class="inv-date">Feb 20</span></div>
+                                <div class="inv-amount text-white">- € 498.00</div>
+                                <div class="inv-tag tag-grey" id="tag-pay-int"><i class="fa-solid fa-ban"></i> Interest Ignored</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-area">
+                        <div class="r-label" id="r-label">Current Demand</div>
+                        <div class="r-value val-red" id="r-value">€ 14.50</div>
+                    </div>
+
+                    <div class="action-footer action-red" id="action-footer">
+                        <i class="fa-solid fa-triangle-exclamation"></i> ACTION: SEND REMINDER
+                    </div>
+
+                    <div class="shield-overlay" id="shield-overlay">
+                        <i class="fa-solid fa-bell-slash shield-big-icon"></i>
+                        <h3>Silent Mode</h3>
+                        <div class="shield-math">
+                            <span class="m-val">€ 2.15</span> <span><</span> <span class="m-limit">€ 5.00</span>
+                        </div>
+                        <div class="shield-note">AUTOMATICALLY SUPPRESSED</div>
+                    </div>
+                </div>
+
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="segmentation" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">AI Profiling</div>
+                    <h2>Smart Segmentation</h2>
+                    <p>Stop treating 10-year VIPs like criminals. AI automatically separates customers into tailored workflows.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-users-slash g-icon"></i>
+                        <div class="g-label">Unsorted List</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <div class="row">
+                            <span class="pill vip"><i class="fa-solid fa-crown"></i> VIP</span>
+                            <span class="pill risk"><i class="fa-solid fa-triangle-exclamation"></i> Risk</span>
+                        </div>
+                        <div class="g-label" style="color:var(--c-zen)">AI Prioritized</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="templates" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Hyper-Personalization</div>
+                    <h2>Amazing Templates</h2>
+                    <p>Send dynamic, visually stunning emails that adapt tone and content based on the customer's profile.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-file-pdf g-icon"></i>
+                        <div class="g-label">Static PDF Attachment</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-envelope-open-text g-icon" style="color:var(--c-zen)"></i>
+                        <div class="g-label" style="color:var(--c-zen)">Dynamic HTML5 Email</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="reminders" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Zero-Touch Dunning</div>
+                    <h2>Automatic Reminders</h2>
+                    <p>Set it and forget it. Reminders trigger precisely when payment milestones are missed.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-calendar-xmark g-icon"></i>
+                        <div class="g-label">Manual Sending</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-robot g-icon" style="color:var(--c-zen)"></i>
+                        <div class="g-label" style="color:var(--c-zen)">Auto-Pilot Workflow</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="routing" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Inbox Automation</div>
+                    <h2>Smart Routing</h2>
+                    <p>Incoming emails are detected and automatically assigned to the right dispute specialist.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-inbox g-icon"></i>
+                        <div class="g-label">Flooded Shared Inbox</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-arrow-right-arrow-left g-icon" style="color:var(--c-zen)"></i>
+                        <div class="g-label" style="color:var(--c-zen)">Auto-Assigned Tickets</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="reputation" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Predictive Risk</div>
+                    <h2>Payment Reputation</h2>
+                    <p>Live scoring identifies historical behavior. Good payers get gentle nudges; bad payers get strict demands.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-question g-icon"></i>
+                        <div class="g-label">Unknown Risk</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-chart-line g-icon" style="color:var(--c-zen)"></i>
+                        <div class="g-label" style="color:var(--c-zen)">Live Reputation Score</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="paylinks" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Frictionless Pay</div>
+                    <h2>Payment Links</h2>
+                    <p>Magic links in every template log the user in and pre-fill the transaction for one-tap payment.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-regular fa-credit-card g-icon"></i>
+                        <div class="g-label">Manual Bank Transfer</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-link g-icon" style="color:var(--c-success)"></i>
+                        <div class="g-label" style="color:var(--c-success)">One-Click Payment Link</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="import" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Real-Time Sync</div>
+                    <h2>Auto-Import Data</h2>
+                    <p>Stop manual uploads. API integration watches your ledger and syncs invoices instantly.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-file-csv g-icon"></i>
+                        <div class="g-label">Weekly CSV Upload</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-rotate g-icon" style="color:var(--c-zen)"></i>
+                        <div class="g-label" style="color:var(--c-zen)">Real-Time API Sync</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="match" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Smart Reconciliation</div>
+                    <h2>Payment Matching</h2>
+                    <p>Incoming bank feeds automatically match with open invoices, instantly halting reminders.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-hand-holding-dollar g-icon"></i>
+                        <div class="g-label">Unmatched Payments</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-check-double g-icon" style="color:var(--c-success)"></i>
+                        <div class="g-label" style="color:var(--c-success)">Auto-Reconciled</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="forecast" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Cashflow Oracle</div>
+                    <h2>Payment Forecasting</h2>
+                    <p>Historical data models predict exactly when payments will land next week or next month.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-crystal-ball g-icon"></i>
+                        <div class="g-label">Guesswork</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-chart-area g-icon" style="color:var(--c-zen)"></i>
+                        <div class="g-label" style="color:var(--c-zen)">AI-Driven Forecast</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="dashboard" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Command Center</div>
+                    <h2>Interactive Dashboard</h2>
+                    <p>Visual heatmaps show bottlenecks, team performance, and outstanding tasks in real-time.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-table g-icon"></i>
+                        <div class="g-label">Static Spreadsheets</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-chart-pie g-icon" style="color:var(--c-zen)"></i>
+                        <div class="g-label" style="color:var(--c-zen)">Live Actionable Insights</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="legal" class="snap-section">
+            <div class="feature-card feature-link">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Legal Shield</div>
+                    <h2>Registered Email</h2>
+                    <p>Wrap important emails in a legally binding service that guarantees and proves delivery.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-envelope g-icon"></i>
+                        <div class="g-label">Standard Email</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-scale-balanced g-icon" style="color:var(--c-shield)"></i>
+                        <div class="g-label" style="color:var(--c-shield)">Legally Certified</div>
+                    </div>
+                </div>
+                <div class="card-tap-hint stagger-3">
+                    <span>Tap to view details</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <div class="mobile-sticky-cta">
+        <span>Transform your revenue.</span>
+        <button class="cta-btn-small" onclick="window.location.href='#intro'">Get Started</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

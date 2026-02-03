@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering the Template Editor</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <style>
+        :root {
+            --primary: #5433ff;
+            --secondary: #20bdff;
+            --dark-text: #172b4d;
+            --light-text: #6b778c;
+            --bg-color: #f4f5f7;
+            --card-radius: 16px;
+        }
+
+        /* --- GLOBAL STYLES --- */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-text);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            /* Abstract Modern Background */
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(84, 51, 255, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(32, 189, 255, 0.08) 0px, transparent 50%),
+                linear-gradient(180deg, #f4f5f7 0%, #ffffff 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            margin-top: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 80px auto 40px auto; /* Added top margin for Back button space */
+            position: relative;
+        }
+
+        /* --- BUTTONS (Navigation & Actions) --- */
+        
+        /* 1. PDF Export Button (Bottom Right) */
+        .pdf-fab-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        
+        .pdf-btn {
+            background: linear-gradient(135deg, #5433ff 0%, #20bdff 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(84, 51, 255, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 0.5px;
+        }
+
+        .pdf-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 35px -5px rgba(84, 51, 255, 0.6);
+        }
+
+        /* 2. Back to App Button (Top Left) */
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: white;
+            color: var(--dark-text);
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 5px 15px -3px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -3px rgba(0,0,0,0.1);
+            color: var(--primary);
+        }
+
+        /* --- MAIN CARD --- */
+        .main-card {
+            background: white;
+            border-radius: var(--card-radius);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        /* --- HEADER SECTION --- */
+        .header-bg {
+            background: linear-gradient(120deg, #5433ff 0%, #20bdff 100%);
+            padding: 60px 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Abstract circles in header */
+        .header-bg::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .header-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .header-title {
+            font-size: 42px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        /* --- SECTIONS --- */
+        .section {
+            padding: 40px;
+            border-bottom: 1px solid #ebecf0;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        /* Section Colors */
+        .badge-blue { background: #e6fcff; color: #008da6; }
+        .badge-yellow { background: #fff0b3; color: #b38600; }
+        .badge-green { background: #e3fcef; color: #006644; }
+        .badge-purple { background: #eae6ff; color: #403294; }
+        .badge-orange { background: #fffae6; color: #bf8c00; }
+
+        h2 {
+            font-size: 26px;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* --- UI ELEMENTS --- */
+        
+        /* Lists */
+        ul.custom-list {
+            list-style: none;
+            padding: 0;
+        }
+        ul.custom-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 12px;
+            color: var(--light-text);
+        }
+        ul.custom-list li::before {
+            content: '\f00c'; /* FontAwesome Check */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        /* Callout Boxes */
+        .callout {
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        .callout-warning {
+            background-color: #fff7d6;
+            border: 1px solid #ffe380;
+            color: #172b4d;
+        }
+        .callout-icon {
+            font-size: 20px;
+        }
+
+        /* Hybrid Template Cards */
+        .hybrid-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .hybrid-card {
+            flex: 1;
+            background: #f8f9fa;
+            border: 1px solid #ebecf0;
+            padding: 25px;
+            border-radius: 12px;
+            min-width: 250px;
+        }
+        .tag-block {
+            background: white;
+            padding: 8px;
+            border: 1px solid #dfe1e6;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            color: #d32f2f;
+            text-align: center;
+            font-size: 13px;
+        }
+        .code-box {
+            font-family: 'Consolas', monospace;
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        /* Pro Tips Grid */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .tip-card {
+            background: #f9f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid transparent;
+            transition: transform 0.2s;
+        }
+        .tip-card:hover {
+            transform: translateY(-3px);
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .tip-card.border-purple { border-color: var(--primary); }
+        .tip-card.border-green { border-color: #00875a; }
+        
+        .tip-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-text);
+        }
+
+        /* Code Editor Mockup */
+        .editor-mockup {
+            background: #282c34;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .editor-header {
+            background: #21252b;
+            padding: 10px 15px;
+            display: flex;
+            gap: 6px;
+        }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-r { background: #ff5f56; }
+        .dot-y { background: #ffbd2e; }
+        .dot-g { background: #27c93f; }
+
+        textarea.code-area {
+            width: 100%;
+            height: 450px;
+            background: #282c34;
+            color: #abb2bf;
+            border: none;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            resize: vertical;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        /* Help Cards */
+        .help-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .help-card {
+            flex: 1;
+            background: white;
+            border: 1px solid #ebecf0;
+            padding: 25px;
+            border-radius: 12px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            min-width: 250px;
+            display: block;
+        }
+        .help-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(32, 189, 255, 0.15);
+        }
+        
+        /* Logo Link Style */
+        .logo-link {
+            text-decoration: none;
+            display: inline-block;
+            transition: opacity 0.2s;
+        }
+        .logo-link:hover {
+            opacity: 0.8;
+        }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            body { 
+                background: white !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
+            }
+            .container { margin: 0; max-width: 100%; }
+            .main-card { box-shadow: none; border: none; border-radius: 0; }
+            
+            /* Hide Buttons */
+            .pdf-fab-container, .back-btn, .no-print { display: none !important; }
+            
+            .section { page-break-inside: avoid; }
+            .header-bg { border-radius: 0; padding: 40px; }
+            textarea { page-break-inside: avoid; }
+            /* Force text color black for legibility */
+            p, li, h1, h2, h3 { color: #000 !important; }
+            /* Keep white text white */
+            .header-bg h1, .header-bg p { color: white !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="pdf-fab-container no-print">
+        <button onclick="window.print()" class="pdf-btn">
+            <i class="fa-solid fa-file-pdf"></i>
+            Export to PDF
+        </button>
+    </div>
+
+    <a href="https://app.maxcredible.com" target="_blank" class="back-btn no-print">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to App
+    </a>
+
+    <div class="container">
+        <div class="main-card">
+            
+            <div class="header-bg">
+                <h1 class="header-title">Mastering the Template Editor</h1>
+                <p class="header-subtitle">The comprehensive guide to building dynamic, professional templates in MaxCredible.</p>
+            </div>
+
+            <div class="section">
+                <span class="badge badge-blue">Section 1</span>
+                <h2><i class="fa-solid fa-pen-nib" style="color: #5433ff;"></i> The Basics: WYSIWYG Editing</h2>
+                <p>The editor is "What You See Is What You Get." It works just like Word or Google Docs for basic tasks.</p>
+                <ul class="custom-list">
+                    <li><strong>Click and Type:</strong> Simply click anywhere in the white space to start writing text.</li>
+                    <li><strong>Formatting:</strong> Use the toolbar icons to style your text (Bold, Italic, Underline).</li>
+                    <li><strong>Alignment:</strong> Use the alignment buttons to center text, align left, or align right.</li>
+                    <li><strong>Undo/Redo:</strong> Made a mistake? Press <code>Ctrl+Z</code> (Cmd+Z) immediately.</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <span class="badge badge-yellow">Section 2</span>
+                <h2><i class="fa-solid fa-compass-drafting" style="color: #b38600;"></i> The Golden Rule of Email Design</h2>
+                <p>Building templates for emails is different from web design. Email clients (Outlook, Gmail) are old-fashioned.</p>
+                
+                <div class="callout callout-warning">
+                    <div class="callout-icon"><i class="fa-solid fa-triangle-exclamation" style="color: #b38600;"></i></div>
+                    <div>
+                        <strong style="color: #b38600;">The Golden Rule: Use Tables for Layout</strong><br>
+                        Never use "columns", "float", or "flexbox" to position items side-by-side. <strong>Always use an HTML Table with invisible borders.</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <span class="badge badge-green">Section 3</span>
+                <h2><i class="fa-solid fa-table-cells" style="color: #006644;"></i> Working with Tables</h2>
+                <p>Tables are your grid system. You can manipulate them visually or via code.</p>
+                
+                <h3 style="color: var(--primary);">Visual Editing</h3>
+                <ol style="margin-left: 20px; color: var(--light-text);">
+                    <li style="margin-bottom: 10px;"><strong>Insert Table:</strong> Click the Grid icon <i class="fa-solid fa-border-all"></i> in the toolbar.</li>
+                    <li style="margin-bottom: 10px;"><strong>Right-Click Menu:</strong> Right-click inside any cell to add rows or merge cells.</li>
+                    <li><strong>Invisible Borders:</strong> Right-click > <em>Table Properties</em> > Set <strong>Border width</strong> to <code>0</code>.</li>
+                </ol>
+
+                <h3 style="color: var(--primary); margin-top: 30px;">Source Code Editing</h3>
+                <p>For pixel-perfect control, click the <code>&lt;&gt;</code> button.</p>
+                <div class="code-box">
+&lt;table width="100%" border="0"&gt;
+  &lt;tr&gt; &lt;!-- Row --&gt;
+    &lt;td width="50%"&gt;Left Content&lt;/td&gt;
+    &lt;td width="50%"&gt;Right Content&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+                </div>
+            </div>
+
+            <div class="section">
+                <span class="badge badge-purple">Section 4</span>
+                <h2><i class="fa-solid fa-wand-magic-sparkles" style="color: #403294;"></i> Hybrid Templates</h2>
+                <p>Create ONE template for both Email and Print using conditional tags.</p>
+                
+                <div class="hybrid-grid">
+                    <div class="hybrid-card">
+                        <h4 style="color: #0052cc;"><i class="fa-solid fa-envelope"></i> The Email View</h4>
+                        <p style="font-size: 13px; color: #5e6c84;">Wraps digital content like payment buttons:</p>
+                        <div class="tag-block">[BeginDeleteIfLetter]</div>
+                        <div style="text-align: center; padding: 10px; margin: 10px 0; border: 1px dashed #ccc; color: #ccc;">HTML Email Code</div>
+                        <div class="tag-block">[EndDeleteIfLetter]</div>
+                    </div>
+                    <div class="hybrid-card">
+                        <h4 style="color: #00875a;"><i class="fa-solid fa-print"></i> The Print View</h4>
+                        <p style="font-size: 13px; color: #5e6c84;">Wraps formal letter layout and addresses:</p>
+                        <div class="tag-block">[BeginDeleteIfEmail]</div>
+                        <div style="text-align: center; padding: 10px; margin: 10px 0; border: 1px dashed #ccc; color: #ccc;">HTML Print Code</div>
+                        <div class="tag-block">[EndDeleteIfEmail]</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <span class="badge badge-orange">Section 5</span>
+                <h2><i class="fa-solid fa-code" style="color: #bf8c00;"></i> Variables & Placeholders</h2>
+                <p>Common placeholders to inject real data:</p>
+                <ul class="code-box" style="list-style: none; margin: 0;">
+                    <li>[PackageCustomerName] <span style="color: #5c6370;">// Debtor Name</span></li>
+                    <li>[InvoiceNumber]       <span style="color: #5c6370;">// Invoice ID</span></li>
+                    <li>[InvoiceAmount]       <span style="color: #5c6370;">// Amount</span></li>
+                </ul>
+
+                <h3 style="color: var(--primary); margin-top: 25px;">The Repeater Loop</h3>
+                <p>To show multiple invoices, wrap the row in repeaters:</p>
+                <div style="background: #e3fcef; color: #006644; padding: 15px; border-radius: 6px; border-left: 4px solid #006644;">
+                    <i class="fa-solid fa-circle-info"></i> <strong>Start:</strong> <code>&lt;th&gt;... [BeginInvoiceRepeat]&lt;/th&gt;</code><br>
+                    <i class="fa-solid fa-circle-stop" style="margin-top: 5px;"></i> <strong>End:</strong> <code>&lt;td&gt;... [EndInvoiceRepeat]&lt;/td&gt;</code>
+                </div>
+            </div>
+
+            <div class="section">
+                <span class="badge badge-blue">Section 6</span>
+                <h2><i class="fa-solid fa-lightbulb" style="color: #008da6;"></i> Pro Tips & Tricks</h2>
+                <div class="tips-grid">
+                    <div class="tip-card border-purple">
+                        <div class="tip-header"><i class="fa-solid fa-link" style="color: var(--primary);"></i> Images are Links</div>
+                        <p style="font-size: 13px; margin: 0; color: var(--light-text);">Images must be hosted online. You cannot Paste an image from your desktop.</p>
+                    </div>
+                    <div class="tip-card border-purple">
+                        <div class="tip-header"><i class="fa-solid fa-eye" style="color: var(--primary);"></i> Always Preview</div>
+                        <p style="font-size: 13px; margin: 0; color: var(--light-text);">Use the Preview button with a real debtor to test your table loops.</p>
+                    </div>
+                    <div class="tip-card border-purple">
+                        <div class="tip-header"><i class="fa-solid fa-broom" style="color: var(--primary);"></i> Clean Paste</div>
+                        <p style="font-size: 13px; margin: 0; color: var(--light-text);">Use "Paste as Text" (Ctrl+Shift+V) to avoid broken Word formatting.</p>
+                    </div>
+                    <div class="tip-card border-green">
+                        <div class="tip-header"><i class="fa-solid fa-dollar-sign" style="color: #00875a;"></i> Currency Symbols</div>
+                        <p style="font-size: 13px; margin: 0; color: var(--light-text);">Always add <code>[PackageCurrencyShort]</code> before amounts.</p>
+                    </div>
+                    <div class="tip-card border-green">
+                        <div class="tip-header"><i class="fa-solid fa-money-check-dollar" style="color: #00875a;"></i> Payment Links</div>
+                        <p style="font-size: 13px; margin: 0; color: var(--light-text);">Turn the text <code>[PackagePaymentLink]</code> into a clickable button.</p>
+                    </div>
+                    <div class="tip-card" style="border-color: #b38600; background: #fffbf0;">
+                        <div class="tip-header"><i class="fa-solid fa-robot" style="color: #b38600;"></i> AI Troubleshooting</div>
+                        <p style="font-size: 13px; margin: 0; color: var(--dark-text);">Paste your source code into ChatGPT to fix broken HTML syntax instantly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <span class="badge badge-purple">Section 7</span>
+                <h2><i class="fa-solid fa-file-code" style="color: #5433ff;"></i> Ready-to-Use Code</h2>
+                <p>Complete code for the <strong>Friendly Reminder</strong> template.</p>
+                <p style="background: #e3f2fd; padding: 12px; border-radius: 6px; color: #0d47a1; font-size: 14px;">
+                    <i class="fa-solid fa-arrow-down"></i> <strong>ACTION:</strong> Copy all code below and paste it into the Source Code window (<code>&lt;&gt;</code>).
+                </p>
+                
+                <div class="editor-mockup">
+                    <div class="editor-header">
+                        <div class="dot dot-r"></div>
+                        <div class="dot dot-y"></div>
+                        <div class="dot dot-g"></div>
+                    </div>
+                    <textarea class="code-area" readonly>
+&lt;center lang="en" style="width: 100%; background-color: #f4f4f7; font-family: 'Poppins', Arial, sans-serif;" role="article" aria-roledescription="email"&gt;
+  &lt;div class="webkit" style="max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0px 2px 10px rgba(0,0,0,0.05);"&gt;
+    
+    &lt;table style="background-color: #5433ff; border-top-left-radius: 8px; border-top-right-radius: 8px; width: 100%; border-collapse: collapse; border-spacing: 0px;" role="presentation" border="0" cellspacing="0" cellpadding="0"&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td style="padding: 20px 30px; width: 64.8463%; text-align: left; border-style: hidden;" align="left"&gt;&lt;/td&gt;
+          &lt;td style="padding: 20px 30px; width: 35.1537%; text-align: right; border-style: hidden;" align="right"&gt;
+            &lt;span style="color: #ffffff;"&gt;
+              &lt;img src="https://docs.google.com/drawings/d/e/2PACX-1vSbgoAtGXD6qUSh-RcTGEATU-IZRte5RmZ8GYT75orDh28pWttqYwgjxJ1aTGH2295jzuRgVQjqW4Co/pub?w=1687&amp;h=539" alt="" width="175" height="56" style="display: block; border: 0;"&gt;
+            &lt;/span&gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+
+    &lt;table style="background-color: #ffffff; width: 100%; border-collapse: collapse;" role="presentation" cellspacing="0" cellpadding="0"&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td style="padding: 30px 40px; color: #505f79; font-size: 14px; line-height: 1.6; border-style: hidden;"&gt;
+            &lt;h1 style="font-size: 24px; font-weight: bold; color: #172b4d; margin-top: 0; margin-bottom: 20px;"&gt;A Friendly Reminder&lt;/h1&gt;
+            &lt;p style="margin-bottom: 15px;"&gt;Hello &lt;span class="mce-mergetag"&gt;[PackageCustomerName]&lt;/span&gt;,&lt;/p&gt;
+            &lt;p style="margin-bottom: 15px;"&gt;We hope that this email finds you well. This is a friendly reminder that there are one or more outstanding invoices on your account that require your attention. Please find the details below:&lt;/p&gt;
+            
+            &lt;table class="invoice-table" style="margin-bottom: 30px; border-collapse: collapse; width: 100%; border: 1px solid #dfe1e6;" role="presentation" border="0" cellspacing="0" cellpadding="0"&gt;
+              &lt;thead&gt;
+                &lt;tr&gt;
+                  &lt;th style="border: 1px solid #dfe1e6; padding: 12px 15px; text-align: left; font-size: 14px; background-color: #f4f5f7; font-weight: bold; color: #172b4d;"&gt;Invoice&lt;/th&gt;
+                  &lt;th style="border: 1px solid #dfe1e6; padding: 12px 15px; text-align: left; font-size: 14px; background-color: #f4f5f7; font-weight: bold; color: #172b4d;"&gt;Due date&lt;/th&gt;
+                  &lt;th style="border: 1px solid #dfe1e6; padding: 12px 15px; text-align: left; font-size: 14px; background-color: #f4f5f7; font-weight: bold; color: #172b4d;"&gt;Amount [BeginInvoiceRepeat]&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td style="border: 1px solid #dfe1e6; padding: 12px 15px; text-align: left; font-size: 14px;"&gt;[InvoiceNumber]&lt;/td&gt;
+                  &lt;td style="border: 1px solid #dfe1e6; padding: 12px 15px; text-align: left; font-size: 14px;"&gt;&lt;strong&gt;[InvoiceDueDate]&lt;/strong&gt;&lt;/td&gt;
+                  &lt;td style="border: 1px solid #dfe1e6; padding: 12px 15px; text-align: right; font-size: 14px; font-weight: bold;"&gt;[InvoiceCurrencySymbol][InvoiceAmount][EndInvoiceRepeat]&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td style="border: 1px solid #dfe1e6; padding: 12px 15px; text-align: right; font-weight: bold; background-color: #f4f5f7; font-size: 14px;" colspan="2"&gt;Total Outstanding:&lt;/td&gt;
+                  &lt;td style="border: 1px solid #dfe1e6; padding: 12px 15px; text-align: right; font-size: 14px; font-weight: bold; background-color: #f4f5f7;"&gt;[InvoiceCurrencySymbol][PackageTotalOpenAmount]&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+
+            &lt;p style="margin-bottom: 15px;"&gt;You can easily settle these invoices by transferring the funds to the below bank details.&lt;/p&gt;
+            
+            &lt;table style="width: 75%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid rgb(221, 221, 221);" border="1"&gt;
+              &lt;tbody&gt;
+                &lt;tr style="background-color: #f5f5f5;"&gt;
+                  &lt;td style="padding: 10px; border: 1px solid rgb(221, 221, 221); font-weight: bold; width: 40%;"&gt;Item&lt;/td&gt;
+                  &lt;td style="padding: 10px; border: 1px solid rgb(221, 221, 221); font-weight: bold; width: 60%;"&gt;Detail&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td style="padding: 10px; border: 1px solid rgb(221, 221, 221);"&gt;Total Amount&lt;/td&gt;
+                  &lt;td style="padding: 10px; border: 1px solid rgb(221, 221, 221);"&gt;[PackageCurrencySymbol][PackageTotalAmount]&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td style="padding: 10px; border: 1px solid rgb(221, 221, 221);"&gt;Company Name&lt;/td&gt;
+                  &lt;td style="padding: 10px; border: 1px solid rgb(221, 221, 221);"&gt;Talent Data Labs&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td style="padding: 10px; border: 1px solid rgb(221, 221, 221);"&gt;IBAN&lt;/td&gt;
+                  &lt;td style="padding: 10px; border: 1px solid rgb(221, 221, 221);"&gt;NL88 KNAB 0414 8858 48&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            
+            &lt;p style="margin-bottom: 0;"&gt;Sincerely,&lt;br&gt;The Team&lt;/p&gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+
+    &lt;table style="background-color: #f4f5f7; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; width: 100%; border-collapse: collapse;" role="presentation" width="100%" cellspacing="0" cellpadding="0"&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td style="padding: 30px 40px; text-align: center; font-size: 12px; color: #6b778c; border-style: hidden;"&gt;
+            &lt;p style="margin: 0 0 15px 0;"&gt;Phone: +31640436540 | Email: Administration@talentdatalabs.com&lt;/p&gt;
+            &lt;p style="margin: 0;"&gt;
+                &lt;img src="https://docs.google.com/drawings/d/e/2PACX-1vTwjDMTj7FH3tmeLj6H24PRhLO_U0yBPfQtT0bW_Ku8iPo63LMD5ZeZeaWe8Kdt78d1JxkXz8T27NG5/pub?w=691&amp;h=249" alt="Powered by MaxCredible" width="150" style="display: inline-block; vertical-align: middle;"&gt;
+            &lt;/p&gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+&lt;/center&gt;
+                    </textarea>
+                </div>
+            </div>
+
+            <div class="section">
+                <span class="badge badge-blue">Section 8</span>
+                <h2><i class="fa-solid fa-book-open" style="color: #008da6;"></i> Documentation & Help</h2>
+                <div class="help-grid">
+                    <a href="https://docs.google.com/document/d/11m3iJ1IMJ5gqhRmWSFyzjX4d42H6eij5uYtySBCaMNw/edit?tab=t.0#heading=h.184mhaj" target="_blank" class="help-card">
+                        <h4 style="color: #5433ff; margin-bottom: 5px;"><i class="fa-solid fa-book"></i> User Guide</h4>
+                        <p style="font-size: 13px; color: #5e6c84; margin: 0;">Official logic documentation.</p>
+                    </a>
+                    <a href="https://www.tiny.cloud/docs/tinymce/" target="_blank" class="help-card">
+                        <h4 style="color: #20bdff; margin-bottom: 5px;"><i class="fa-solid fa-gear"></i> Editor Docs</h4>
+                        <p style="font-size: 13px; color: #5e6c84; margin: 0;">TinyMCE technical details.</p>
+                    </a>
+                    <a href="https://docs.google.com/spreadsheets/d/1fDWnEMJeSq5gFaKa-FXI0IuHjSBeVd-T1ZV1H4GU6v0/edit?gid=1328078357#gid=1328078357" target="_blank" class="help-card">
+                        <h4 style="color: #00875a; margin-bottom: 5px;"><i class="fa-solid fa-list-ul"></i> Placeholders</h4>
+                        <p style="font-size: 13px; color: #5e6c84; margin: 0;">Full list of variables.</p>
+                    </a>
+                </div>
+            </div>
+
+            <div style="padding: 40px; text-align: center; border-top: 1px solid #ebecf0;">
+                <p style="font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #6b778c;">Guide generated for MaxCredible Users</p>
+                <a href="https://www.maxcredible.com" target="_blank" class="logo-link">
+                    <img style="width: 140px; opacity: 0.7; filter: grayscale(100%);" src="https://docs.google.com/drawings/d/e/2PACX-1vTwjDMTj7FH3tmeLj6H24PRhLO_U0yBPfQtT0bW_Ku8iPo63LMD5ZeZeaWe8Kdt78d1JxkXz8T27NG5/pub?w=691&amp;h=249" alt="MaxCredible">
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
+

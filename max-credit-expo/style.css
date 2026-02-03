@@ -1,0 +1,355 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Base slide style */
+.slide {
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    /* Hidden by default */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 5vw;
+    /* Custom padding for header/footer */
+    background-color: #f8fafc;
+    /* light gray background */
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0;
+    overflow-y: auto;
+    /* Allow scrolling on content-heavy slides */
+    box-sizing: border-box;
+}
+
+/* Add: hide tone-text elements by default */
+.tone-text,
+.tone-span {
+    display: none;
+}
+
+/* Active slide */
+.slide.active {
+    display: flex;
+    opacity: 1;
+    z-index: 10;
+}
+
+/* Previous slide (for transition) */
+.slide.previous {
+    display: flex;
+    opacity: 0;
+    z-index: 5;
+}
+
+/* Styling for big numbers */
+.big-number {
+    font-weight: 900;
+    /* Black */
+    color: #0d9488;
+    /* Teal-600 */
+}
+
+/* Progress bar */
+#progress-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 8px;
+    background-color: #0d9488;
+    /* Teal-600 */
+    transition: width 0.3s ease-out;
+    z-index: 50;
+}
+
+/* Slide number */
+#slide-number {
+    position: fixed;
+    bottom: 16px;
+    right: 20px;
+    font-size: 1rem;
+    color: #64748b;
+    /* Slate-500 */
+    z-index: 50;
+}
+
+/* Navigation buttons */
+.nav-button {
+    position: fixed;
+    bottom: 16px;
+    z-index: 50;
+    background-color: white;
+    color: #0d9488;
+    border: 1px solid #0d9488;
+    border-radius: 9999px;
+    /* fully rounded */
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s;
+}
+
+.nav-button:hover {
+    background-color: #0d9488;
+    color: white;
+}
+
+#prev-slide {
+    left: 20px;
+}
+
+#next-slide {
+    left: 76px;
+}
+
+/* NEW: Tone Switcher Buttons */
+#tone-switcher {
+    position: fixed;
+    bottom: 16px;
+    right: 100px;
+    /* Next to the slide number */
+    z-index: 50;
+    display: none;
+    /* Hidden by default, JS shows it */
+    gap: 4px;
+}
+
+.tone-switch-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    background-color: white;
+    border: 1px solid #94a3b8;
+    /* slate-400 */
+    color: #334155;
+    /* slate-700 */
+    font-size: 0.875rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.tone-switch-btn:hover {
+    background-color: #f1f5f9;
+    /* slate-100 */
+}
+
+.tone-switch-btn.active-tone {
+    background-color: #0d9488;
+    /* teal-600 */
+    color: white;
+    border-color: #0d9488;
+}
+
+/* NEW HEADER STYLING */
+.slide-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 20;
+    box-sizing: border-box;
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-left img,
+.header-right img {
+    height: 40px;
+}
+
+.header-right img {
+    border-radius: 4px;
+}
+
+.header-left span,
+.header-right span {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #334155;
+    /* Default: slate-700 */
+}
+
+.bg-gray-900 .header-left span,
+.bg-gray-900 .header-right span,
+.bg-gray-800 .header-left span,
+.bg-gray-800 .header-right span {
+    color: #e2e8f0;
+    /* slate-200 */
+}
+
+.bg-blue-800 .header-left span,
+.bg-blue-800 .header-right span {
+    color: #e0f2fe;
+    /* light blue */
+}
+
+.bg-teal-700 .header-left span,
+.bg-teal-700 .header-right span {
+    color: #ccfbf1;
+    /* light teal */
+}
+
+/* NEW SLIDE 12 CSS SOLUTION */
+#conclusie-slide {
+    /* Override the .slide flex-direction */
+    display: block;
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+#conclusie-wrapper {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    /* Default 1 column */
+    gap: 2.5rem;
+    /* gap-10 */
+    width: 100%;
+    max-width: 78rem;
+    /* max-w-7xl */
+    margin-left: auto;
+    margin-right: auto;
+    align-items: start;
+}
+
+@media (min-width: 768px) {
+
+    /* md: breakpoint */
+    #conclusie-wrapper {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns on md and larger */
+    }
+}
+
+#conclusie-wrapper h1 {
+    grid-column: 1 / -1;
+    /* Span all columns */
+    text-align: center;
+    margin-bottom: 2.5rem;
+    /* mb-10 */
+}
+
+@keyframes flicker {
+
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+        opacity: 0.99;
+        filter: drop-shadow(0 0 4px rgba(255, 115, 0, 0.6)) drop-shadow(0 0 8px rgba(255, 60, 0, 0.5));
+    }
+
+    20%,
+    24%,
+    55% {
+        opacity: 0.95;
+        filter: drop-shadow(0 0 2px rgba(255, 80, 0, 0.4)) drop-shadow(0 0 6px rgba(255, 30, 0, 0.3));
+    }
+}
+
+@keyframes floatUp {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.flicker-glow {
+    animation: flicker 2.5s infinite ease-in-out;
+}
+
+.float-up {
+    animation: floatUp 3.5s ease-in-out infinite;
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.05);
+    }
+}
+
+.animate-scale-up {
+    animation: scaleUp 0.3s ease-out forwards;
+    z-index: 10;
+}
+
+@keyframes fadeOutDown {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+}
+
+.animate-fade-out-down {
+    animation: fadeOutDown 0.3s ease-in forwards;
+}
+
+/* STEP 1: Animation for the arrow on slide 2 */
+@keyframes bounceRight {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(8px);
+    }
+}
+
+.animate-bounce-right {
+    animation: bounceRight 1.5s ease-in-out infinite;
+}
+
+/* End of new animations */

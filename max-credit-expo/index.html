@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible AI in Credit Management: Impact on Sustainability & Debt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Base slide style */
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 5vw; /* Custom padding for header/footer */
+            background-color: #f8fafc; /* light gray background */
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
+            overflow-y: auto; /* Allow scrolling on slides with lots of content */
+            box-sizing: border-box;
+        }
+        /* Add: hide tone-text elements by default */
+        .tone-text, .tone-span {
+            display: none;
+        }
+        /* Active slide */
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            z-index: 10;
+        }
+        /* Previous slide (for transition) */
+        .slide.previous {
+            display: flex;
+            opacity: 0;
+            z-index: 5;
+        }
+        /* Styling for big numbers */
+        .big-number {
+            font-weight: 900; /* Black */
+            color: #0d9488; /* Teal-600 */
+        }
+        /* Progress bar */
+        #progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            background-color: #0d9488; /* Teal-600 */
+            transition: width 0.3s ease-out;
+            z-index: 50;
+        }
+        /* Slide number */
+        #slide-number {
+            position: fixed;
+            bottom: 16px;
+            right: 20px;
+            font-size: 1rem;
+            color: #64748b; /* Slate-500 */
+            z-index: 50;
+        }
+        /* Navigation buttons */
+        .nav-button {
+            position: fixed;
+            bottom: 16px;
+            z-index: 50;
+            background-color: white;
+            color: #0d9488;
+            border: 1px solid #0d9488;
+            border-radius: 9999px; /* fully rounded */
+            width: 44px;
+            height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s;
+        }
+        .nav-button:hover {
+            background-color: #0d9488;
+            color: white;
+        }
+        #prev-slide {
+            left: 20px;
+        }
+        #next-slide {
+            left: 76px;
+        }
+
+        /* NEW: Tone Switcher Buttons */
+        #tone-switcher {
+            position: fixed;
+            bottom: 16px;
+            right: 100px; /* Next to the slide number */
+            z-index: 50;
+            display: none; /* Hidden by default, JS shows it */
+            gap: 4px;
+        }
+        .tone-switch-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            background-color: white;
+            border: 1px solid #94a3b8; /* slate-400 */
+            color: #334155; /* slate-700 */
+            font-size: 0.875rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .tone-switch-btn:hover {
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .tone-switch-btn.active-tone {
+            background-color: #0d9488; /* teal-600 */
+            color: white;
+            border-color: #0d9488;
+        }
+
+        /* NEW HEADER STYLING */
+        .slide-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 20;
+            box-sizing: border-box;  
+        }
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-left img, .header-right img {
+            height: 40px;
+        }
+        .header-right img {
+            border-radius: 4px;
+        }
+        .header-left span, .header-right span {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #334155; /* Default: slate-700 */
+        }
+        .bg-gray-900 .header-left span, .bg-gray-900 .header-right span,
+        .bg-gray-800 .header-left span, .bg-gray-800 .header-right span {
+            color: #e2e8f0; /* slate-200 */
+        }
+        .bg-blue-800 .header-left span, .bg-blue-800 .header-right span {
+            color: #e0f2fe; /* light blue */
+        }
+        .bg-teal-700 .header-left span, .bg-teal-700 .header-right span {
+            color: #ccfbf1; /* light teal */
+        }
+
+        /* This ID is now on slide 14 */
+        #conclusie-slide {
+            /* Override the .slide flex-direction */
+            display: block;  
+            padding-top: 100px;  
+            padding-bottom: 100px;
+        }
+        #conclusie-wrapper {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr); /* Default 1 column */
+            gap: 2.5rem; /* gap-10 */
+            width: 100%;
+            max-width: 78rem; /* max-w-7xl */
+            margin-left: auto;
+            margin-right: auto;
+            align-items: start;
+        }
+        @media (min-width: 768px) { /* md: breakpoint */
+            #conclusie-wrapper {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns on md and larger */
+            }
+        }
+        #conclusie-wrapper h1 {
+            grid-column: 1 / -1; /* Span all columns */
+            text-align: center;
+            margin-bottom: 2.5rem; /* mb-10 */
+        }
+
+       @keyframes flicker {
+         0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+           opacity: 0.99;
+           filter: drop-shadow(0 0 4px rgba(255, 115, 0, 0.6))
+                   drop-shadow(0 0 8px rgba(255, 60, 0, 0.5));
+         }
+         20%, 24%, 55% {
+           opacity: 0.95;
+           filter: drop-shadow(0 0 2px rgba(255, 80, 0, 0.4))
+                   drop-shadow(0 0 6px rgba(255, 30, 0, 0.3));
+         }
+        }
+
+        @keyframes floatUp {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+
+        .flicker-glow { animation: flicker 2.5s infinite ease-in-out; }
+        .float-up { animation: floatUp 3.5s ease-in-out infinite; }
+        
+        @keyframes scaleUp {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+        .animate-scale-up {
+            animation: scaleUp 0.3s ease-out forwards;
+            z-index: 10;
+        }
+        @keyframes fadeOutDown {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(0.9); opacity: 0; }
+        }
+        .animate-fade-out-down {
+            animation: fadeOutDown 0.3s ease-in forwards;
+        }
+
+        /* STEP 1: Animation for the arrow on slide 2 */
+        @keyframes bounceRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(8px); }
+        }
+        .animate-bounce-right {
+            animation: bounceRight 1.5s ease-in-out infinite;
+        }
+        /* End new animations */
+
+        /* NEW: Accordion Styles for Priority Slide */
+        .priority-accordion {
+            width: 100%;
+            max-width: 64rem; /* max-w-6xl */
+            margin: 1.5rem auto 0;
+        }
+        .priority-accordion details {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-left: 5px solid #64748b; /* Default: slate-500 */
+            margin-bottom: 1rem;
+            transition: all 0.2s ease-out;
+        }
+        .priority-accordion details[open] {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .priority-accordion summary {
+            padding: 1.25rem 1.5rem; /* p-5 */
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem; /* text-xl */
+            color: #1e293b; /* slate-800 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            list-style: none; /* Remove default marker */
+        }
+        .priority-accordion summary::-webkit-details-marker {
+            display: none; /* Hide default marker */
+        }
+        .priority-accordion summary::after {
+            content: '+';
+            font-size: 2rem;
+            font-weight: 300;
+            color: #94a3b8;
+            transition: transform 0.2s ease-out;
+        }
+        .priority-accordion details[open] summary::after {
+            content: '−'; /* Minus sign */
+            transform: rotate(180deg);
+        }
+        .priority-accordion .accordion-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            color: #334155; /* slate-700 */
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+        }
+        .priority-accordion table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .priority-accordion th, .priority-accordion td {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0; /* slate-200 */
+            vertical-align: middle; /* Align pills vertically */
+        }
+        .priority-accordion th {
+            background-color: #f8fafc; /* slate-50 */
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #0f172a; /* slate-900 */
+            font-family: 'Poppins', sans-serif;
+        }
+        .priority-accordion td {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.95rem;
+        }
+        /* Priority 1 Styling */
+        .priority-accordion .priority-1 { border-left-color: #ef4444; /* red-500 */ }
+        .priority-accordion .priority-1 summary { color: #b91c1c; /* red-700 */ }
+        .priority-accordion .priority-1 summary::after { color: #ef4444; }
+        /* Priority 2 Styling */
+        .priority-accordion .priority-2 { border-left-color: #f97316; /* orange-500 */ }
+        .priority-accordion .priority-2 summary { color: #c2410c; /* orange-700 */ }
+        .priority-accordion .priority-2 summary::after { color: #f97316; }
+        /* Priority 3 Styling */
+        .priority-accordion .priority-3 { border-left-color: #eab308; /* yellow-500 */ }
+        .priority-accordion .priority-3 summary { color: #a16207; /* yellow-700 */ }
+        .priority-accordion .priority-3 summary::after { color: #eab308; }
+
+        /* Pill component style */
+        .pill {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            line-height: 1.5;
+        }
+        /* Debtor link style */
+        .debtor-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            background-color: #eef2ff; /* indigo-50 */
+            color: #3730a3; /* indigo-800 */
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        .debtor-link:hover {
+            background-color: #e0e7ff; /* indigo-100 */
+        }
+        .debtor-link svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+    </style>
+</head>
+<body class="overflow-hidden">
+
+    <section class="slide active text-center bg-gray-900 text-white">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-4xl">
+            <h1 class="text-5xl md:text-6xl font-black mb-4">The AI Revolution in Credit Management</h1>
+            <p class="text-2xl md:text-3xl text-teal-400 font-semibold">From Reactive Rework to Proactive Results</p>
+            
+            <div class="bg-white max-w-xl w-full mx-auto my-6 p-4 rounded-lg shadow-2xl">
+                <img src="../images/green.png" alt="AI connects Sustainability and Finance" class="w-full rounded-lg">
+            </div>
+            
+            <p class="text-xl opacity-80">Impact on Sustainability & Debt Issues</p>
+            </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        
+        <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center text-gray-800">Stop Broadcasting, Start Connecting</h2>
+
+        <div class="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center">
+            
+            <div class="text-center md:text-left">
+                <h3 class="text-3xl md:text-4xl font-bold mb-6">Credit management data and AI lead to lower costs and higher results</h3>
+                
+                <p class="text-xl text-gray-700 mb-8">Today we'll show how this hyper-personalized approach works. The same data, a totally different impact.</p>
+                
+                <svg viewBox="0 0 200 100" class="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 50 Q75 10, 100 50 T150 50" stroke="#14b8a6" stroke-width="2"/>
+                    <path d="M50 50 Q75 90, 100 50 T150 50" stroke="#0d9488" stroke-width="2"/>
+                    <path d="M50 50 Q25 30, 70 40 T150 50" stroke="#14b8a6" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="4 2"/>
+                    <path d="M50 50 Q25 70, 70 60 T150 50" stroke="#0d9488" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="4 2"/>
+                    <circle cx="50" cy="50" r="4" fill="#0f766e"/>
+                    <circle cx="100" cy="50" r="6" fill="#14b8a6"/>
+                    <circle cx="150" cy="50" r="4" fill="#0f766e"/>
+                    <circle cx="75" cy="10" r="3" fill="#14b8a6" fill-opacity="0.7"/>
+                    <circle cx="75" cy="90" r="3" fill="#0d9488" fill-opacity="0.7"/>
+                    <circle cx="125" cy="10" r="3" fill="#14b8a6" fill-opacity="0.7"/>
+                    <circle cx="125" cy="90" r="3" fill="#0d9488" fill-opacity="0.7"/>
+                    <circle cx="70" cy="40" r="3" fill="#14b8a6" fill-opacity="0.7"/>
+                    <circle cx="70" cy="60" r="3" fill="#0d9488" fill-opacity="0.7"/>
+                </svg>
+            </div>
+
+            <div class="relative w-full">
+                <div class="bg-white p-8 rounded-lg shadow-2xl border-t-4 border-teal-500">
+                    <h3 class="text-3xl font-bold mb-6 text-center">Choose Your Perspective</h3>
+                    <p class="text-center text-gray-600 mb-8">Select a 'tone of voice' to personalize the presentation.</p>
+                    
+                    <div class="space-y-4" id="tone-options">
+                        <button onclick="selectTone('neutraal', this)" class="tone-option-btn w-full text-left p-4 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-sm transition-all duration-200 ease-in-out transform hover:scale-105">
+                            <h4 class="text-xl font-bold text-gray-800">Option 1: Neutral</h4>
+                            <p class="text-gray-600">Professional, strategic, and 'to the point'.</p>
+                        </button>
+                        <button onclick="selectTone('greta', this)" class="tone-option-btn w-full text-left p-4 bg-red-100 hover:bg-red-200 rounded-lg shadow-sm transition-all duration-200 ease-in-out transform hover:scale-105">
+                            <h4 class="text-xl font-bold text-red-800">Option 2: Greta Thunberg</h4>
+                            <p class="text-red-700">Confrontational, urgent, and climate-driven. "How dare you!"</p>
+                        </button>
+                        <button onclick="selectTone('episch', this)" class="tone-option-btn w-full text-left p-4 bg-purple-100 hover:bg-purple-200 rounded-lg shadow-sm transition-all duration-200 ease-in-out transform hover:scale-105">
+                            <h4 class="text-xl font-bold text-purple-800">Option 3: Epic</h4>
+                            <p class="text-purple-700">A hero's journey of struggle, victory, and glory.</p>
+                        </button>
+                        <button onclick="selectTone('sociaal', this)" class="tone-option-btn w-full text-left p-4 bg-blue-100 hover:bg-blue-200 rounded-lg shadow-sm transition-all duration-200 ease-in-out transform hover:scale-105">
+                            <h4 class="text-xl font-bold text-blue-800">Option 4: Hyper Social</h4>
+                            <p class="text-blue-700">Ultra-empathetic, 100% human-centric. All for the connection.</p>
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute -left-8 top-1/2 -translate-y-1/2 text-4xl text-gray-400 animate-bounce-down" aria-hidden="true">
+    ➡️
+</div>
+            </div>
+            
+        </div>
+    </section>
+    
+
+    <section class="slide">
+    <div class="slide-header">
+        <div class="header-left">
+            <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+            <span>MaxCredible</span>
+        </div>
+        </div>
+    
+    <div class="max-w-5xl w-full text-center">
+        <p class="text-xl font-semibold uppercase tracking-wider text-red-600 mb-2">The Problem (1/2)</p> <div class="mt-2">
+            <div class="text-center"> 
+                <h2 class="text-4xl md:text-5xl font-bold mb-2 leading-tight">
+                    <span class="tone-span neutraal">Analysis: Operational Inefficiency (The "Hidden Factory")</span>
+                    <span class="tone-span greta">Our House is on Fire: The "Hidden Factory"</span>
+                    <span class="tone-span episch">The Eternal Evil: The "Hidden Factory"</span>
+                    <span class="tone-span sociaal">The Silent Frustration Factory</span>
+                </h2>
+                <p class="text-lg md:text-xl font-semibold text-red-700 italic fade-in-text mt-0">
+                    The old world is burning up in paper, waste, and CO₂ — time for something better.
+                </p>
+            </div>
+        </div>
+    </div> 
+    
+    <div class="flex flex-col md:flex-row items-center justify-center md:gap-8 w-full max-w-4xl mx-auto mb-6 mt-4">
+        <div class="flex-1 text-left"> <p class="text-xl md:text-2xl text-gray-700">
+                <span class="tone-text neutraal">The baseline analysis identifies a 'hidden factory' of O2C friction, 
+leading to suboptimal DSO, high OPEX, and unnecessary friction.</span>
+                <span class="tone-text greta">Our house is on fire. As we speak, the corporate world (the Polluter) ignores a 'hidden factory' that is destroying our future.</span>
+                <span class="tone-text episch">A Hero (the Company) rises to defeat an Old Enemy: the 'hidden factory' of chaos, rework, and waste.</span>
+                <span class="tone-text sociaal">Every team (our dear colleagues) struggles with a 'hidden factory' of misunderstandings and time-wasting work.</span>
+            </p>
+        </div>
+        
+        <div class="flex-shrink-0 md:mt-0 mt-4"> <img 
+                src="https://png.pngtree.com/png-vector/20220714/ourmid/pngtree-cartoon-illustration-of-paper-stack-or-documents-on-fire-png-image_5702538.png" 
+                alt="Burning stack of paper" 
+                class="w-24 md:w-36 h-auto object-contain flicker-glow drop-shadow-lg" >
+        </div>
+    </div>
+
+
+    <div class="grid md:grid-cols-2 gap-8 text-left max-w-5xl w-full mt-6"> <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-red-500">
+            <h3 class="text-2xl font-bold mb-3">
+                <span class="tone-span neutraal">Status Quo: Reactive & High OPEX</span>
+                <span class="tone-span greta">Morally Bankrupt & Destructive ("Wrong")</span>
+                <span class="tone-span episch">Weakened & Chaotic ("The Evil")</span>
+                <span class="tone-span sociaal">Needlessly Complicated ("A Waste")</span>
+            </h3>
+            <ul class="list-disc list-inside text-lg text-gray-600 space-y-2">
+                <li>Labor-intensive and manual (high FTE costs)</li>
+                <li>Error-prone processes (e.g., incorrect PO numbers)</li>
+                <li class="tone-text neutraal">High friction, negative impact on customer KPIs</li>
+                <li class="tone-text greta">Pure, unadulterated arrogance towards the planet</li>
+                <li class="tone-text episch">A recipe for a disgraceful defeat</li>
+                <li class="tone-text sociaal">Processes that make people deeply unhappy</li>
+                
+                <li>Focus on "debt chasing" (reactive)</li>
+            </ul>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-red-500">
+            <h3 class="text-2xl font-bold mb-3">
+                <span class="tone-span neutraal">The Impact of the Problem</span>
+                <span class="tone-span greta">The Damage of Greed</span>
+                <span class="tone-span episch">The Strength of the Enemy</span>
+                <span class="tone-span sociaal">What We Don't Like</span>
+            </h3>
+            <p class="text-4xl font-black text-red-600">15,000 - 25,000</p>
+            <p class="text-lg text-gray-600 mb-4">sheets of paper per medium-sized company, per year.</p>
+            <p class="text-4xl font-black text-red-600">1 - 2 TONS</p>
+            <p class="text-lg text-gray-600">CO₂ per average company, per year.</p>
+        </div>
+    </div>
+</section>
+
+<section class="slide">
+    <div class="slide-header">
+        <div class="header-left">
+            <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+            <span>MaxCredible</span>
+        </div>
+        </div>
+    
+    <div class="max-w-5xl w-full">
+        <p class="text-xl font-semibold uppercase tracking-wider text-red-600 text-center mb-2">The Problem (2/2)</p> <div class="mt-2">
+            <div class="text-center"> 
+                <h2 class="text-4xl md:text-5xl font-bold mb-2 leading-tight">
+                    <span class="tone-span neutraal">The Problem: Generic vs. Specific ("The Blunt Axe")</span>
+                    <span class="tone-span greta">The Failure of Asocial Capital ("The Blunt Axe")</span>
+                    <span class="tone-span episch">The Second Enemy: The Treacherous Ally</span>
+                    <span class="tone-span sociaal">The Great Misunderstanding ("The Blunt Axe")</span>
+                </h2>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center justify-center md:gap-8 w-full max-w-4xl mx-auto mb-6 mt-4">
+            <div class="flex-1 text-left"> <p class="text-xl md:text-2xl text-gray-700"> 
+                    <span class="tone-text neutraal">The "legacy" model doesn't segment by intent, and harms viable customers (assets) who *want* to pay, but (temporarily) *cannot*.</span>
+                    <span class="tone-text greta">The 'old' model is built on greed. It kicks people who are already down, purely for short-term profit. "How dare you!"</span>
+                    <span class="tone-text episch">The 'foolish' king treats friend and foe alike, and drives his best allies (the customers) into the enemy's camp.</span>
+                    <span class="tone-text sociaal">The 'old' system is deaf. It doesn't hear that our dear customers mean 'yes', but are saying 'not right now'. It breaks relationships needlessly.</span>
+                </p>
+            </div>
+            
+            <div class="flex-shrink-0 md:mt-0 mt-4"> <img 
+                    src="../images/debt.png" 
+                    alt="Stack of debt letters" 
+                    class="w-24 md:w-36 h-auto object-contain flicker-glow drop-shadow-lg" >
+            </div>
+        </div>
+
+
+        <div class="grid md:grid-cols-2 gap-8 text-center mt-6"> <div class="bg-white p-8 rounded-lg shadow-2xl border-t-4 border-blue-600">
+                <h3 class="text-2xl font-bold mb-3">For Individuals & Companies</h3>
+                <p class="text-lg text-gray-600 mb-4">Interest and fines pile up, pushing parties deeper into trouble and creating a negative spiral.</p>
+                <p class="text-2xl font-semibold text-red-600 mt-4">Risk: Uncollectibility & Bankruptcy</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-lg shadow-2xl border-t-4 border-blue-600">
+                <h3 class="text-2xl font-bold mb-3">For the Supplier</h3>
+                <p class="text-lg text-gray-600 mb-4">Unpredictable cash flow and high write-offs threaten the continuity of one's own business.</p>
+                    <p class="text-2xl font-semibold text-red-600 mt-4">Risk: Unable to pay employees</p>
+            </div>
+        </div>
+        
+        <p class="text-2xl font-bold text-gray-800 mt-8 text-center"> <span class="tone-span neutraal">The failure: The "blunt axe" (generic reminder) increases customer churn and damages the relationship asset.</span>
+            <span class="tone-span greta">The crime: The "blunt axe" (generic reminder) creates poverty and destroys SMEs. This is immoral.</span>
+            <span class="tone-span episch">The betrayal: The "blunt axe" (generic reminder) breaks the alliance and leads to loss.</span>
+            <span class="tone-span sociaal">The tragedy: The "blunt axe" (generic reminder) is a lack of listening and costs us good relationships.</span>
+        </p>
+    </div>
+</section>
+
+ 
+    <section class="slide bg-teal-700 text-white">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-4xl text-center">
+            <p class="text-xl font-semibold uppercase tracking-wider opacity-80">Solution 1: Impact & Results</p>
+            <h1 class="text-5xl md:text-6xl font-black mt-2">
+                <span class="tone-span neutraal">Solution: ESG & Operational Efficiency</span>
+                <span class="tone-span greta">Paying Off the Climate Debt. Now.</span>
+                <span class="tone-span episch">The Fight Against Chaos</span>
+                <span class="tone-span sociaal">Working Together for a Better Workday</span>
+            </h1>
+        </div>
+    </section>
+
+    <section class="slide bg-white text-gray-800 text-center">
+    <div class="slide-header">
+        <div class="header-left">
+            <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+            <span>MaxCredible</span>
+        </div>
+        </div>
+    
+    <h2 class="text-3xl md:text-5xl font-extrabold mb-6 text-teal-700 text-center">
+        <span class="tone-span neutraal">From Broadcasting to Listening</span>
+        <span class="tone-span greta">It's time to *really* listen, before it's too late!</span>
+        <span class="tone-span episch">The Dialogue Overcomes the Monologue</span>
+        <span class="tone-span sociaal">Not just talking, but truly connecting</span>
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center w-full max-w-5xl mb-8">
+
+        <div class="flex flex-col items-center">
+            <img src="../images/angry mail.png" alt="Old world"
+                 class="w-96 h-auto object-contain mb-2 mx-auto"> 
+            <p class="text-base md:text-lg font-semibold text-gray-600 text-center">Old world: broadcast, repeat, hope for a response</p>
+        </div>
+
+        <div class="flex flex-col items-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/2989/2989988.png" alt="Transformation icon"
+                 class="w-32 md:w-48 h-32 md:h-48 mx-auto animate-pulse mb-2">
+            <p class="text-base md:text-lg font-bold text-teal-600 text-center">Transformation</p>
+        </div>
+
+        <div class="flex flex-col items-center">
+            <img src="../images/answering.png" alt="New way of listening"
+                 class="w-48 h-auto object-contain mb-2 mx-auto"> 
+            <p class="text-base md:text-lg font-semibold text-gray-600 text-center">New world: listen, understand, connect</p>
+        </div>
+
+    </div>
+
+    <div class="mt-8 max-w-4xl mx-auto">
+        <p class="text-2xl md:text-3xl font-bold text-teal-700 leading-snug">
+            <span class="tone-text neutraal">Get ready. We will now show how <span class="text-gray-900">the new way of working, supported by AI</span>, completely surpasses traditional credit management systems.</span>
+            <span class="tone-text greta">Time is running out! We must see how <span class="text-gray-900">AI-driven innovation</span> surpasses our outdated systems and underscores the need for action.</span>
+            <span class="tone-text episch">Behold! Witness the rise of <span class="text-gray-900">a new era, forged by AI</span>, that definitively overshadows the old titans of credit management!</span>
+            <span class="tone-text sociaal">Hi everyone! Get ready, because we're going to show you how <span class="text-gray-900">AI makes our work super fun and easy</span>, and how those old systems are completely outdated! Yes!</span>
+        </p>
+    </div>
+</section>
+
+    <section class="slide">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-6xl w-full">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-center">
+                <span class="tone-span neutraal">Solution 1: Comparative Analysis (Before & After)</span>
+                <span class="tone-span greta">The Tale of Two Futures (Wrong vs. Right)</span>
+                <span class="tone-span episch">The Battle of Two Worlds (Chaos vs. Order)</span>
+                <span class="tone-span sociaal">The Story of Two Experiences (Friction vs. Flow)</span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 mb-10 text-center max-w-3xl mx-auto">
+                <span class="tone-text neutraal">A data-driven comparison between the legacy workflow and the AI-optimized O2C cycle.</span>
+                <span class="tone-text greta">You choose. Do you choose the 'hidden factory' that is destroying our world? Or do you choose the only right path?</span>
+                <span class="tone-text episch">How the Hero (the company) casts the **Enemy** (chaos) into the abyss and saves the kingdom.</span>
+                <span class="tone-text sociaal">How the Team (our colleagues) solves **that thing we don't like** (all the frustrating 'must-dos') and finds joy again.</span>
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-2xl border-t-8 border-red-500">
+                    <h3 class="text-3xl font-bold mb-4 text-red-600">
+                        <span class="tone-span neutraal">PROBLEM: Legacy Process</span>
+                        <span class="tone-span greta">BEFORE: The Age of Denial (Wrong)</span>
+                        <span class="tone-span episch">BEFORE: The Realm of Darkness (Chaos)</span>
+                        <span class="tone-span sociaal">BEFORE: The Age of Friction (A Waste)</span>
+                    </h3>
+                    <p class="text-lg text-gray-600 mb-6 italic">
+                        <span class="tone-text neutraal">Reactive, manual, and driven by "exception handling".</span>
+                        <span class="tone-text greta">Disgusting. Arrogant, wasteful, and driven by "profit above all".</span>
+                        <span class="tone-text episch">Weak, manual, and driven by "Darkness wins".</span>
+                        <span class="tone-text sociaal">Impersonal, manual, and driven by "Computer says no".</span>
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-4xl font-black text-red-600">€15 - €30</p>
+                            <p class="text-lg text-gray-700 font-semibold">Per paper invoice</p>
+                        </div>
+                        <div>
+                            <p class="text-4xl font-black text-red-600">5-15%</p>
+                            <p class="text-lg text-gray-700 font-semibold">Response Ratio (Paper)</p>
+                        </div>
+                        
+                        <div class="pt-4 mt-4 border-t border-red-300">
+                            <h4 class="text-xl font-bold text-gray-800 mb-2">The Environmental Costs (Per Large Enterprise/Year):</h4>
+                            <p class="text-3xl font-black text-red-600">~17.6 Million Liters of Water</p>
+                            <p class="text-lg text-gray-700 font-semibold mb-2">(7+ Olympic swimming pools wasted)</p>
+                            <p class="text-3xl font-black text-red-600">~16,700 kg CO₂e</p>
+                            <p class="text-lg text-gray-700 font-semibold mb-2">(Emissions from paper, printing & transport)</p>
+                            <p class="text-3xl font-black text-red-600">~210 Trees</p>
+                            <p class="text-lg text-gray-700 font-semibold">(Cut down for invoices and reminders)</p>
+                        </div>
+                        
+                        <div class="pt-4">
+                            <p class="text-xl text-gray-800 font-bold">
+                                <span class="tone-span neutraal">Focus: Costs, Friction, Manual Intervention</span>
+                                <span class="tone-span greta">Focus: Profit, Regardless of the Cost to the Planet</span>
+                                <span class="tone-span episch">Focus: Survival, Chaos, Defeat</span>
+                                <span class="tone-span sociaal">Focus: Rules, Friction, Misunderstanding</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-teal-800 text-white p-8 rounded-lg shadow-2xl border-t-8 border-teal-300">
+                    <h3 class="text-3xl font-bold mb-4 text-teal-300">
+                        <span class="tone-span neutraal">SOLUTION: AI-Driven O2C</span>
+                        <span class="tone-span greta">AFTER: The Age of Action (Right)</span>
+                        <span class="tone-span episch">AFTER: The Enlightened Realm (Order)</span>
+                        <span class="tone-span sociaal">AFTER: The Human Workplace (Flow)</span>
+                    </h3>
+                    <p class="text-lg opacity-90 mb-6 italic">
+                        <span class="tone-text neutraal">Proactive, digital, and driven by "first-time-right".</span>
+                        <span class="tone-text greta">Responsible, digital, and driven by "There is no planet B".</span>
+                        <span class="tone-text episch">Powerful, proactive, and driven by "Victory is near".</span>
+                        <span class="tone-text sociaal">Empathetic, digital, and driven by "We'll solve this together".</span>
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-4xl font-black text-white">€2.25 - €3.50</p>
+                            <p class="text-lg text-teal-100 font-semibold">Per digital invoice</p>
+                        </div>
+                        <div>
+                            <p class="text-4xl font-black text-white">60-80%</p>
+                            <p class="text-lg text-teal-100 font-semibold">Response Ratio (Digital/SMS)</p>
+                        </div>
+
+                        <div class="pt-4 mt-4 border-t border-teal-500">
+                            <h4 class="text-xl font-bold text-teal-100 mb-2">The Environmental Gains (AI-Driven):</h4>
+                            <p class="text-3xl font-black text-white">100% Reduction</p>
+                            <p class="text-lg text-teal-100 font-semibold mb-2">Of all this paper, water & transport consumption</p>
+                            <p class="text-3xl font-black text-white">~16,700 kg CO₂e</p>
+                            <p class="text-lg text-teal-100 font-semibold mb-2">Saved per year</p>
+                            <p class="text-3xl font-black text-white">~17.6M Liters of Water</p>
+                            <p class="text-lg text-teal-100 font-semibold">Saved per year</p>
+                        </div>
+
+                        <div class="pt-4">
+                            <p class="text-xl text-white font-bold">
+                                <span class="tone-span neutraal">Focus: Value Creation, Speed & ESG Data</span>
+                                <span class="tone-span greta">Focus: Survival, Planet & Future</span>
+                                <span class="tone-span episch">Focus: Winning, Glory & Strategy</span>
+                                <span class="tone-span sociaal">Focus: Relationship, Understanding & Success</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide bg-gray-100">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-6xl w-full">
+            <h2 class="text-4xl md:text-5xl font-bold mb-8 text-center">
+                <span class="tone-span neutraal">Solution 1: Results Deep Dive</span>
+                <span class="tone-span greta">The Hard Numbers of Our Choice</span>
+                <span class="tone-span episch">The Spoils of Victory: In Numbers</span>
+                <span class="tone-span sociaal">The Measurable Impact on People & Planet</span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 mb-10 text-center max-w-3xl mx-auto">
+                <span class="tone-text neutraal">The implementation of AI-driven processes yields direct, measurable ecological (ESG) and operational (OPEX) gains.</span>
+                <span class="tone-text greta">Stopping 'business as usual' is not a choice, it's a necessity. The numbers prove that the 'right' way is also the 'profitable' way.</span>
+                <span class="tone-text episch">The 'smart' path leads not only to glory, but also to measurable spoils. Behold the reward of our battle.</span>
+                <span class="tone-text sociaal">A 'smarter' approach is not only nicer for the people, it also yields direct, measurable, positive results for everyone.</span>
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Operational Impact</h3>
+                    <p class="text-6xl big-number">60-80%</p>
+                    <p class="text-xl text-gray-700 font-semibold">Response Ratio on SMS</p>
+                    <p class="text-lg text-gray-500 mb-4">(vs. 5-15% on paper)</p>
+                    
+                    <p class="text-6xl big-number">50-80%</p>
+                    <p class="text-xl text-gray-700 font-semibold">Fewer physical customer visits</p>
+                    <p class="text-lg text-gray-500">(Savings on fuel & travel time)</p>
+                </div>
+                
+                <div class="bg-teal-800 text-white p-6 rounded-lg shadow-2xl text-center transform scale-105">
+                    <h3 class="text-2xl font-bold mb-3">Ecological Impact</h3>
+                    <p class="text-sm uppercase tracking-wider mb-4">(Per average company, per year)</p>
+                    
+                    <p class="text-6xl font-black">1-2</p>
+                    <p class="text-xl font-semibold mb-4">Trees saved</p>
+                    
+                    <p class="text-6xl font-black">500kg - 1.5T</p>
+                    <p class="text-xl font-semibold">CO₂ Reduction</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Large Enterprise Impact</h3>
+                    <p class="text-sm uppercase tracking-wider mb-4">(Per year)</p>
+                    <p class="text-6xl big-number">210</p>
+                    <p class="text-xl text-gray-700 font-semibold mb-4">Trees saved</p>
+                    
+                    <p class="text-6xl big-number">17.6M</p>
+                    <p class="text-xl text-gray-700 font-semibold mb-4">Liters of water saved</p>
+                    
+                    <p class="text-6xl big-number">16,700</p>
+                    <p class="text-xl text-gray-700 font-semibold">Kg CO₂e saved</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide bg-gray-100">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-6xl w-full">
+            <h2 class="text-4xl md:text-5xl font-bold mb-8 text-center">
+                <span class="tone-span neutraal">Cross-Market AI: Knowledge Sharing & Policy Optimization</span>
+                <span class="tone-span greta">The Global View: Stop Lying to Yourselves</span>
+                <span class="tone-span episch">The All-Seeing Eye: One Debtor, Three Fronts</span>
+                <span class="tone-span sociaal">The Full Picture: Helping Our Colleagues Win</span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 mb-10 text-center max-w-3xl mx-auto">
+                <span class="tone-text neutraal">This is the *same debtor* managed by *your* company in different markets. AI lets you compare performance, see they pay your BE entity better, and find out *why*.</span>
+                <span class="tone-text greta">It's the same debtor. They are paying your BE team, but not your UK team. Stop making excuses. The data is telling you what to do.</span>
+                <span class="tone-text episch">The General (you) can now see the entire battlefield. The enemy (TechCorp) is weak on the BE front, but strong in the UK. Time to share the winning strategy.</span>
+                <span class="tone-text sociaal">Look! TechCorp pays our BE colleagues so well! Let's see what they're doing and share that positivity with our UK and NL teams!</span>
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-1">TechCorp Global (Int)</h3>
+                    <p class="text-lg font-semibold text-blue-700 mb-4">Subsidiary NL</p>
+                    
+                    <p class="text-lg text-gray-500 mb-1">Payment Score</p>
+                    <p class="text-6xl font-black text-blue-700">72</p>
+                    
+                    <p class="text-lg text-gray-500 mt-4 mb-1">Profile Effectiveness</p>
+                    <p class="text-5xl font-bold text-gray-700">65%</p>
+
+                    <p class="text-lg text-gray-500 mt-4 mb-1">On-time Payments</p>
+                    <p class="text-5xl font-bold text-gray-700">75%</p>
+                    
+                    <p class="text-lg text-gray-500 mt-4 mb-1">Issues / Invoices</p>
+                    <p class="text-5xl font-bold text-gray-700">9%</p>
+                </div>
+                
+                <div class="bg-teal-800 text-white p-6 rounded-lg shadow-2xl text-center transform scale-105">
+                    <h3 class="text-2xl font-bold text-white mb-1">TechCorp Global (Int)</h3>
+                    <p class="text-lg font-semibold text-teal-300 mb-4">Subsidiary BE</p>
+
+                    <p class="text-lg text-teal-100 opacity-80 mb-1">Payment Score</p>
+                    <p class="text-6xl font-black text-white">81</p>
+                    
+                    <p class="text-lg text-teal-100 opacity-80 mt-4 mb-1">Profile Effectiveness</p>
+                    <p class="text-5xl font-bold text-white">85%</p>
+
+                    <p class="text-lg text-teal-100 opacity-80 mt-4 mb-1">On-time Payments</p>
+                    <p class="text-5xl font-bold text-white">92%</p>
+                    
+                    <p class="text-lg text-teal-100 opacity-80 mt-4 mb-1">Issues / Invoices</p>
+                    <p class="text-5xl font-bold text-white">3%</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-1">TechCorp Global (Int)</h3>
+                    <p class="text-lg font-semibold text-blue-700 mb-4">Subsidiary UK</p>
+                    
+                    <p class="text-lg text-gray-500 mb-1">Payment Score</p>
+                    <p class="text-6xl font-black text-blue-700">68</p>
+                    
+                    <p class="text-lg text-gray-500 mt-4 mb-1">Profile Effectiveness</p>
+                    <p class="text-5xl font-bold text-gray-700">60%</p>
+
+                    <p class="text-lg text-gray-500 mt-4 mb-1">On-time Payments</p>
+                    <p class="text-5xl font-bold text-gray-700">70%</p>
+                    
+                    <p class="text-lg text-gray-500 mt-4 mb-1">Issues / Invoices</p>
+                    <p class="text-5xl font-bold text-gray-700">12%</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="slide bg-blue-800 text-white">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-4xl text-center">
+            <p class="text-xl font-semibold uppercase tracking-wider opacity-80">Solution 2: Impact & Results</p>
+            <h1 class="text-5xl md:text-6xl font-black mt-2">
+                <span class="tone-span neutraal">Solution: Social Impact & Customer Retention</span>
+                <span class="tone-span greta">The Fight Against Social Debt</span>
+                <span class="tone-span episch">The Battle for the Ally</span>
+                <span class="tone-span sociaal">Truly Caring for Our Customers</span>
+            </h1>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-6xl w-full grid md:grid-cols-5 gap-10 items-center">
+            
+            <div class="text-left md:col-span-2">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    <span class="tone-span neutraal">From Doubt to Certainty</span>
+                    <span class="tone-span greta">Stop Sailing Blind</span>
+                    <span class="tone-span episch">The Dashboard of Oversight</span>
+                    <span class="tone-span sociaal">Your Smart, Confident Colleague</span>
+                </h2>
+                
+                <div class="text-xl md:text-2xl text-gray-800 space-y-5">
+                    <p>
+                        <span class="tone-text neutraal"><b>Never doubt again:</b> The dashboard transforms gut feeling into data-driven certainty.</span>
+                        <span class="tone-text greta"><b>Never doubt again:</b> The dashboard shows the confrontational reality you ignored.</span>
+                        <span class="tone-text episch"><b>Never doubt again:</b> The oracle (dashboard) speaks the truth and illuminates the path.</span>
+                        <span class="tone-text sociaal"><b>Never doubt again:</b> Your smart colleague (the dashboard) gives you the confidence to make the right choice.</span>
+                    </p>
+                    <p>
+                        <span class="tone-text neutraal"><b>Dare to sell:</b> Identify and convert opportunities you previously saw as unacceptable risks.</span>
+                        <span class="tone-text greta"><b>Dare to sell:</b> Stop rejecting opportunities out of fear. The data shows what *is* possible.</span>
+                        <span class="tone-text episch"><b>Dare to sell:</b> Conquer markets you feared, now armed with strategic foresight.</span>
+                        <span class="tone-text sociaal"><b>Dare to sell:</b> Say 'yes' to that customer, knowing the data helps you be a good partner.</span>
+                    </p>
+                    <p>
+                        <span class="tone-text neutraal"><b>Prevent the invisible:</b> See friction, risks, and opportunities you couldn't see before.</span>
+                        <span class="tone-text greta"><b>Prevent the disaster:</b> See the problems (that you didn't want to see) before they escalate.</span>
+                        <span class="tone-text episch"><b>Prevent defeat:</b> See the enemy's traps (friction) that were previously hidden.</span>
+                        <span class="tone-text sociaal"><b>Prevent the pain:</b> See where the customer is stuck (what you didn't see) and help them proactively.</span>
+                    </p>
+                </div>
+            </div>
+            
+            <img src="../images/mc-capture-placeholder.svg" alt="Dashboard Placeholder" class="w-full h-auto object-contain md:col-span-3">
+        </div>
+    </section>
+
+    <section class="slide bg-gray-100">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-5xl w-full">
+            <h2 class="text-4xl md:text-5xl font-bold mb-8 text-center">
+                <span class="tone-span neutraal">Solution 2: The Empathetic Agent in Action</span>
+                <span class="tone-span greta">The Weapon: The Honest Agent</span>
+                <span class="tone-span episch">The Weapon: The All-Seeing Agent</span>
+                <span class="tone-span sociaal">The Secret Weapon: The Listening Agent</span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 mb-10 text-center max-w-3xl mx-auto">
+                <span class="tone-text neutraal">The 'smart' model segments by intent: is it unwillingness or inability? The AI agent provides predictive advice.</span>
+                <span class="tone-text greta">The 'right' model asks the confrontational question: is this unwillingness, or is it inability caused by the system?</span>
+                <span class="tone-text episch">The 'enlightened' agent sees the truth: is this a traitor, or a wounded ally? The Agent knows the difference.</span>
+                <span class="tone-text sociaal">The 'smart' model *really* listens: is this someone who <b>won't</b> pay, or someone who <b>can't</b>? The AI agent hears the difference.</span>
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-8">
+                
+                <div class="w-full md:w-1/5"> <img src="../images/payment score.svg" alt="Payment Score" class="w-full h-full object-contain object-top">
+                </div>
+
+                <div class="w-full md:w-4/5"> <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h3 class="text-2xl font-bold text-blue-700 mb-3">Personalized Score</h3>
+                            <p class="text-lg text-gray-600">A relationship score based on financial data *and* 'soft' data, like the tone of emails and history of disputes.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h3 class="text-2xl font-bold text-blue-700 mb-3">Predictive Agent</h3>
+                            <p class="text-lg text-gray-600">The AI agent calculates with high probability <span class="font-bold">what, how much, and when</span> will be paid.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h3 class="text-2xl font-bold text-blue-700 mb-3">Proactive Help</h3>
+                            <p class="text-lg text-gray-600">Automatically offers a "breathing pause" (e.g., 4 months on hold) to parties who are struggling but are still viable.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-lg mt-8 border-l-4 border-blue-700">
+                        <h4 class="text-xl font-bold mb-2">
+                            <span class="tone-span neutraal">Case Study: Seasonal SME (Apparel)</span>
+                            <span class="tone-span greta">Case Study: The Apparel Store (Saved from the Abyss)</span>
+                            <span class="tone-span episch">Epic: The Apparel Store (The Trial)</span>
+                            <span class="tone-span sociaal">The Story: That dear apparel store...</span>
+                        </h4>
+                        <p class="text-lg text-gray-700">
+                            <span class="tone-text neutraal">The SME customer buys the autumn collection, causing a temporary liquidity shortage. They are profitable, but have low margins. The AI agent recognizes this seasonal pattern and advises the creditor to bridge the pause. The 'legacy' approach would have written off this customer asset. The 'smart' AI agent saves the relationship *and* the predicted cash flow.</span>
+                            <span class="tone-text greta">The shop owner invests in the (fast fashion) autumn collection. Can't pay. The 'old' system would have bankrupted this SME for a few euros. The 'right' AI agent sees the owner is viable, stops the penalty machine, and advises a breathing pause. This is socially *and* economically just.</span>
+                            <span class="tone-text episch">The brave shop owner bets on the autumn collection, but the treasury is empty. The 'dumb' hammer of the debt collector threatens to fall. But the All-Seeing Agent recognizes the seasonal pattern as a recurring trial. The Agent forges a pact (a breathing pause), saves the ally, and secures the future gold stream (cash flow).</span>
+                            <span class="tone-text sociaal">The apparel store (a loyal customer!) is a bit tight on cash from buying the autumn collection. They <b>want</b> to pay, it's just not a good time. The 'old' system sends an angry, cold letter and chases away this good customer, who just had bad luck. The 'social' AI agent listens, recognizes the pattern, and suggests a flexible solution. The relationship is saved. How wonderful!</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="slide">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-6xl w-full">
+            <h2 class="text-4xl md:text-5xl font-bold mb-8 text-center">
+                <span class="tone-span neutraal">Solution 2: The Measurable Results</span>
+                <span class="tone-span greta">The Harvest: Social Gain IS Financial Gain</span>
+                <span class="tone-span episch">The Reward: Riches *and* Loyalty</span>
+                <span class="tone-span sociaal">The Win-Win: Better Relationships, Better Numbers</span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 mb-10 text-center max-w-3xl mx-auto">
+                <span class="tone-text neutraal">The result of 'smart' and data-driven segmentation: a pure win-win. Improved DSO *and* improved customer retention.</span>
+                <span class="tone-text greta">The proof that 'doing the right thing' doesn't cost money, it *makes* money. **Greed** (asocial capital) loses.</span>
+                <span class="tone-text episch">The result of an enlightened strategy: the treasury overflows *and* the allies are more loyal than ever.</span>
+                <span class="tone-text sociaal">The proof that listening pays off. By showing empathy, you strengthen the relationship *and* the cash flow. A pure win-win.</span>
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white p-8 rounded-lg shadow-2xl">
+                    <h3 class="text-2xl font-bold text-gray-500 mb-2">DSO Reduction</h3>
+                    <p class="text-7xl font-black text-blue-800">6% - 74%</p>
+                    <p class="text-xl text-gray-700 font-semibold">(Median: 20 days paid faster)</p>
+                </div>
+                
+                <div class="bg-white p-8 rounded-lg shadow-2xl">
+                    <h3 class="text-2xl font-bold text-gray-500 mb-2">Successful Payments</h3>
+                    <p class="text-7xl font-black text-blue-800">+10-20%</p>
+                    <p class="text-xl text-gray-700 font-semibold">More successful payments</p>
+                </div>
+                
+                <div class="bg-white p-8 rounded-lg shadow-2xl">
+                    <h3 class="text-2xl font-bold text-gray-500 mb-2">Risk & Relationship</h3>
+                    <p class="text-7xl font-black text-blue-800">83%</p>
+                    <p class="text-xl text-gray-700 font-semibold mb-4">of problematic debts correctly identified before write-off.</p>
+                    <p class="text-7xl font-black text-green-600">+25%</p>
+                    <p class="text-xl text-gray-700 font-semibold">more opportunities for well-intentioned customers (the 'helpers') to buy.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide bg-gray-100">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+
+        <div class="max-w-6xl w-full text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                <span class="tone-span neutraal">The AI Priority Engine: From Risk to Resolution</span>
+                <span class="tone-span greta">The Triage: No More Hiding High-Risk Debt</span>
+                <span class="tone-span episch">The Gauntlet: Conquering the High-Risk List</span>
+                <span class="tone-span sociaal">The 'Urgent Help' List: From Worry to Resolution</span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 mb-8 max-w-4xl mx-auto">
+                <span class="tone-text neutraal">The AI agent doesn't just identify risk; it forces action. It triages all debtors into actionable priority lists. High-risk cases cannot be ignored.</span>
+                <span class="tone-text greta">This isn't a 'to-do' list; it's a 'must-do-now' list. The system forces you to confront the highest risks. No more delays, no more 'later'.</span>
+                <span class="tone-text episch">The agent lines up the enemy. Your team must now face them, one by one. Victory is defined by resolution. Inaction is not an option.</span>
+                <span class="tone-text sociaal">The AI finds our customers who are most at-risk. It's our 'urgent-help' list. We run through it to make sure everyone gets the support they need, fast!</span>
+            </p>
+
+            <div class="priority-accordion text-left">
+                
+                <details class="priority-1">
+                    <summary>Priority 1: Extremely High Risk</summary>
+                    <div class="accordion-content">
+                        <p>Debtors with >€100,000 outstanding and invoices >60 days overdue. These are critical accounts that require immediate, personal intervention to secure payment or log a formal promise/dispute. Inaction is not an option.</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Key Account</th>
+                                    <th>Invoice #</th>
+                                    <th>Amount Due</th>
+                                    <th>Days Overdue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="debtor-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v9A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 4H9.379a1.5 1.5 0 0 1-1.06-.44L7.26 2.5A1.5 1.5 0 0 0 6.199 2H3.5Z"></path></svg>
+                                            TechCorp Global
+                                        </a>
+                                    </td>
+                                    <td><a href="#" class="text-blue-600 underline hover:text-blue-800 font-medium">INV-10023</a></td>
+                                    <td>€115,200.00</td>
+                                    <td><span class="pill text-white bg-red-700">92</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="debtor-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v9A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 4H9.379a1.5 1.5 0 0 1-1.06-.44L7.26 2.5A1.5 1.5 0 0 0 6.199 2H3.5Z"></path></svg>
+                                            Innovate Solutions
+                                        </a>
+                                    </td>
+                                    <td><a href="#" class="text-blue-600 underline hover:text-blue-800 font-medium">INV-10045</a></td>
+                                    <td>€204,100.00</td>
+                                    <td><span class="pill text-white bg-red-600">75</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="debtor-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v9A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 4H9.379a1.5 1.5 0 0 1-1.06-.44L7.26 2.5A1.5 1.5 0 0 0 6.199 2H3.5Z"></path></svg>
+                                            Enterprise Logistics
+                                        </a>
+                                    </td>
+                                    <td><a href="#" class="text-blue-600 underline hover:text-blue-800 font-medium">INV-10051</a></td>
+                                    <td>€130,050.00</td>
+                                    <td><span class="pill text-white bg-red-500">61</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+
+                <details class="priority-2">
+                    <summary>Priority 2: Very High Risk</summary>
+                    <div class="accordion-content">
+                        <p>High-value debtors with invoices 30-60 days overdue. These accounts are at a high risk of becoming critical. The goal is to secure payment or a promise before they move into the 60+ day bracket.</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Invoice #</th>
+                                    <th>Amount Due</th>
+                                    <th>Days Overdue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="debtor-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v9A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 4H9.379a1.5 1.5 0 0 1-1.06-.44L7.26 2.5A1.5 1.5 0 0 0 6.199 2H3.5Z"></path></svg>
+                                            Regional Builders
+                                        </a>
+                                    </td>
+                                    <td><a href="#" class="text-blue-600 underline hover:text-blue-800 font-medium">INV-10112</a></td>
+                                    <td>€45,500.00</td>
+                                    <td><span class="pill text-white bg-orange-500">45</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="debtor-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v9A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 4H9.379a1.5 1.5 0 0 1-1.06-.44L7.26 2.5A1.5 1.5 0 0 0 6.199 2H3.5Z"></path></svg>
+                                            Coastal Imports
+                                        </a>
+                                    </td>
+                                    <td><a href="#" class="text-blue-600 underline hover:text-blue-800 font-medium">INV-10119</a></td>
+                                    <td>€62,000.00</td>
+                                    <td><span class="pill text-white bg-orange-500">38</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="debtor-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v9A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 4H9.379a1.5 1.5 0 0 1-1.06-.44L7.26 2.5A1.5 1.5 0 0 0 6.199 2H3.5Z"></path></svg>
+                                            Mid-Market Goods
+                                        </a>
+                                    </td>
+                                    <td><a href="#" class="text-blue-600 underline hover:text-blue-800 font-medium">INV-10124</a></td>
+                                    <td>€31,800.00</td>
+                                    <td><span class="pill text-white bg-orange-400">31</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+
+                <details class="priority-3">
+                    <summary>Priority 3: High Risk</summary>
+                    <div class="accordion-content">
+                        <p>All other clients with high-value invoices that are just-due or 1-10 days overdue. Proactive, automated follow-ups are crucial here to prevent them from aging and ensure a 'first-time-right' payment culture.</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Invoice #</th>
+                                    <th>Amount Due</th>
+                                    <th>Days Overdue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="debtor-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v9A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 4H9.379a1.5 1.5 0 0 1-1.06-.44L7.26 2.5A1.5 1.5 0 0 0 6.199 2H3.5Z"></path></svg>
+                                            Nexus Data
+                                        </a>
+                                    </td>
+                                    <td><a href="#" class="text-blue-600 underline hover:text-blue-800 font-medium">INV-10201</a></td>
+                                    <td>€22,000.00</td>
+                                    <td><span class="pill text-gray-800 bg-yellow-400">8</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="debtor-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v9A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 4H9.379a1.5 1.5 0 0 1-1.06-.44L7.26 2.5A1.5 1.5 0 0 0 6.199 2H3.5Z"></path></svg>
+                                            Apex Design
+                                        </a>
+                                    </td>
+                                    <td><a href="#" class="text-blue-600 underline hover:text-blue-800 font-medium">INV-10203</a></td>
+                                    <td>€19,500.00</td>
+                                    <td><span class="pill text-gray-800 bg-yellow-300">5</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" class="debtor-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v9A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 4H9.379a1.5 1.5 0 0 1-1.06-.44L7.26 2.5A1.5 1.5 0 0 0 6.199 2H3.5Z"></path></svg>
+                                            Swift Partners
+                                        </a>
+                                    </td>
+                                    <td><a href="#" class="text-blue-600 underline hover:text-blue-800 font-medium">INV-10208</a></td>
+                                    <td>€25,100.00</td>
+                                    <td><span class="pill text-gray-800 bg-yellow-300">2</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+            </div>
+            
+            <p class="text-2xl font-bold text-gray-900 mt-10">
+                <span class="tone-span neutraal">Core Principle: A 100% resolution rate. High-risk items <span class="text-red-600">cannot</span> remain on the list. They must be resolved.</span>
+                <span class="tone-span greta">The Only Rule: Zero tolerance for inaction. These lists <span class="text-red-600">must</span> be cleared. Every single day. No exceptions.</span>
+                <span class="tone-span episch">The Creed: Leave no enemy standing. The list <span class="text-red-600">must</span> be conquered. Resolution is the only path to glory.</span>
+                <span class="tone-span sociaal">Our Promise: No one is left behind. This list <span class="text-red-600">must</span> be cleared, so every person gets the connection they deserve.</span>
+            </p>
+
+        </div>
+    </section>
+    <section class="slide bg-gray-900 text-white" id="conclusie-slide">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div id="conclusie-wrapper">
+            
+            <h1 class="text-5xl md:text-6xl font-black shrink-0">
+                <span class="tone-span neutraal">Conclusion: The Strategic Synthesis</span>
+                <span class="tone-span greta">The Conclusion is Simple</span>
+                <span class="tone-span episch">The Legend Summarized</span>
+                <span class="tone-span sociaal">The Moral of our Story</span>
+            </h1>
+
+            <div class="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 h-full">
+                <div class="space-y-6">
+                    <p class="text-xl md:text-2xl text-gray-200">
+                        <span class="font-bold text-teal-400 tone-span neutraal">The AI Agent: </span>
+                        <span class="font-bold text-teal-400 tone-span greta">The AI Guardian: </span>
+                        <span class="font-bold text-teal-400 tone-span episch">The God-Weapon (AI): </span>
+                        <span class="font-bold text-teal-400 tone-span sociaal">The AI Colleague: </span>
+                        <span class="tone-span neutraal">AI transforms the credit manager from a reactive 'cost center' to a proactive 'value driver'.</span>
+                        <span class="tone-span greta">AI isn't a 'nice tool', it's a weapon that forces the manager to transform from 'polluter' to 'solver'.</span>
+                        <span class="tone-span episch">AI promotes the 'soldier' (manager) to 'general' (strategist) who wins the war before the first battle.</span>
+                        <span class="tone-span sociaal">AI gives the manager 'super-hearing', changing them from 'collector' (hunter) to 'helper' (partner).</span>
+                    </p>
+                    
+                    <p class="text-xl md:text-2xl text-gray-200">
+                        <span class="font-bold text-teal-400 tone-span neutraal">The ESG Link: </span>
+                        <span class="font-bold text-teal-400 tone-span greta">The Debt Repaid: </span>
+                        <span class->"font-bold text-teal-400 tone-span episch">The Enemy Defeated: </span>
+                        <span class="font-bold text-teal-400 tone-span sociaal">The Friction Solved: </span>
+                        <span class="tone-span neutraal">The most efficient (OPEX) and profitable (DSO) route is also the most sustainable (ESG).</span>
+                        <span class="tone-span greta">The 'right' way is the 'greenest' way. It's disgusting that we didn't do this all along. Profit without morals is debt.</span>
+                        <span class="tone-span episch">The 'smartest' strategist (AI) wins on two fronts: the treasury (profit) *and* the land (environment). Glory and sustainability go together.</span>
+                        <span class="tone-span sociaal">The 'nicest' way (for the customer) is *also* the 'smartest' (for cash flow) and the 'greenest' (for the planet).</span>
+                    </p>
+                    
+                    <p class="text-xl md:text-2xl text-gray-200">
+                        <span class="font-bold text-teal-400 tone-span neutraal">The Customer Asset: </span>
+                        <span class="font-bold text-teal-400 tone-span greta">The Person Saved: </span>
+                        <span class->"font-bold text-teal-400 tone-span episch">The Ally Saved: </span>
+                        <span class="font-bold text-teal-400 tone-span sociaal">The Relationship Saved: </span>
+                        <span class="tone-span neutraal">'Smart', predictive data leads to a lower DSO *with* higher customer retention and LTV.</span>
+                        <span class="tone-span greta">'Honest' data stops the penalty machine and saves viable SMEs from the abyss.</span>
+                        <span class="tone-span episch">'All-seeing' data saves the loyal ally and turns a potential debt into an eternal pact.</span>
+                        <span class="tone-span sociaal">'Listening' data leads to a lower DSO, not <b>despite</b>, but <b>thanks to</b> a better customer relationship.</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 flex flex-col justify-between min-h-[32rem] md:min-h-[40rem]">
+                <h3 class="text-2xl font-bold mb-6 text-white text-center">The Impact: Old vs. New (KPIs)</h3>
+                
+                <div class="flex justify-center gap-6 mb-8 flex-wrap">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-red-600 rounded-full mr-2"></div>
+                        <span class="text-gray-300 text-sm">Old System (Paper)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-teal-500 rounded-full mr-2"></div>
+                        <span class="text-gray-300 text-sm">New System (AI)</span>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center items-center flex-grow">
+                    <img src="../images/outcomes.png" alt="Outcomes" class="h-full w-auto object-contain" />
+                </div>
+            </div>
+
+
+            </div>
+        </div> 
+    </section>
+    
+    <section class="slide">
+        <div class="slide-header">
+            <div class="header-left">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo">
+                <span>MaxCredible</span>
+            </div>
+            </div>
+        <div class="max-w-4xl text-center">
+            <h1 class="text-5xl md:text-6xl font-black mb-8">
+                <span class="tone-span neutraal">Thank You</span>
+                <span class="tone-span greta">Time for Action</span>
+                <span class="tone-span episch">The End of the Legend</span>
+                <span class="tone-span sociaal">Thanks for the Connection</span>
+            </h1>
+            <p class="text-3xl text-gray-800 font-semibold">Questions?</p>
+            
+            <div class="mt-12 border-t-2 border-gray-300 pt-8 w-full max-w-3xl mx-auto">
+                <img src="https://docs.google.com/drawings/d/e/2PACX-1vQpBYVjwGPNqXcrf44k9IjkOjXeJHTvFB_x9fC5t0hSvfveLOcYc7CwqdBSwF7OOqUgIMc9oPF_P928/pub?w=960&h=720" alt="Max AI Logo" class="max-w-xs w-full mx-auto mb-8 rounded-lg">
+                
+                <div class="max-w-md mx-auto text-center">
+                    <div>
+                        <p class="text-2xl text-gray-700">Stefan van Tulder</p>
+                        <p class="text-xl text-gray-600">MaxCredible</p>
+                        <p class="text-xl text-teal-700 font-semibold mt-2">s.vantulder@maxcredible.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <div id="progress-bar"></div>
+    <div id="slide-number">1 / 15</div>
+    <button id="prev-slide" class="nav-button" aria-label="Previous slide">&larr;</button>
+    <button id="next-slide" class="nav-button" aria-label="Next slide">&rarr;</button>
+
+    <div id="tone-switcher">
+        <button id="tone-btn-neutraal" onclick="switchTone('neutraal')" class="tone-switch-btn" title="Neutral">N</button>
+        <button id="tone-btn-greta" onclick="switchTone('greta')" class="tone-switch-btn" title="Greta">G</button>
+        <button id="tone-btn-episch" onclick="switchTone('episch')" class="tone-switch-btn" title="Epic">E</button>
+        <button id="tone-btn-sociaal" onclick="switchTone('sociaal')" class="tone-switch-btn" title="Social">S</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const progressBar = document.getElementById('progress-bar');
+            const slideNumberEl = document.getElementById('slide-number');
+            const prevButton = document.getElementById('prev-slide');
+            const nextButton = document.getElementById('next-slide');
+            let currentSlide = 0;
+            const totalSlides = slides.length; // This will now correctly be 15
+
+            window.selectTone = function(tone, clickedButton) {
+                const allButtons = document.querySelectorAll('#tone-options .tone-option-btn');
+                
+                allButtons.forEach(btn => {
+                    if (btn === clickedButton) {
+                        btn.classList.add('animate-scale-up');
+                    } else {
+                        btn.classList.add('animate-fade-out-down');
+                    }
+                    btn.disabled = true;
+                });
+
+                setTimeout(() => {
+                    switchTone(tone); 
+                    showNextSlide(); 
+                    
+                    allButtons.forEach(btn => {
+                        btn.classList.remove('animate-scale-up', 'animate-fade-out-down');
+                        btn.disabled = false;
+                    });
+                }, 400); 
+            }
+
+            window.switchTone = function(tone) {
+                localStorage.setItem('presentationTone', tone);
+                
+                document.querySelectorAll('.tone-switch-btn').forEach(btn => {
+                    btn.classList.remove('active-tone');
+                });
+                const activeBtn = document.getElementById(`tone-btn-${tone}`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active-tone');
+                }
+
+                applyTone(); 
+            }
+
+            function applyTone() {
+                const tone = localStorage.getItem('presentationTone') || 'neutraal'; 
+                const activeSlide = document.querySelector('.slide.active');
+                if (!activeSlide) return;
+
+                activeSlide.querySelectorAll('.tone-text').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                activeSlide.querySelectorAll('.tone-span').forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                activeSlide.querySelectorAll('.tone-text.' + tone).forEach(el => {
+                    el.style.display = 'block';
+                });
+                
+                activeSlide.querySelectorAll('.tone-span.' + tone).forEach(el => {
+                    el.style.display = 'inline';
+                });
+            }
+
+            function updateSlideDisplay() {
+                slides.forEach((slide, index) => {
+                    slide.classList.remove('active', 'previous');
+                    if (index === currentSlide) {
+                        slide.classList.add('active');
+                        applyTone(); 
+                    } else if (index === currentSlide - 1) {
+                        slide.classList.add('previous');
+                    }
+                });
+                
+                const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+                
+                // This will now correctly show "X / 15"
+                slideNumberEl.textContent = `${currentSlide + 1} / ${totalSlides}`;
+                
+                prevButton.style.display = currentSlide === 0 ? 'none' : 'flex';
+                nextButton.style.display = currentSlide === totalSlides - 1 ? 'none' : 'flex';
+
+                const switcher = document.getElementById('tone-switcher');
+                if (currentSlide > 0) { 
+                    switcher.style.display = 'flex';
+                } else {
+                    switcher.style.display = 'none';
+                }
+            }
+
+            function showNextSlide() {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updateSlideDisplay();
+                }
+            }
+
+            function showPrevSlide() {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updateSlideDisplay();
+                }
+            }
+
+            nextButton.addEventListener('click', showNextSlide);
+            prevButton.addEventListener('click', showPrevSlide);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+                    e.preventDefault();
+                    showNextSlide();
+                } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                    e.preventDefault();
+                    showPrevSlide();
+                }
+            });
+
+            // This makes sure the <details> tabs are closed when the slide is not active
+            // and opens the first one when it becomes active.
+            slides.forEach((slide, index) => {
+                // *** UPDATED from 11 to 12 ***
+                if (index === 12) { // The priority slide is now at index 12 (the 13th slide)
+                    const detailsElements = slide.querySelectorAll('details');
+                    const observer = new IntersectionObserver((entries) => {
+                        if (entries[0].isIntersecting) {
+                            // Open the first one by default when slide becomes active
+                            if (detailsElements.length > 0) {
+                                detailsElements[0].open = true;
+                            }
+                        } else {
+                            // Close all of them when slide is not active
+                            detailsElements.forEach(d => d.open = false);
+                        }
+                    }, { threshold: 0.5 });
+                    observer.observe(slide);
+                }
+            });
+
+            updateSlideDisplay();
+            switchTone(localStorage.getItem('presentationTone') || 'neutraal');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/max-credit-expo/:path*",
+      "destination": "/max-credit-expo/:path*"
+    }
+  ]
+}

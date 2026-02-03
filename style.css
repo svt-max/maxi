@@ -1,0 +1,969 @@
+/* ==== GLOBAL STYLES ==== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+section {
+    background-color: #ffffff; /* White background for the card effect */
+    padding: 80px 40px;
+    max-width: 1000px; /* Limits width of "card" sections */
+    margin: 0 auto; /* Centers "card" sections */
+    margin-bottom: 30px; /* Space between "card" sections */
+    text-align: center;
+    border-radius: 12px; /* Rounded corners for the card */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03); /* Subtle shadow for the card */
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+h1 {
+    font-size: 3rem;
+    color: #111;
+}
+
+h2 {
+    font-size: 2.25rem;
+    color: #222;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+h4 {
+    font-size: 1.2rem;
+}
+
+p {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sub-headline {
+    font-size: 1.25rem;
+    color: #555;
+    margin-bottom: 40px;
+}
+
+/* ==== NAVIGATION BAR STYLES ==== */
+.navbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 10px 30px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.nav-logo {
+    justify-self: start;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #111;
+    text-decoration: none;
+}
+
+.nav-menu {
+    justify-self: center;
+    list-style: none;
+    display: flex;
+    gap: 30px; 
+}
+
+.nav-menu li a {
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 999px;
+    transition: all 0.3s ease;
+}
+.nav-buttons {
+    justify-self: end;
+}
+
+.nav-menu li a:hover {
+    color: #111;
+    background-color: #f0f0f0;
+}
+
+
+/* ==== BUTTON STYLES ==== */
+.cta-buttons {
+    margin-top: 30px;
+}
+
+.btn {
+    font-family: 'Poppins', sans-serif;
+    display: inline-block;
+    padding: 12px 24px;
+    margin: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #2200FF;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #1a00cc;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #2200FF;
+    border: 2px solid transparent;
+}
+
+.btn-secondary:hover {
+    text-decoration: underline;
+}
+
+/* ==== HOW IT WORKS SECTION STYLES ==== */
+.how-it-works {
+    background-color: #f9f9f9;
+    margin-top: 40px; /* Add spacing between hero and this section */
+    position: relative; /* Ensure section stacks properly */
+    z-index: 1; /* Place above hero if needed */
+}
+
+.how-it-works h2 {
+    margin-bottom: 60px;
+}
+
+.steps-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 80px;
+}
+
+.step {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    grid-template-areas: "image text";
+    align-items: center;
+    gap: 40px;
+}
+
+.step:nth-child(even) {
+    grid-template-areas: "text image";
+}
+
+.step:nth-child(even) .step-image {
+    grid-area: image;
+}
+
+.step:nth-child(even) .step-text {
+    grid-area: text;
+}
+
+.step-text {
+    text-align: center;
+}
+
+.step-text h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2200FF;
+    margin-bottom: 10px;
+}
+
+.step-text h4 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 15px;
+}
+.step-image {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+}
+.step-image img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+/* ==== HOW IT WORKS (MOBILE) ==== */
+@media (max-width: 768px) {
+    .step,
+    .step:nth-child(even) {
+        grid-template-columns: 1fr;  /* 1. Force a single column */
+        grid-template-areas: unset;  /* 2. Clear desktop layout */
+        gap: 20px; /* A little less gap for mobile */
+    }
+
+    /* 3. Unset the specific desktop rules on the children */
+    .step-image,
+    .step:nth-child(even) .step-image {
+        grid-area: unset; /* Clear the "image" area name */
+        grid-row: 1;      /* Explicitly put image in row 1 */
+        margin: 0 auto;
+        max-width: 300px; 
+    }
+
+    .step-text,
+    .step:nth-child(even) .step-text {
+        grid-area: unset; /* Clear the "text" area name */
+        grid-row: 2;      /* Explicitly put text in row 2 */
+        text-align: center;
+    }
+
+    .step-text p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    /* ==== HOW IT WORKS (MOBILE) - Font & Button Tweaks ==== */
+    .step-text h4 {
+        font-size: 1.5rem; /* Down from 1.8rem */
+    }
+
+    /* This stacks the buttons in the 'How It Works' section */
+    .how-it-works .cta-buttons {
+        display: flex;
+        flex-direction: column; /* Stack 'em */
+        gap: 15px;
+        padding: 0 20px; /* Add side padding to align them */
+    }
+
+    .how-it-works .cta-buttons .btn {
+        font-size: 1rem; /* Down from 1.1rem */
+        width: 100%;     /* Make them full-width */
+        margin: 0;
+    }
+}
+
+
+/* ==== FEATURES & BENEFITS SECTION STYLES ==== */
+.features {
+    background-color: #ffffff;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-top: 40px;
+    text-align: left;
+}
+
+.feature-block {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.feature-block h4 {
+    margin-bottom: 15px;
+}
+
+@media (min-width: 768px) {
+    .features-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ==== SOCIAL PROOF SECTION STYLES ==== */
+.social-proof {
+    background-color: #f9f9f9;
+}
+
+.testimonials-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.testimonial {
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    text-align: left;
+}
+
+.testimonial blockquote {
+    font-size: 1.15rem;
+    font-style: italic;
+    color: #333;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 40px;
+}
+
+.testimonial blockquote::before {
+    content: '“';
+    position: absolute;
+    left: 0;
+    top: -10px;
+    font-size: 4rem;
+    color: #2200FF;
+    opacity: 0.3;
+}
+
+.testimonial cite {
+    font-weight: bold;
+    color: #111;
+}
+
+@media (min-width: 768px) {
+    .testimonials-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ==== ABOUT SECTION STYLES (Homepage) ==== */
+.about {
+    background-color: #ffffff;
+}
+
+/* ==== FINAL CTA SECTION STYLES ==== */
+.final-cta {
+    background-color: #2200FF;
+    color: #ffffff;
+    border-radius: 8px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.final-cta h2 {
+    color: #ffffff;
+}
+
+.final-cta p {
+    color: #f0f0f0;
+    font-size: 1.15rem;
+}
+
+.final-cta .btn-primary {
+    background-color: #ffffff;
+    color: #2200FF;
+}
+
+.final-cta .btn-primary:hover {
+    background-color: #eef;
+}
+
+.final-cta .btn-secondary {
+    color: #ffffff;
+    border-color: transparent;
+}
+
+.final-cta .btn-secondary:hover {
+    text-decoration: underline;
+}
+
+/* ==== FORM STYLES (inside final-cta) ==== */
+.final-cta .trial-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 450px;
+    margin: 30px auto 0 auto;
+}
+
+.final-cta .form-group {
+    width: 100%;
+}
+
+.final-cta .trial-form input[type="text"],
+.final-cta .trial-form input[type="email"] {
+    width: 100%;
+    padding: 14px;
+    border-radius: 5px;
+    border: none;
+    background: #ffffff;
+    color: #111;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+}
+
+.final-cta .trial-form input::placeholder {
+    color: #555;
+}
+
+.final-cta .trial-form .btn {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.final-cta .form-message {
+    margin-top: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    padding: 8px;
+    border-radius: 4px;
+    display: none;
+}
+
+.final-cta .form-message.success {
+    display: block;
+    background-color: rgba(67, 160, 71, 0.3);
+}
+
+.final-cta .form-message.error {
+    display: block;
+    background-color: rgba(217, 48, 37, 0.3);
+}
+
+/* ==== IMAGE STYLES ==== */
+.hero-image {
+    max-width: 1000px; /* Constrain width */
+    width: 100%; /* Make it responsive within the max-width */
+    height: auto;
+    margin: 0 auto; /* Center the image */
+    display: block; /* Ensures image is centered horizontally */
+}
+
+/* ==== HERO SECTION FULLSCREEN & ARROW ==== */
+.hero {
+    min-height: 100vh; /* Minimum height is full viewport */
+    height: auto; /* Allow it to grow if content requires */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    position: relative;
+    padding: 80px 0 40px; /* Add padding top for navbar and bottom for spacing */
+    max-width: none; /* Allows it to take full width */
+    margin-left: 0;  /* Remove auto margins from global section */
+    margin-right: 0; /* Remove auto margins from global section */
+    margin-bottom: 0; /* No bottom margin here, handled by next section's top */
+    border-radius: 0; /* Remove rounded corners */
+    box-shadow: none; /* Remove shadow */
+    background-color: transparent; /* Ensure no white background shows through */
+    overflow: hidden; /* Prevent any content overflow */
+}
+
+.scroll-arrow {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #555;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+    align-self: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    position: relative;
+}
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.3;
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+}
+
+.hero h2 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #444;
+    line-height: 1.6;
+    max-width: 650px;
+    margin: 0 auto 30px auto;
+}
+
+/* ==== NAVBAR HIDE/SHOW ==== */
+.navbar-hidden {
+    transform: translateY(-100%);
+}
+
+.nav-logo img {
+    height: 28px;
+    width: auto;
+    display: block;
+}
+
+/* ==== MOBILE & RESPONSIVE STYLES ==== */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 24px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #333;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        grid-template-columns: 1fr 1fr;
+        padding: 12px 20px;
+    }
+
+    .nav-menu,
+    .nav-buttons {
+        display: none; 
+    }
+    
+    .nav-toggle {
+        display: flex;
+        justify-self: end;
+        position: relative;
+        z-index: 1001;
+    }
+   /* ==== MOBILE HERO STYLES ==== */
+    /* Replace your old mobile hero styles with this block */
+
+    .hero {
+        height: auto;           /* Let content define the height */
+        padding-top: 0;         /* FIX: Removes whitespace above image */
+        padding-bottom: 40px;   /* Adds space at the bottom */
+        justify-content: flex-start; /* Aligns content to the top */
+    }
+
+    .hero-image {
+        max-width: 100%; /* Ensures image is never wider than the screen */
+    }
+
+    /* Combined margin-top for .hero h1 on mobile and short screens */
+    .hero h1 {
+        font-size: 2.25rem; 
+        line-height: 1.2;
+        padding-left: 15px;  
+        padding-right: 15px;
+        margin-top: 30px;     /* Adds space above the headline */
+    }
+
+    .hero h2 {
+    font-size: 1.1rem; 
+    line-height: 1.5; 
+    padding-left: 15px;  
+    padding-right: 15px; 
+    }
+
+    section.hero .cta-buttons {
+    display: flex !important;
+    flex-direction: column !important; 
+    gap: 15px !important; 
+    padding-left: 20px !important;  
+    padding-right: 20px !important;
+    width: 100% !important; 
+    }
+
+    .hero .cta-buttons .btn {
+    width: 100%; 
+    margin: 0; 
+    }
+
+.scroll-arrow {
+    display: none;
+}
+
+.navbar.nav-open .nav-toggle span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+    
+    .navbar.nav-open .nav-toggle span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .navbar.nav-open .nav-toggle span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: #ffffff;
+        z-index: 999;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 40px;
+        gap: 20px;
+    }
+
+    .navbar.nav-open .nav-menu {
+        display: flex;
+    }
+
+    .navbar.nav-open .nav-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        padding: 0 40px;
+        position: fixed;
+        bottom: 40px;
+        left: 0;
+        z-index: 999;
+    }
+
+    .navbar.nav-open .nav-buttons .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+
+/* ==== ABOUT PAGE: HERO ==== */
+.about-hero {
+    background-color: #f9f9f9;
+    padding-top: 100px;
+    padding-bottom: 80px;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 30px;
+}
+
+.about-hero h1 {
+    font-size: 2.8rem;
+    max-width: 700px;
+    margin: 0 auto 20px auto;
+}
+
+.about-hero .sub-headline {
+    font-size: 1.25rem;
+    font-weight: 400;
+}
+
+/* ==== ABOUT PAGE: SOCIAL PROOF BANNER ==== */
+.social-proof-banner {
+    background-color: #2200FF; /* Make the whole section blue */
+    /* It will keep the rounded corners from the global 'section' rule */
+}
+
+.social-proof-banner h2 {
+    font-size: 1.5rem;
+    color: #ffffff; /* Change text to white */
+    font-weight: 600;
+}
+
+.social-proof-banner h2 strong {
+    color: #ffffff; /* Keep strong text white */
+    font-weight: 700;
+}
+
+/* ==== ABOUT PAGE: HISTORY ==== */
+.history-section p {
+    text-align: left;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* ==== ABOUT PAGE: MEDIA CAROUSEL ==== */
+.media-section {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.media-section h2,
+.media-section .sub-headline {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.carousel-container {
+    display: flex;
+    overflow-x: auto;
+    padding: 20px;
+    /* Apply the calculated padding by default for wide screens */
+    padding-left: calc((100vw - 1000px) / 2 + 20px);
+    gap: 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+.carousel-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+/* --- SEPARATE MEDIA QUERY FOR SMALLER SCREENS --- */
+/* On screens smaller than our max-width + padding, reset padding */
+@media (max-width: 1040px) {
+    .carousel-container {
+        padding-left: 20px;
+    }
+}
+
+.media-card {
+    flex: 0 0 300px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.media-card:hover {
+    transform: translateY(-5px);
+}
+
+.media-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.media-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.media-card-content {
+    padding: 20px;
+    text-align: left;
+}
+
+.media-card-content h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.media-card-content p {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
+
+/* ==== ABOUT PAGE: LOGO BAR STYLES ==== */
+.logos {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-around; 
+    align-items: center;
+    gap: 30px;
+    margin-top: 30px; /* Space below the "Trusted by" text */
+    
+    /* --- NEW BAR STYLES --- */
+    background-color: #ffffff; /* The white bar background */
+    border-radius: 999px; /* This makes it a rounded pill shape */
+    padding: 20px 30px; /* Padding inside the white bar */
+}
+
+.logos img {
+    height: 40px; 
+    width: auto; 
+    
+    /* --- REMOVE THE FILTER --- */
+    filter: none; /* Show original logo colors */
+    opacity: 1; /* Show full opacity */
+}
+
+/* ==== HOW IT WORKS MORE PAGE STYLES ==== */
+
+/* --- Section Container --- */
+.how-maxcredible {
+    /* Override global section styles for this page */
+    background-color: #ffffff; /* Use white background for this page */
+    max-width: none; /* Allow full width */
+    padding-top: 100px; /* Add space below navbar */
+    padding-bottom: 80px;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+
+/* --- Headers and Sub-headline --- */
+.how-maxcredible h2 {
+    font-size: 2.5rem; /* Larger title */
+    color: #111;
+    margin-bottom: 1rem;
+    max-width: 1000px; /* Keep centered */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.how-maxcredible .sub-headline {
+    font-size: 1.15rem;
+    max-width: 700px; /* Constrained width */
+    margin: 0 auto 4rem auto;
+    color: #555;
+}
+
+/* --- List Container for Steps --- */
+.mc-step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 80px; /* Space between steps */
+    max-width: 1000px; /* Max width for content alignment */
+    margin: 0 auto; /* Center the list container */
+}
+
+/* --- Individual Step Item --- */
+.mc-step-list-item {
+    display: flex;
+    flex-wrap: wrap; /* Wrap on smaller screens */
+    align-items: center; /* Vertically center image and text */
+    justify-content: space-between;
+    gap: 40px; /* Space between text and image */
+}
+
+/* Alternating layout: reverse order for items with 'reverse' class */
+.mc-step-list-item.reverse {
+    flex-direction: row-reverse;
+}
+
+/* --- Text Block within a Step --- */
+.mc-step-list-item .mc-text {
+    flex: 1 1 45%; /* Allow text block to take ~half width */
+    min-width: 300px; /* Prevent text getting too squished */
+    text-align: left;
+}
+
+.mc-step-list-item .mc-text h3 {
+    font-size: 1.8rem; /* Make step title larger */
+    color: #2200FF; /* Brand blue */
+    margin-bottom: 0.75rem;
+}
+
+.mc-step-list-item .mc-text p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #333;
+    max-width: none; /* Let text fill container */
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* --- Image Block within a Step --- */
+.mc-step-list-item .mc-image {
+    flex: 1 1 45%; /* Allow image block to take ~half width */
+    min-width: 300px; /* Prevent image getting too squished */
+    text-align: center;
+}
+
+.mc-step-list-item .mc-image img {
+    display: block;
+    max-width: 100%; /* Make image responsive */
+    height: auto;
+    margin: 0 auto; /* Center image within its container */
+    border-radius: 12px; /* Add slight rounding */
+    box-shadow: 0 8px 24px rgba(16,24,40,0.08); /* Add subtle shadow */
+}
+
+/* --- Final CTA Button on this page --- */
+.how-maxcredible .cta-buttons {
+    margin-top: 60px; /* Space above button */
+}
+
+/* --- Responsive styles for the How It Works More page --- */
+@media (max-width: 768px) {
+    .mc-step-list-item,
+    .mc-step-list-item.reverse {
+        flex-direction: column; /* Stack vertically */
+        gap: 30px;
+    }
+
+    .mc-step-list-item .mc-text,
+    .mc-step-list-item .mc-image {
+        flex: 1 1 100%; /* Make text/image full width */
+        max-width: 500px; /* Limit width on mobile */
+        text-align: center; /* Center text on mobile */
+    }
+
+     .mc-step-list-item .mc-text {
+         order: 2; /* Ensure text comes after image */
+     }
+     .mc-step-list-item .mc-image {
+         order: 1; /* Ensure image comes first */
+     }
+
+     .mc-step-list-item .mc-text p {
+        margin-left: auto;
+        margin-right: auto;
+     }
+}
+
+/* ==== LAPTOP & SHORT SCREEN FIX (FINAL ADJUSTMENTS) ==== */
+@media (min-width: 769px) and (max-height: 900px) {
+  /* 1. HERO Adjustments: Shrink elements to reduce total height */
+  .hero {
+    height: auto;
+    justify-content: flex-start;
+    padding-top: 80px;      /* Space for the fixed navbar */
+    padding-bottom: 50px;   /* Reduced padding here to make the section smaller */
+  }
+
+  .hero h1 {
+    font-size: 2.25rem; 
+    margin-bottom: 15px; 
+  }
+  .hero h2 {
+    font-size: 1.15rem; 
+    margin-bottom: 25px; 
+  }
+  
+  .hero .cta-buttons .btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+
+  .scroll-arrow {
+    display: none;
+  }
+
+  /* 2. NEXT SECTION Adjustment: Increase buffer and shrink header font */
+  .how-it-works {
+    /* Increase the top padding on the next section for an extra buffer */
+    padding-top: 100px; 
+  }
+  
+  .how-it-works h2 {
+    /* Shrink the main H2 title font to save vertical space */
+    font-size: 1.8rem;
+    margin-bottom: 40px; /* Reduce bottom margin a bit */
+  }
+}
