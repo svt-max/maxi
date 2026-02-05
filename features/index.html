@@ -25,19 +25,47 @@
 
     <nav class="top-nav">
         <div class="nav-content">
-            <img src="Logo_redish.svg" alt="MaxCredible" class="nav-logo" onerror="this.style.display='none'; document.getElementById('txt-logo').style.display='block'">
-            <div id="txt-logo" class="text-logo" style="display:none;">MaxCredible</div>
-
-            <div class="nav-links">
-                <a href="#intro" class="n-link">Start</a>
-                <a href="#interest" class="n-link">Interest</a>
-                <a href="#segmentation" class="n-link">Segmentation</a>
-                <a href="#dashboard" class="n-link">Dashboard</a>
+            <div class="logo-container" onclick="window.location.reload()">
+                <img src="Logo_redish.svg" alt="MaxCredible" class="nav-logo" 
+                    onerror="this.style.display='none'; document.getElementById('txt-logo').style.display='block'">
+                <div id="txt-logo" class="text-logo" style="display:none;">MaxCredible</div>
             </div>
-            
-            <button class="nav-cta" onclick="window.location.href='#intro'">Get Started</button>
+
+            <div class="nav-controls">
+                <button class="nav-toggle" id="menuToggle">
+                    <span class="toggle-txt">Modules</span>
+                    <div class="hamburger"><span></span><span></span></div>
+                </button>
+                <div class="nav-divider"></div>
+                <button class="nav-cta" onclick="window.location.href='#intro'">Get Started</button>
+            </div>
         </div>
     </nav>
+
+    <div class="nav-overlay" id="navOverlay">
+        <div class="nav-columns">
+            <div class="nav-col">
+                <h3>Logic Core</h3>
+                <a href="#interest" class="nav-item"><i class="fa-solid fa-microchip"></i> Interest Engine</a>
+                <a href="#segmentation" class="nav-item"><i class="fa-solid fa-users-gear"></i> Segmentation</a>
+                <a href="#routing" class="nav-item"><i class="fa-solid fa-arrow-right-arrow-left"></i> Smart Routing</a>
+                <a href="#match" class="nav-item"><i class="fa-solid fa-check-double"></i> Reconciliation</a>
+            </div>
+            <div class="nav-col">
+                <h3>Engagement</h3>
+                <a href="#templates" class="nav-item"><i class="fa-solid fa-wand-magic-sparkles"></i> Templates</a>
+                <a href="#reminders" class="nav-item"><i class="fa-solid fa-stopwatch"></i> Auto-Reminders</a>
+                <a href="#paylinks" class="nav-item"><i class="fa-solid fa-link"></i> PayLinks</a>
+                <a href="#legal" class="nav-item"><i class="fa-solid fa-scale-balanced"></i> Legal Email</a>
+            </div>
+            <div class="nav-col">
+                <h3>Intelligence</h3>
+                <a href="#dashboard" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="#reputation" class="nav-item"><i class="fa-solid fa-star-half-stroke"></i> Reputation</a>
+                <a href="#forecast" class="nav-item"><i class="fa-solid fa-crystal-ball"></i> Forecasting</a>
+            </div>
+        </div>
+    </div>
 
     <main class="snap-container" id="mainContainer">
         
