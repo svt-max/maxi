@@ -4,7 +4,17 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. GLOBAL HTML TEMPLATES ---
+    // --- 1. INJECT GLOBAL HEAD ASSETS (Fonts & Icons) ---
+    const headAssets = `
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    `;
+    document.head.insertAdjacentHTML('beforeend', headAssets);
+
+
+    // --- 2. GLOBAL HTML TEMPLATES (Nav, Bg, Footer) ---
     const headerHTML = `
         <div class="ambient-background">
             <div class="blob b-1"></div>
@@ -62,15 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // --- 2. INJECT HTML INTO THE PAGE ---
-    // Insert header right after the opening <body> tag
+    // --- 3. INJECT HTML INTO THE PAGE ---
     document.body.insertAdjacentHTML('afterbegin', headerHTML);
-    
-    // Insert footer right before the closing </body> tag
     document.body.insertAdjacentHTML('beforeend', footerHTML);
 
 
-    // --- 3. INITIALIZE MEGA MENU LOGIC ---
+    // --- 4. INITIALIZE MEGA MENU LOGIC ---
     const menuToggle = document.getElementById('menuToggle');
     const navOverlay = document.getElementById('navOverlay');
 
