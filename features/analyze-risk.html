@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MaxCredible | Analyze Risk</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Theme Colors */
+            --bg-deep: #0f0c29;
+            --card-bg: #0f172a; 
+            --border: rgba(255, 255, 255, 0.1);
+            
+            /* State Colors */
+            --c-legacy: #ff4747; /* Synced Angry Red */
+            --c-netting: #38bdf8; /* Friendly Sky Blue */
+            --c-shield: #a855f7; /* Magic Purple */
+
+            /* Transitions */
+            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding-bottom: 3rem;
+            position: relative;
+        }
+
+        /* --- Header --- */
+        header {
+            text-align: center;
+            margin-top: 140px; /* Pushed down to clear the top nav */
+            margin-bottom: 2.5rem;
+            z-index: 5;
+            padding: 0 1rem;
+        }
+        
+        .logo { width: 180px; margin-bottom: 1.5rem; filter: drop-shadow(0 0 20px rgba(255,255,255,0.1)); }
+        
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(to right, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.25;
+            padding-bottom: 0.1em;
+        }
+
+        /* --- AMBIENT BG --- */
+        .ambient-background { position: fixed; inset: 0; z-index: -1; background: #0f0c29; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: float 10s infinite alternate; pointer-events: none; }
+        .b-1 { width: 500px; height: 500px; background: #ff00cc; top: -10%; left: -10%; }
+        .b-2 { width: 600px; height: 600px; background: #333399; bottom: -10%; right: -10%; }
+        .b-3 { width: 400px; height: 400px; background: #00d4ff; top: 40%; left: 30%; }
+        @keyframes float { 100% { transform: translate(30px, 50px); } }
+
+        /* --- NAVIGATION --- */
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 100px;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; padding: 0 5%;
+            background: linear-gradient(to bottom, rgba(2,6,23,0.8) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .nav-content {
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 100px;
+            padding: 8px 12px 8px 24px; display: flex; align-items: center; justify-content: space-between; 
+            pointer-events: auto; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+            width: 90%; max-width: 1200px; margin: 0 auto;
+        }
+        .logo-container { cursor: pointer; display: flex; align-items: center; text-decoration: none; }
+        .nav-logo { height: 32px; width: auto; display: block; }
+        .nav-controls { display: flex; align-items: center; gap: 12px; }
+        .nav-toggle { 
+            background: transparent; border: none; color: #fff; display: flex; align-items: center; gap: 12px; 
+            cursor: pointer; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; 
+            padding: 8px 12px; border-radius: 20px; transition: background 0.2s;
+        }
+        .nav-toggle:hover { background: rgba(255,255,255,0.05); }
+        .hamburger { width: 18px; height: 12px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .hamburger span { width: 100%; height: 2px; background: #fff; transition: 0.3s; border-radius: 2px; }
+
+        /* --- MEGA MENU --- */
+        .nav-overlay {
+            position: fixed; top: 105px; left: 50%; transform: translateX(-50%) scale(0.95);
+            width: 95%; max-width: 1000px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 3rem; 
+            opacity: 0; pointer-events: none; z-index: 999; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.8); display: flex; flex-direction: column; 
+        }
+        .nav-columns { display: flex; flex-direction: row; justify-content: space-between; width: 100%; gap: 2rem; }
+        .nav-overlay.open { opacity: 1; pointer-events: all; transform: translateX(-50%) scale(1); }
+        .nav-col { flex: 1; }
+        .nav-col h3 { font-family: 'Outfit', sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #64748b; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
+        .nav-item { display: flex; align-items: center; gap: 12px; color: #cbd5e1; text-decoration: none; margin-bottom: 1.2rem; font-weight: 500; transition: 0.2s; font-size: 1rem; }
+        .nav-item:hover { color: #38bdf8; transform: translateX(5px); }
+        .nav-item i { width: 24px; text-align: center; color: #38bdf8; opacity: 0.7; }
+        
+        @media (max-width: 768px) {
+            .nav-overlay {
+                top: 0; left: 0; width: 100%; height: 100vh; max-width: none; border-radius: 0; border: none;
+                transform: translateY(-20px); background: #0f172a; padding: 120px 2rem 4rem 2rem;
+                overflow-y: auto; justify-content: flex-start;
+            }
+            .nav-overlay.open { transform: translateY(0); }
+            .nav-columns { flex-direction: column; gap: 3rem; }
+            .top-nav { height: 80px; }
+        }
+
+        /* --- CONTROL DECK --- */
+        .control-deck {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px; /* Mobile Default */
+            justify-content: center;
+            padding: 0 1rem;
+            box-sizing: border-box;
+            transition: all 0.4s;
+        }
+
+        .module-btn {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s var(--ease-elastic);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            min-width: 180px; 
+            flex: 1; /* Fluid on mobile */
+        }
+
+        .module-btn:hover {
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-4px);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .module-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .module-info { text-align: left; }
+        .module-label { display: block; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; color: #94a3b8; letter-spacing: 0.5px; white-space: nowrap;}
+        .module-status { display: block; font-size: 0.75rem; color: #475569; margin-top: 2px;}
+
+        /* Pulse Guide */
+        @keyframes subtle-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); border-color: rgba(56, 189, 248, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(56, 189, 248, 0); border-color: rgba(56, 189, 248, 0.1); }
+            100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); border-color: var(--border); }
+        }
+        .pulse-guide { animation: subtle-pulse 2s infinite; }
+
+        /* Active States */
+        .module-btn.active-netting {
+            border-color: var(--c-netting);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+            background: rgba(56, 189, 248, 0.05);
+            animation: none; 
+        }
+        .module-btn.active-netting .module-icon { background: var(--c-netting); color: #0f172a; }
+        .module-btn.active-netting .module-label { color: #fff; }
+        .module-btn.active-netting .module-status { color: var(--c-netting); }
+
+        .module-btn.active-shield {
+            border-color: var(--c-shield);
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.15);
+            background: rgba(168, 85, 247, 0.05);
+        }
+        .module-btn.active-shield .module-icon { background: var(--c-shield); color: #fff; }
+        .module-btn.active-shield .module-label { color: #fff; }
+        .module-btn.active-shield .module-status { color: var(--c-shield); }
+
+        /* --- ANALYZE RISK STYLES --- */
+        .risk-wrapper { padding: 2rem; display: flex; flex-direction: column; min-height: 400px; width: 100%; box-sizing: border-box; position: relative;}
+        
+        /* State 1: Ledger Table */
+        .ledger-view { width: 100%; opacity: 1; transition: all 0.5s; display: flex; flex-direction: column; gap: 8px;}
+        .ledger-row { display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: #94a3b8; }
+        .ledger-header { background: rgba(0,0,0,0.2); font-weight: bold; color: #fff; text-transform: uppercase; font-size: 0.75rem; border: none;}
+        
+        /* Action Button */
+        .scan-btn { margin-top: 1.5rem; background: linear-gradient(135deg, #ec4899, #be185d); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(236, 72, 153, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;}
+        .scan-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(236, 72, 153, 0.6); }
+
+        /* State 2: Scanning Animation */
+        .scan-view { display: none; opacity: 0; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; background: var(--card-bg); z-index: 10; transition: opacity 0.5s;}
+        .radar-spinner { width: 80px; height: 80px; border: 4px solid rgba(236, 72, 153, 0.2); border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem;}
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* State 3: Dashboard */
+        .dash-view { display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s; flex-direction: column; gap: 1rem; width: 100%;}
+        .dash-view.visible { display: flex; opacity: 1; transform: translateY(0); }
+        
+        .dash-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden; }
+        .card-exposure { border-color: rgba(239, 68, 68, 0.3); }
+        .card-exposure::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #ef4444, #f87171); }
+        
+        .dash-lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 700; margin-bottom: 5px; display: block;}
+        .dash-val { font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1; }
+        
+        /* Interactive Row */
+        .risk-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(239, 68, 68, 0.1); cursor: pointer; transition: all 0.2s;}
+        .risk-item:hover { background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.4); transform: scale(1.02); }
+        .r-icon { background: rgba(239, 68, 68, 0.1); color: #ef4444; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 1.2rem;}
+
+        /* State 4: Deep Dive */
+        .deep-dive-view { display: none; opacity: 0; transform: translateX(20px); transition: all 0.5s; flex-direction: column; width: 100%; height: 100%; position: absolute; inset: 0; background: var(--card-bg); padding: 2rem; box-sizing: border-box; z-index: 20;}
+        .deep-dive-view.visible { display: flex; opacity: 1; transform: translateX(0); }
+        .back-btn { background: none; border: none; color: #94a3b8; cursor: pointer; font-family: 'Plus Jakarta Sans'; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; padding: 0;}
+        .back-btn:hover { color: #fff; }
+
+        body.mode-analyzed .smart-card { border-color: rgba(236, 72, 153, 0.4); box-shadow: 0 0 60px -10px rgba(236, 72, 153, 0.15); }
+        body.mode-analyzed .status-bar { background: rgba(236, 72, 153, 0.1); color: #ec4899; border-top: 1px solid rgba(236, 72, 153, 0.2); }
+        
+        /* Re-adding Mobile Overrides from original file */
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .nav-overlay {
+                top: 0; left: 0; width: 100%; height: 100vh; max-width: none; border-radius: 0; border: none;
+                transform: translateY(-20px); background: #0f172a; padding: 120px 2rem 4rem 2rem;
+                overflow-y: auto; justify-content: flex-start;
+            }
+            .nav-overlay.open { transform: translateY(0); }
+            .nav-columns { flex-direction: column; gap: 3rem; }
+            .top-nav { height: 80px; }
+            .smart-card { width: 100%; border-radius: 24px; min-height: 50vh; display: flex; flex-direction: column; justify-content: space-between; margin: 0 -1.5rem; width: calc(100% + 3rem);}
+        }
+        @media (min-width: 768px) {
+            h1 { font-size: 4rem; margin-bottom: 0.5rem; padding-bottom: 0.1em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-background">
+        <div class="blob b-1"></div>
+        <div class="blob b-2"></div>
+        <div class="blob b-3"></div>
+    </div>
+
+    <nav class="top-nav">
+        <div class="nav-content">
+            <a href="index.html" class="logo-container" title="Back to Features">
+                <img src="MaxCredible Icon with Text.png" alt="MaxCredible" class="nav-logo" style="filter: brightness(0) invert(1);">
+            </a>
+
+            <div class="nav-controls">
+                <button class="nav-toggle" id="menuToggle">
+                    <span class="toggle-txt">Modules</span>
+                    <div class="hamburger"><span></span><span></span></div>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="nav-overlay" id="navOverlay">
+        <div class="nav-columns">
+            <div class="nav-col">
+                <h3>Logic Core</h3>
+                <a href="index.html#interest" class="nav-item"><i class="fa-solid fa-microchip"></i> Interest Engine</a>
+                <a href="index.html#segmentation" class="nav-item"><i class="fa-solid fa-users-gear"></i> Segmentation</a>
+                <a href="index.html#routing" class="nav-item"><i class="fa-solid fa-arrow-right-arrow-left"></i> Smart Routing</a>
+                <a href="index.html#match" class="nav-item"><i class="fa-solid fa-check-double"></i> Reconciliation</a>
+            </div>
+            <div class="nav-col">
+                <h3>Engagement</h3>
+                <a href="index.html#templates" class="nav-item"><i class="fa-solid fa-wand-magic-sparkles"></i> Templates</a>
+                <a href="index.html#reminders" class="nav-item"><i class="fa-solid fa-stopwatch"></i> Auto-Reminders</a>
+                <a href="index.html#paylinks" class="nav-item"><i class="fa-solid fa-link"></i> PayLinks</a>
+                <a href="index.html#legal" class="nav-item"><i class="fa-solid fa-scale-balanced"></i> Legal Email</a>
+            </div>
+            <div class="nav-col">
+                <h3>Intelligence</h3>
+                <a href="index.html#dashboard" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="index.html#reputation" class="nav-item"><i class="fa-solid fa-star-half-stroke"></i> Reputation</a>
+                <a href="index.html#forecast" class="nav-item"><i class="fa-solid fa-crystal-ball"></i> Forecasting</a>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <h1>Analyze Risk</h1>
+    </header>
+
+    <div class="stage-area" style="margin-top: 2rem;">
+        <div class="smart-card">
+            <div class="risk-wrapper">
+                
+                <div class="ledger-view" id="view-raw">
+                    <div class="ledger-row ledger-header">
+                        <span>Debtor</span> <span>Inv Date</span> <span>Amount</span>
+                    </div>
+                    <div class="ledger-row"><span>Acme Corp</span> <span>2025-08-12</span> <span>$12,500</span></div>
+                    <div class="ledger-row"><span>Wayne Ent.</span> <span>2025-09-01</span> <span>$4,200</span></div>
+                    <div class="ledger-row"><span>Globex Inc.</span> <span>2025-07-20</span> <span>$8,200</span></div>
+                    <div class="ledger-row"><span>Stark Ind.</span> <span>2025-10-05</span> <span>$1,150</span></div>
+                    <div class="ledger-row"><span>Soylent Corp</span> <span>2025-06-15</span> <span>$5,100</span></div>
+                    
+                    <button class="scan-btn" onclick="startScan()">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i> Run AI Health Check
+                    </button>
+                </div>
+
+                <div class="scan-view" id="view-scan">
+                    <div class="radar-spinner"></div>
+                    <h3 style="font-family: 'Outfit'; margin: 0; color: #fff;">Analyzing Ledger...</h3>
+                    <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 5px;">Cross-referencing payment histories.</p>
+                </div>
+
+                <div class="dash-view" id="view-dash">
+                    <div class="dash-card card-exposure">
+                        <span class="dash-lbl">Current Risk Exposure</span>
+                        <span class="dash-val" style="color: #ef4444;">$42,350.00</span>
+                    </div>
+
+                    <div class="dash-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="dash-lbl" style="margin:0;"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> Critical Risk Identified</span>
+                            <span style="font-size: 0.7rem; color: #94a3b8;">Click to expand</span>
+                        </div>
+                        
+                        <div class="risk-item" onclick="showDeepDive()">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="r-icon">A</div>
+                                <div>
+                                    <div style="font-weight: bold; color: #fff; font-size: 0.9rem;">Acme Corp</div>
+                                    <div style="font-size: 0.75rem; color: #ef4444;">58 Days Late (Avg)</div>
+                                </div>
+                            </div>
+                            <div style="font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem;">$12,500 <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: #64748b; margin-left: 8px;"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deep-dive-view" id="view-deep">
+                    <button class="back-btn" onclick="backToDashboard()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+                    
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
+                        <div class="r-icon">A</div>
+                        <div>
+                            <h2 style="font-family: 'Outfit'; margin: 0; color: #fff; font-size: 1.5rem;">Acme Corp</h2>
+                            <p style="color: #ef4444; font-size: 0.85rem; margin: 0; font-weight: bold;">High Flight Risk</p>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+                        <span class="dash-lbl">AI Risk Factors</span>
+                        <ul style="margin: 0; padding-left: 1rem; color: #cbd5e1; font-size: 0.85rem; line-height: 1.6;">
+                            <li>Payment velocity dropped by 40% in Q3.</li>
+                            <li>Ignored last 3 standard reminders.</li>
+                            <li>Opened emails but did not click PayLinks.</li>
+                        </ul>
+                    </div>
+
+                    <button class="scan-btn" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);">
+                        <i class="fa-solid fa-bolt"></i> Deploy Aggressive Workflow
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-eye-slash"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Data Hidden in Spreadsheets</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">The Blind Spot</div>
+            <div class="narrative-text" id="narrative-text">
+                Raw ledger data shows you who owes you money, but it doesn't tell you who is actually a risk. It's impossible to manually calculate behavioral trends across thousands of rows.
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 4rem; text-align: center; opacity: 0.7; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+        <span style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700;">Powered by MaxCredible</span>
+        <img src="MaxCredible Icon with Text.png" alt="MaxCredible Logo" style="height: 32px; filter: brightness(0) invert(1);">
+    </div>
+
+    <script>
+        // --- MEGA MENU TOGGLE ---
+        const menuToggle = document.getElementById('menuToggle');
+        const navOverlay = document.getElementById('navOverlay');
+
+        if(menuToggle && navOverlay) {
+            menuToggle.addEventListener('click', () => {
+                navOverlay.classList.toggle('open');
+                const spans = menuToggle.querySelectorAll('span');
+                if(navOverlay.classList.contains('open')) {
+                    spans[0].style.transform = "rotate(45deg) translate(5px, 5px)";
+                    spans[1].style.transform = "rotate(-45deg) translate(5px, -5px)";
+                } else {
+                    spans[0].style.transform = "none";
+                    spans[1].style.transform = "none";
+                }
+            });
+        }
+
+        const body = document.body;
+        const viewRaw = document.getElementById('view-raw');
+        const viewScan = document.getElementById('view-scan');
+        const viewDash = document.getElementById('view-dash');
+        const viewDeep = document.getElementById('view-deep');
+        const actionBar = document.getElementById('action-bar');
+        
+        const narrativeTitle = document.getElementById('narrative-title');
+        const narrativeText = document.getElementById('narrative-text');
+
+        // Flow 1: Trigger the scan
+        function startScan() {
+            // Fade out raw data
+            viewRaw.style.opacity = "0";
+            
+            setTimeout(() => {
+                viewRaw.style.display = "none";
+                viewScan.style.display = "flex";
+                // Trigger reflow
+                void viewScan.offsetWidth;
+                viewScan.style.opacity = "1";
+                
+                // Simulate processing time, then show dashboard
+                setTimeout(showDashboard, 2500);
+            }, 500);
+        }
+
+        // Flow 2: Reveal the Dashboard
+        function showDashboard() {
+            body.className = 'mode-analyzed';
+            viewScan.style.opacity = "0";
+
+            setTimeout(() => {
+                viewScan.style.display = "none";
+                viewDash.classList.add('visible');
+
+                actionBar.className = "status-bar";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-magnifying-glass-chart"></i>&nbsp; Action: Risk Detected</span><span style="opacity:0.7; font-size:0.75rem">$42,350 Exposure Found</span></div>';
+
+                narrativeTitle.innerText = 'Instant Clarity';
+                narrativeText.innerText = 'MaxCredible ingests your ledger instantly, calculates behavioral scores, and flags critical risks. You go from looking at static spreadsheets to a targeted action plan.';
+            }, 500);
+        }
+
+        // Flow 3: Click a row to see the Deep Dive
+        function showDeepDive() {
+            viewDash.classList.remove('visible');
+            
+            setTimeout(() => {
+                viewDash.style.display = "none";
+                viewDeep.classList.add('visible');
+
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-crosshairs"></i>&nbsp; Action: Focused</span><span style="opacity:0.7; font-size:0.75rem">Reviewing Acme Corp</span></div>';
+
+                narrativeTitle.innerText = 'Data-Driven Action';
+                narrativeText.innerText = 'Now you know exactly why they are a flight risk. Instead of sending a generic reminder, you can instantly deploy a highly aggressive, customized workflow designed specifically to recover this exact debt.';
+            }, 500);
+        }
+
+        // Flow 4: Go back to the Dashboard
+        function backToDashboard() {
+            viewDeep.classList.remove('visible');
+            
+            setTimeout(() => {
+                viewDeep.style.display = "none";
+                viewDash.style.display = "flex";
+                // Trigger reflow
+                void viewDash.offsetWidth;
+                viewDash.classList.add('visible');
+
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-magnifying-glass-chart"></i>&nbsp; Action: Risk Detected</span><span style="opacity:0.7; font-size:0.75rem">$42,350 Exposure Found</span></div>';
+
+                narrativeTitle.innerText = 'Instant Clarity';
+                narrativeText.innerText = 'MaxCredible ingests your ledger instantly, calculates behavioral scores, and flags critical risks. You go from looking at static spreadsheets to a targeted action plan.';
+            }, 500);
+        }
+    </script>
+</body>
+</html>
