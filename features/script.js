@@ -78,6 +78,16 @@ let autoCycle = setInterval(runCycles, 3500);
 
 function runCycles() {
     cycleInterest();
+    cycleImport();
+    cycleSegmentation();
+    cycleDashboard();
+    cycleReminders();
+    cycleRouting();
+    cyclePaylinks();
+    cycleTemplates();
+    cycleMatch();
+    cycleForecast();
+    cycleLegal();
     cycleGenerics();
 }
 
@@ -86,7 +96,18 @@ document.querySelectorAll('.visual-cycle').forEach(el => {
     el.addEventListener('click', (e) => {
         e.stopPropagation(); // Prevent card click redirect
         clearInterval(autoCycle); // Stop the auto-timer
+        
         if(el.id === 'interest-visual') cycleInterest();
+        else if(el.id === 'import-visual') cycleImport();
+        else if(el.id === 'seg-visual') cycleSegmentation();
+        else if(el.id === 'dash-visual') cycleDashboard();
+        else if(el.id === 'rem-visual') cycleReminders();
+        else if(el.id === 'route-visual') cycleRouting();
+        else if(el.id === 'pay-visual') cyclePaylinks();
+        else if(el.id === 'tpl-visual') cycleTemplates();
+        else if(el.id === 'match-visual') cycleMatch();
+        else if(el.id === 'fore-visual') cycleForecast();
+        else if(el.id === 'leg-visual') cycleLegal();
         else el.classList.toggle('cycling');
         
         // Haptic feedback for the "fix"
@@ -149,6 +170,237 @@ function cycleInterest() {
         actionFooter.className = "action-footer action-purple";
         actionFooter.innerHTML = '<i class="fa-solid fa-lock"></i> ACTION: SUPPRESSED';
         intDesc.innerText = "Silent Mode. The remaining €2.15 is mathematically correct but trivial. The Shield stops the spam.";
+    }
+}
+
+// 1.5 IMPORT & SEGMENTATION CYCLES
+function cycleImport() {
+    const visual = document.getElementById('import-visual');
+    const desc = document.getElementById('import-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('import-state-1');
+    const s2 = document.getElementById('import-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Raw ledger data is instantly ingested and transformed into actionable financial intelligence.";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "Database Analyzed. View total pipeline health, outstanding balances, and key performance metrics instantly.";
+    }
+}
+
+function cycleSegmentation() {
+    const visual = document.getElementById('seg-visual');
+    const desc = document.getElementById('seg-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('seg-state-1');
+    const s2 = document.getElementById('seg-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Raw customer data flows into dynamic buckets based on live risk assessment and geographic region.";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "Sorted! High-risk accounts get automated tight follow-ups, while VIPs get specialized white-glove templates.";
+    }
+}
+
+function cycleDashboard() {
+    const visual = document.getElementById('dash-visual');
+    const desc = document.getElementById('dash-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('dash-state-1');
+    const s2 = document.getElementById('dash-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Instead of drowning in endless spreadsheets and trying to manually track who owes what...";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "Transform raw data into visual heatmaps to instantly spot bottlenecks and prioritize team efforts.";
+    }
+}
+
+function cycleReminders() {
+    const visual = document.getElementById('rem-visual');
+    const desc = document.getElementById('rem-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('rem-state-1');
+    const s2 = document.getElementById('rem-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Manually checking calendars and sending emails one by one is slow and error-prone.";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "Set a strict timeline. Gentle nudges escalate automatically to interest additions and collections.";
+    }
+}
+
+function cycleRouting() {
+    const visual = document.getElementById('route-visual');
+    const desc = document.getElementById('route-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('route-state-1');
+    const s2 = document.getElementById('route-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "The dunning journey progresses automatically toward collections without context.";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "Dispute detected! The system instantly halts the workflow and routes the ticket to a specialist.";
+    }
+}
+
+function cyclePaylinks() {
+    const visual = document.getElementById('pay-visual');
+    const desc = document.getElementById('pay-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('pay-state-1');
+    const s2 = document.getElementById('pay-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Customers manually type IBANs and references, leading to errors and delays.";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "PayLinks embed directly into reminders. Cash clears instantly, tracing is flawless, and Days Sales Outstanding drops.";
+    }
+}
+
+function cycleTemplates() {
+    const visual = document.getElementById('tpl-visual');
+    const desc = document.getElementById('tpl-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('tpl-state-1');
+    const s2 = document.getElementById('tpl-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Boring, plain-text emails with static PDF attachments get ignored or sent to spam.";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "Send beautiful, branded HTML emails that adapt their tone based on the customer's risk profile.";
+    }
+}
+
+function cycleMatch() {
+    const visual = document.getElementById('match-visual');
+    const desc = document.getElementById('match-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('match-state-1');
+    const s2 = document.getElementById('match-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Open invoices sit idle while bank payments arrive without clear references.";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "AI instantly reconciles incoming funds against open invoices, stopping reminders in their tracks.";
+    }
+}
+
+function cycleForecast() {
+    const visual = document.getElementById('fore-visual');
+    const desc = document.getElementById('fore-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('fore-state-1');
+    const s2 = document.getElementById('fore-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Relying on guesswork leaves you blind to cashflow dips and working capital needs.";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "Historical AI models predict exactly when payments will land, ensuring you are never caught off guard.";
+    }
+}
+
+function cycleLegal() {
+    const visual = document.getElementById('leg-visual');
+    const desc = document.getElementById('leg-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('leg-state-1');
+    const s2 = document.getElementById('leg-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Standard emails have no legal weight. Debtors can easily claim 'I never received it.'";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "Wrap critical notices in a legally binding envelope with an encrypted delivery hash for undeniable proof.";
     }
 }
 
