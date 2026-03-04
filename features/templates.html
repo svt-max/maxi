@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible | Dynamic Templates</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .tpl-wrapper { padding: 2rem; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
+        
+        /* State 1: Design */
+        #view-design { display: flex; flex-direction: column; gap: 1.5rem; transition: opacity 0.4s; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        .lbl { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 1px; }
+        
+        .btn-row { display: flex; gap: 8px; }
+        .t-btn { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 10px; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .t-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .t-btn.active { background: rgba(56, 189, 248, 0.1); border-color: #38bdf8; color: #38bdf8; }
+        
+        .c-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; color: transparent; }
+        .c-btn.active { border-color: #fff; transform: scale(1.1); color: #fff; box-shadow: 0 0 15px currentColor; }
+
+        /* Mock Email Preview */
+        .mock-email { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.4s; margin-top: 1rem; }
+        .me-header { padding: 1.2rem; color: #fff; font-weight: bold; font-size: 0.9rem; display: flex; justify-content: space-between; transition: background 0.4s; }
+        .me-body { padding: 1.5rem; color: #334155; font-size: 0.9rem; line-height: 1.6; }
+        .me-btn { display: inline-block; padding: 10px 20px; border-radius: 8px; color: #fff; font-weight: bold; margin-top: 1rem; transition: background 0.4s; }
+
+        .action-btn { margin-top: 1.5rem; background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.4); width: 100%;}
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(56, 189, 248, 0.6); }
+
+        /* State 2: Select Target */
+        #view-targets { display: none; opacity: 0; flex-direction: column; transition: opacity 0.4s; }
+        .target-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
+        .target-row:hover { background: rgba(56, 189, 248, 0.05); border-color: rgba(56, 189, 248, 0.3); transform: translateX(5px); }
+        .t-name { font-weight: bold; color: #fff; font-size: 1rem; display: block; }
+        .t-sub { font-size: 0.75rem; color: #94a3b8; }
+        .t-badge { background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        body.mode-sent .smart-card { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 60px -10px rgba(16, 185, 129, 0.15); }
+        body.mode-sent .status-bar { background: rgba(16, 185, 129, 0.1); color: #10b981; border-top: 1px solid rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Dynamic Templates</h1>
+    </header>
+
+    <div class="stage-area">
+        <div class="smart-card">
+            <div class="tpl-wrapper">
+                
+                <div id="view-design">
+                    <div class="control-group">
+                        <span class="lbl">Tone of Voice</span>
+                        <div class="btn-row" id="tone-controls">
+                            <button class="t-btn active" onclick="setTone('friendly', this)">Friendly</button>
+                            <button class="t-btn" onclick="setTone('factual', this)">Factual</button>
+                            <button class="t-btn" onclick="setTone('strict', this)">Strict</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group mt-2">
+                        <span class="lbl">Brand Accent</span>
+                        <div class="btn-row" id="color-controls">
+                            <div class="c-btn active" style="background: #38bdf8;" onclick="setColor('#38bdf8', this)"><i class="fa-solid fa-check"></i></div>
+                            <div class="c-btn" style="background: #8b5cf6;" onclick="setColor('#8b5cf6', this)"><i class="fa-solid fa-check"></i></div>
+                            <div class="c-btn" style="background: #10b981;" onclick="setColor('#10b981', this)"><i class="fa-solid fa-check"></i></div>
+                            <div class="c-btn" style="background: #ef4444;" onclick="setColor('#ef4444', this)"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="mock-email">
+                        <div class="me-header" id="me-header" style="background: #38bdf8;">
+                            <span>MaxCredible</span> <span>INV-2026-001</span>
+                        </div>
+                        <div class="me-body">
+                            <h3 style="margin-top:0; color:#0f172a;" id="me-title">A Friendly Reminder</h3>
+                            <p id="me-text">We hope you're having a great week! We noticed that invoice <strong>INV-2026-001</strong> is still outstanding. We've attached a copy for your records.</p>
+                            <div class="me-btn" id="me-btn" style="background: #38bdf8;">Pay Securely</div>
+                        </div>
+                    </div>
+
+                    <button class="action-btn" onclick="showTargets()">Next: Select Recipient <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <div id="view-targets">
+                    <h2 style="font-family: 'Outfit'; margin: 0 0 1.5rem 0; color: #fff;">Select Debtor</h2>
+                    
+                    <div class="target-row" onclick="sendReminder('Acme Corp')">
+                        <div>
+                            <span class="t-name">Acme Corp</span>
+                            <span class="t-sub">$12,500 • 15 Days Overdue</span>
+                        </div>
+                        <span class="t-badge"><i class="fa-solid fa-triangle-exclamation"></i> High Risk</span>
+                    </div>
+
+                    <div class="target-row" onclick="sendReminder('Globex Inc')">
+                        <div>
+                            <span class="t-name">Globex Inc</span>
+                            <span class="t-sub">$4,200 • 5 Days Overdue</span>
+                        </div>
+                        <span class="t-badge" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3);">Med Risk</span>
+                    </div>
+
+                    <button class="t-btn" style="margin-top: 1rem;" onclick="backToDesign()"><i class="fa-solid fa-arrow-left"></i> Back to Design</button>
+                </div>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-palette"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Drafting Template</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">No More Copy-Pasting</div>
+            <div class="narrative-text" id="narrative-text">
+                Design beautiful, on-brand templates once. MaxCredible automatically adjusts the tone based on the debtor's risk profile, ensuring the right message lands at exactly the right time.
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        const meHeader = document.getElementById('me-header');
+        const meBtn = document.getElementById('me-btn');
+        const meTitle = document.getElementById('me-title');
+        const meText = document.getElementById('me-text');
+        
+        const viewDesign = document.getElementById('view-design');
+        const viewTargets = document.getElementById('view-targets');
+        const actionBar = document.getElementById('action-bar');
+        const body = document.body;
+
+        const copy = {
+            friendly: { title: "A Friendly Reminder", text: "We hope you're having a great week! We noticed that invoice <strong>INV-2026-001</strong> is still outstanding. We've attached a copy for your records." },
+            factual: { title: "Outstanding Balance", text: "Our records indicate that invoice <strong>INV-2026-001</strong> remains unpaid as of today. Please review the attached invoice." },
+            strict: { title: "Final Notice: Overdue", text: "We are writing to inform you that payment for <strong>INV-2026-001</strong> is significantly overdue. Please settle this balance immediately." }
+        };
+
+        function setTone(tone, btn) {
+            document.querySelectorAll('#tone-controls .t-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            meTitle.innerText = copy[tone].title;
+            meText.innerHTML = copy[tone].text;
+        }
+
+        function setColor(hex, btn) {
+            document.querySelectorAll('#color-controls .c-btn').forEach(b => { b.classList.remove('active'); b.innerHTML = ''; });
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            meHeader.style.background = hex;
+            meBtn.style.background = hex;
+        }
+
+        function showTargets() {
+            viewDesign.style.opacity = '0';
+            setTimeout(() => {
+                viewDesign.style.display = 'none';
+                viewTargets.style.display = 'flex';
+                // trigger reflow
+                void viewTargets.offsetWidth;
+                viewTargets.style.opacity = '1';
+                
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-users"></i> &nbsp;Action: Target</span><span style="opacity:0.7; font-size:0.75rem">Select recipient</span></div>';
+            }, 400);
+        }
+
+        function backToDesign() {
+            viewTargets.style.opacity = '0';
+            setTimeout(() => {
+                viewTargets.style.display = 'none';
+                viewDesign.style.display = 'flex';
+                void viewDesign.offsetWidth;
+                viewDesign.style.opacity = '1';
+                
+                actionBar.className = "status-bar s-legacy";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-palette"></i> &nbsp;Status</span><span style="opacity:0.7; font-size:0.75rem">Drafting Template</span></div>';
+            }, 400);
+        }
+
+        function sendReminder(company) {
+            body.className = 'mode-sent';
+            viewTargets.style.opacity = '0';
+            
+            setTimeout(() => {
+                viewTargets.innerHTML = `
+                    <div style="text-align: center; padding: 2rem 0;">
+                        <i class="fa-solid fa-paper-plane" style="font-size: 3rem; color: #10b981; margin-bottom: 1rem;"></i>
+                        <h2 style="font-family: 'Outfit'; margin: 0 0 10px 0; color: #fff;">Dispatched Successfully</h2>
+                        <p style="color: #94a3b8; font-size: 0.9rem;">Customized template sent to ${company}.</p>
+                    </div>
+                `;
+                viewTargets.style.opacity = '1';
+
+                actionBar.className = "status-bar";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-check-circle"></i> &nbsp;Delivered</span><span style="opacity:0.7; font-size:0.75rem">Tracking engagement...</span></div>';
+                
+                document.getElementById('narrative-title').innerText = "Instant Execution";
+                document.getElementById('narrative-text').innerText = "The email is dispatched with the perfect tone and styling, directly impacting open rates and reducing time-to-pay.";
+            }, 400);
+        }
+    </script>
+</body>
+</html>

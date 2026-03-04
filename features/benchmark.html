@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible | Peer Benchmark</title>
+    
+    <link rel="stylesheet" href="global.css">
+
+    <style>
+        /* --- BENCHMARK STYLES --- */
+        .bench-wrapper { padding: 2rem; display: flex; flex-direction: column; min-height: 400px; width: 100%; box-sizing: border-box; justify-content: center; text-align: center; }
+
+        .b-lbl { font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; font-weight: 700; margin-bottom: 8px;}
+        .b-val { font-family: 'Outfit', sans-serif; font-size: 4rem; font-weight: 800; color: #fff; line-height: 1; transition: color 0.3s; font-variant-numeric: tabular-nums;}
+
+        .action-btn { margin-top: 2rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 300px; margin-left: auto; margin-right: auto;}
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(16, 185, 129, 0.6); }
+
+        /* Initial View */
+        #view-internal { display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s; }
+
+        /* Interactive Benchmark View */
+        #view-benchmark { display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s; flex-direction: column; width: 100%; }
+        #view-benchmark.visible { display: flex; opacity: 1; transform: translateY(0); }
+
+        /* Slider Styles */
+        .slider-container { position: relative; width: 100%; margin: 3rem 0 2rem 0; height: 30px; display: flex; align-items: center;}
+        .slider-track-bg { position: absolute; width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .slider-fill { position: absolute; height: 12px; background: linear-gradient(90deg, #f97316, #fb923c); border-radius: 10px; pointer-events: none; transition: background 0.3s; }
+
+        .marker-industry { position: absolute; top: -35px; left: 38.3%; /* 53 out of 30-90 range */ transform: translateX(-50%); font-size: 0.75rem; color: #94a3b8; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
+        .marker-industry span { color: #fff; display: block; font-size: 1rem;}
+        .marker-industry::after { content: ''; position: absolute; top: 32px; left: 50%; width: 2px; height: 20px; background: #fff; transform: translateX(-50%); z-index: 0;}
+
+        /* Invisible Native Slider over custom track */
+        input[type=range] { 
+            -webkit-appearance: none; width: 100%; background: transparent; position: absolute; z-index: 10; cursor: ew-resize; margin: 0; 
+            --thumb-color: #f97316;
+            --thumb-shadow: rgba(249, 115, 22, 0.5);
+        }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 28px; width: 28px; border-radius: 50%; background: #fff; border: 3px solid var(--thumb-color); box-shadow: 0 0 15px var(--thumb-shadow); cursor: ew-resize; transition: border-color 0.3s, box-shadow 0.3s; }
+        input[type=range]::-moz-range-thumb { height: 28px; width: 28px; border-radius: 50%; background: #fff; border: 3px solid var(--thumb-color); box-shadow: 0 0 15px var(--thumb-shadow); cursor: ew-resize; transition: border-color 0.3s, box-shadow 0.3s; }
+
+        /* Dynamic Feedback Box */
+        .cash-box { margin-top: 1.5rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1.5rem; border-radius: 16px; transition: all 0.3s; }
+        .cash-box.negative { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
+
+        /* Dynamic Colors */
+        .color-bad { color: #f97316 !important; }
+        .color-good { color: #10b981 !important; }
+        .color-worse { color: #ef4444 !important; }
+
+        body.mode-benchmarked .smart-card { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 60px -10px rgba(16, 185, 129, 0.15); }
+        body.mode-benchmarked .status-bar { background: rgba(16, 185, 129, 0.1); color: #10b981; border-top: 1px solid rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Peer Benchmark</h1>
+    </header>
+
+    <div class="stage-area">
+        <div class="smart-card">
+            <div class="bench-wrapper">
+
+                <div id="view-internal">
+                    <div class="b-lbl">Your Days Sales Outstanding</div>
+                    <div class="b-val" style="color: #fff;">62 Days</div>
+                    <button class="action-btn" onclick="revealBenchmark()">
+                        <i class="fa-solid fa-globe"></i> Add Market Context
+                    </button>
+                </div>
+
+                <div id="view-benchmark">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div style="text-align: left;">
+                            <div class="b-lbl" style="margin-bottom: 0;">Your DSO</div>
+                            <div class="b-val color-bad" id="dso-display" style="font-size: 2.5rem;">62 Days</div>
+                        </div>
+                        <div style="text-align: right; color: #94a3b8; font-size: 0.85rem;">
+                            Drag to simulate <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                        </div>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-track-bg"></div>
+                        <div class="marker-industry">Industry Avg <span>53 Days</span></div>
+                        <div class="slider-fill" id="slider-fill" style="width: 53.3%;"></div> <input type="range" min="30" max="90" value="62" id="dso-slider">
+                    </div>
+
+                    <div class="cash-box" id="cash-box">
+                        <div class="b-lbl" id="cash-lbl" style="color: #10b981;">Potential Cash Unlock</div>
+                        <div class="b-val" id="cash-val" style="font-size: 2.5rem; color: #10b981;">$24,660</div>
+                        <div style="font-size: 0.8rem; margin-top: 8px; color: #cbd5e1; font-weight: 500;" id="cash-feedback">
+                            Closing the 9-day gap to the industry average.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-circle-question"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Operating in a vacuum</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">The Isolated Metric</div>
+            <div class="narrative-text" id="narrative-text">
+                You track your Days Sales Outstanding (DSO), but seeing "62 Days" on a dashboard doesn't mean much unless you know the market standard. Are you ahead, or falling behind?
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+
+    <script>
+        const viewInternal = document.getElementById('view-internal');
+        const viewBenchmark = document.getElementById('view-benchmark');
+        const actionBar = document.getElementById('action-bar');
+        const body = document.body;
+
+        const narrativeTitle = document.getElementById('narrative-title');
+        const narrativeText = document.getElementById('narrative-text');
+
+        // Slider Elements
+        const slider = document.getElementById('dso-slider');
+        const sliderFill = document.getElementById('slider-fill');
+        const dsoDisplay = document.getElementById('dso-display');
+        const cashBox = document.getElementById('cash-box');
+        const cashLbl = document.getElementById('cash-lbl');
+        const cashVal = document.getElementById('cash-val');
+        const cashFeedback = document.getElementById('cash-feedback');
+
+        // Logic Constants (Matched to your onboarding formula)
+        const industryAvg = 53;
+        const baselineDSO = 62;
+        const salesPerDay = 2740;
+
+        function revealBenchmark() {
+            viewInternal.style.opacity = '0';
+            
+            setTimeout(() => {
+                viewInternal.style.display = 'none';
+                viewBenchmark.classList.add('visible');
+                body.className = 'mode-benchmarked';
+
+                actionBar.className = "status-bar";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-trophy"></i>&nbsp; Action: Target Set</span><span style="opacity:0.7; font-size:0.75rem">Interactive Simulation Active</span></div>';
+
+                narrativeTitle.innerText = 'The Competitive Edge';
+                narrativeText.innerText = 'By benchmarking against peers, you instantly see the target. Use the slider to simulate how reducing your DSO unlocks trapped cash you can reinvest today.';
+
+                // Trigger initial calculation to set the UI
+                calculateImpact(slider.value);
+            }, 500);
+        }
+
+        // Listen for slider drags
+        slider.addEventListener('input', (e) => {
+            calculateImpact(e.target.value);
+        });
+
+        function calculateImpact(days) {
+            // Calculate percentage for the slider fill (Math: (current - min) / (max - min) * 100)
+            const percent = ((days - slider.min) / (slider.max - slider.min)) * 100;
+            sliderFill.style.width = `${percent}%`;
+            dsoDisplay.innerText = `${days} Days`;
+
+            // Calculate Cash (Baseline minus current simulated days)
+            let cashUnlocked = (baselineDSO - days) * salesPerDay;
+
+            // Format Currency
+            const formattedCash = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Math.abs(cashUnlocked));
+
+            // Dynamic Styling based on performance
+            if (days <= industryAvg) {
+                // Beating the industry average
+                sliderFill.style.background = "linear-gradient(90deg, #10b981, #34d399)";
+                dsoDisplay.className = "b-val color-good";
+                
+                cashBox.className = "cash-box";
+                cashLbl.style.color = "#10b981";
+                cashVal.style.color = "#10b981";
+                
+                cashLbl.innerText = "Cash Unlocked";
+                cashVal.innerText = formattedCash;
+                cashFeedback.innerHTML = `<i class="fa-solid fa-check-circle"></i> You are beating the industry average by ${industryAvg - days} days!`;
+
+                // Update slider thumb colors via CSS Variables
+                slider.style.setProperty('--thumb-color', '#10b981');
+                slider.style.setProperty('--thumb-shadow', 'rgba(16, 185, 129, 0.5)');
+
+            } else if (days <= baselineDSO) {
+                // Behind industry, but improving baseline
+                sliderFill.style.background = "linear-gradient(90deg, #f97316, #fb923c)";
+                dsoDisplay.className = "b-val color-bad";
+                
+                cashBox.className = "cash-box";
+                cashLbl.style.color = "#10b981"; // Keep cash green since it's an improvement
+                cashVal.style.color = "#10b981";
+                
+                cashLbl.innerText = "Potential Cash Unlock";
+                cashVal.innerText = formattedCash;
+                cashFeedback.innerHTML = `Closing the gap. You are still ${days - industryAvg} days slower than peers.`;
+
+                slider.style.setProperty('--thumb-color', '#f97316');
+                slider.style.setProperty('--thumb-shadow', 'rgba(249, 115, 22, 0.5)');
+            } else {
+                // Worse than baseline (losing cash)
+                sliderFill.style.background = "linear-gradient(90deg, #ef4444, #f87171)";
+                dsoDisplay.className = "b-val color-worse";
+                
+                cashBox.className = "cash-box negative";
+                cashLbl.style.color = "#ef4444";
+                cashVal.style.color = "#ef4444";
+                
+                cashLbl.innerText = "Cash Trapped (Worsening)";
+                cashVal.innerText = "-" + formattedCash;
+                cashFeedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Danger: You are falling further behind the 53-day standard.`;
+
+                slider.style.setProperty('--thumb-color', '#ef4444');
+                slider.style.setProperty('--thumb-shadow', 'rgba(239, 68, 68, 0.5)');
+            }
+        }
+    </script>
+</body>
+</html>

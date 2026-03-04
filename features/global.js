@@ -25,10 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
         <nav class="top-nav">
             <div class="nav-content">
                 <a href="index.html" class="logo-container" title="Back to Features">
-                    <img src="MaxCredible Icon with Text.png" alt="MaxCredible" class="nav-logo" style="filter: brightness(0) invert(1);">
+                    <img src="wordmark logo.png" alt="MaxCredible" class="nav-logo" style="height: 20px; max-width: 100%; object-fit: contain; filter: brightness(0) invert(1);">
                 </a>
 
                 <div class="nav-controls">
+                    <a href="https://app.maxcredible.com/signup/" class="nav-cta-btn">Get Started</a>
                     <button class="nav-toggle" id="menuToggle">
                         <span class="toggle-txt">Modules</span>
                         <div class="hamburger"><span></span><span></span></div>
@@ -66,9 +67,19 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     const footerHTML = `
-        <div style="margin-top: 4rem; text-align: center; opacity: 0.7; display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 10; position: relative; padding-bottom: 2rem;">
-            <span style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700;">Powered by MaxCredible</span>
-            <img src="MaxCredible Icon with Text.png" alt="MaxCredible Logo" style="height: 32px; filter: brightness(0) invert(1);">
+        <div class="global-cta-section">
+            <div class="global-cta-card">
+                <h2 class="g-cta-title">Transform your revenue today.</h2>
+                <p class="g-cta-sub">Join the platform that eliminates manual credit management and accelerates your cashflow.</p>
+                <a href="https://app.maxcredible.com/signup/" class="g-cta-btn">
+                    Start Your Free Trial <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center; opacity: 0.7; display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 10; position: relative; padding-bottom: 3rem;">
+            <span style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700;">Powered by:</span>
+            <img src="wordmark logo.png" alt="MaxCredible Wordmark" style="height: 24px; filter: brightness(0) invert(1);">
         </div>
     `;
 

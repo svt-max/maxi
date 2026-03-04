@@ -183,3 +183,42 @@ h1 {
     .module-btn { padding: 0.8rem; justify-content: center; }
     .module-label { font-size: 0.85rem; }
 }
+
+/* --- GLOBAL CTA BLOCK --- */
+.global-cta-section {
+    width: 100%; max-width: 800px; margin: 4rem auto 2rem auto; padding: 0 1rem; box-sizing: border-box; position: relative; z-index: 10;
+}
+.global-cta-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.9));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5), inset 0 0 20px rgba(56, 189, 248, 0.05);
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+}
+.g-cta-title { font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 800; color: #fff; margin: 0; line-height: 1.2;}
+.g-cta-sub { color: #94a3b8; font-size: 1rem; margin-bottom: 1rem; max-width: 450px; line-height: 1.5; }
+.g-cta-btn {
+    background: linear-gradient(135deg, #38bdf8, #0284c7);
+    color: #fff; text-decoration: none; padding: 16px 36px; border-radius: 50px;
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem;
+    transition: all 0.3s var(--ease-elastic);
+    box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.5);
+    display: inline-flex; align-items: center; gap: 10px;
+}
+.g-cta-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 15px 30px -5px rgba(56, 189, 248, 0.7); }
+
+/* --- NAV CTA BUTTON --- */
+.nav-cta-btn {
+    background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8;
+    text-decoration: none; padding: 8px 18px; border-radius: 20px; font-family: 'Outfit', sans-serif;
+    font-weight: 700; font-size: 0.9rem; transition: all 0.2s;
+}
+.nav-cta-btn:hover { background: #38bdf8; color: #0f172a; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+
+@media (max-width: 768px) {
+    .g-cta-title { font-size: 1.8rem; }
+    .nav-cta-btn { display: none; } /* Kept hidden on mobile to keep top nav uncluttered; bottom CTA handles it */
+}

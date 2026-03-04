@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible | Journey Builder</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .journey-wrapper { padding: 2rem; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
+        
+        /* Controls */
+        .controls-deck { display: flex; gap: 10px; margin-bottom: 2rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .j-ctrl { flex: 1; text-align: center; }
+        .lbl { font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        .toggle-btn { background: #1e293b; border: 1px solid #475569; color: #cbd5e1; padding: 8px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; transition: all 0.3s; }
+        .toggle-btn:hover { background: rgba(56, 189, 248, 0.1); border-color: #38bdf8; color: #fff; }
+        .toggle-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+
+        /* Timeline Nodes */
+        .j-timeline { display: flex; flex-direction: column; position: relative; }
+        .j-node { display: flex; gap: 1rem; position: relative; margin-bottom: 1.5rem; transition: transform 0.5s; }
+        .j-node:last-child { margin-bottom: 0; }
+        
+        /* The connecting line */
+        .j-line { position: absolute; left: 19px; top: 40px; bottom: -20px; width: 2px; background: rgba(255,255,255,0.1); z-index: 1; transition: background 0.3s; }
+        
+        .j-icon { width: 40px; height: 40px; border-radius: 50%; background: #1e293b; border: 2px solid #38bdf8; display: flex; align-items: center; justify-content: center; color: #38bdf8; z-index: 2; position: relative; font-size: 1.1rem; transition: all 0.5s; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        
+        .j-content { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1rem 1.5rem; border-radius: 12px; flex: 1; transition: all 0.5s; display: flex; justify-content: space-between; align-items: center;}
+        
+        .j-text h3 { margin: 0 0 4px 0; font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #fff; transition: color 0.3s;}
+        .j-text p { margin: 0; font-size: 0.8rem; color: #64748b; }
+        
+        .j-delay { text-align: right; }
+        .d-val { font-size: 1.2rem; font-weight: 800; font-family: 'Outfit'; color: #fff; transition: color 0.5s; }
+        .d-lbl { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+
+        /* Dynamic States */
+        body.mode-aggressive .j-node { margin-bottom: 0.5rem; }
+        body.mode-aggressive .d-val { color: #f59e0b; }
+        body.mode-aggressive .j-icon { border-color: #f59e0b; color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+        body.mode-aggressive .status-bar { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-top: 1px solid rgba(245, 158, 11, 0.2); }
+        body.mode-aggressive .smart-card { border-color: rgba(245, 158, 11, 0.4); box-shadow: 0 0 60px -10px rgba(245, 158, 11, 0.15); }
+
+        .escalate-red .j-icon { border-color: #ef4444 !important; color: #ef4444 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4) !important;}
+        .escalate-red h3 { color: #ef4444 !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Journey Builder</h1>
+    </header>
+
+    <div class="stage-area">
+        <div class="smart-card">
+            <div class="journey-wrapper">
+                
+                <div class="controls-deck">
+                    <div class="j-ctrl">
+                        <span class="lbl">Pacing</span>
+                        <button class="toggle-btn" id="btn-pace" onclick="togglePacing()">Standard</button>
+                    </div>
+                    <div class="j-ctrl">
+                        <span class="lbl">Escalation</span>
+                        <button class="toggle-btn" id="btn-esc" onclick="toggleEscalation()">Email Alert</button>
+                    </div>
+                </div>
+
+                <div class="j-timeline">
+                    <div class="j-node">
+                        <div class="j-line"></div>
+                        <div class="j-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div class="j-content">
+                            <div class="j-text">
+                                <h3>Friendly Nudge</h3>
+                                <p>Automated Email</p>
+                            </div>
+                            <div class="j-delay">
+                                <div class="d-val" id="day-1">Day 14</div>
+                                <div class="d-lbl">After Due</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="j-node">
+                        <div class="j-line"></div>
+                        <div class="j-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <div class="j-content">
+                            <div class="j-text">
+                                <h3>Firm Reminder</h3>
+                                <p>Automated Email</p>
+                            </div>
+                            <div class="j-delay">
+                                <div class="d-val" id="day-2">+ 14</div>
+                                <div class="d-lbl">Days Later</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="j-node" id="node-esc">
+                        <div class="j-icon" id="icon-esc"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div class="j-content">
+                            <div class="j-text">
+                                <h3 id="title-esc">Final Warning</h3>
+                                <p id="desc-esc">Urgent Email</p>
+                            </div>
+                            <div class="j-delay">
+                                <div class="d-val" id="day-3">+ 7</div>
+                                <div class="d-lbl">Days Later</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-calendar-days"></i> &nbsp;Journey Length</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">35 Day Cycle</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">Set It & Forget It</div>
+            <div class="narrative-text" id="narrative-text">
+                Configure your ideal timeline once. MaxCredible will automatically track due dates, dispatch reminders, and execute escalations without any manual intervention.
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        const btnPace = document.getElementById('btn-pace');
+        const btnEsc = document.getElementById('btn-esc');
+        
+        const day1 = document.getElementById('day-1');
+        const day2 = document.getElementById('day-2');
+        const day3 = document.getElementById('day-3');
+        
+        const nodeEsc = document.getElementById('node-esc');
+        const iconEsc = document.getElementById('icon-esc');
+        const titleEsc = document.getElementById('title-esc');
+        const descEsc = document.getElementById('desc-esc');
+
+        const actionBar = document.getElementById('action-bar');
+        const body = document.body;
+
+        let isAggressive = false;
+        let isCallEscalation = false;
+
+        function togglePacing() {
+            isAggressive = !isAggressive;
+            if (isAggressive) {
+                body.classList.add('mode-aggressive');
+                btnPace.innerText = "Aggressive";
+                btnPace.classList.add('active');
+                
+                day1.innerText = "Day 3";
+                day2.innerText = "+ 3";
+                day3.innerText = "+ 2";
+                updateStatus();
+            } else {
+                body.classList.remove('mode-aggressive');
+                btnPace.innerText = "Standard";
+                btnPace.classList.remove('active');
+                
+                day1.innerText = "Day 14";
+                day2.innerText = "+ 14";
+                day3.innerText = "+ 7";
+                updateStatus();
+            }
+        }
+
+        function toggleEscalation() {
+            isCallEscalation = !isCallEscalation;
+            if (isCallEscalation) {
+                btnEsc.innerText = "Phone Call";
+                btnEsc.classList.add('active');
+                nodeEsc.classList.add('escalate-red');
+                
+                iconEsc.innerHTML = '<i class="fa-solid fa-phone-volume"></i>';
+                titleEsc.innerText = "Call Task";
+                descEsc.innerText = "Added to To-Do List";
+            } else {
+                btnEsc.innerText = "Email Alert";
+                btnEsc.classList.remove('active');
+                nodeEsc.classList.remove('escalate-red');
+                
+                iconEsc.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                titleEsc.innerText = "Final Warning";
+                descEsc.innerText = "Urgent Email";
+            }
+        }
+
+        function updateStatus() {
+            if(isAggressive) {
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-bolt"></i> &nbsp;Journey Length</span><span style="opacity:0.7; font-size:0.75rem">8 Day Cycle (Accelerated)</span></div>';
+                document.getElementById('narrative-title').innerText = "High-Velocity Recovery";
+                document.getElementById('narrative-text').innerText = "By tightening the pacing, high-risk accounts are pushed to escalation much faster, reducing your exposure to bad debt.";
+            } else {
+                actionBar.className = "status-bar s-legacy";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-calendar-days"></i> &nbsp;Journey Length</span><span style="opacity:0.7; font-size:0.75rem">35 Day Cycle</span></div>';
+                document.getElementById('narrative-title').innerText = "Set It & Forget It";
+                document.getElementById('narrative-text').innerText = "Configure your ideal timeline once. MaxCredible will automatically track due dates, dispatch reminders, and execute escalations.";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -445,16 +445,22 @@ function scrambleText(el, finalText) {
 
 /* --- FEATURE CLICK REDIRECT --- */
 const featureLinks = document.querySelectorAll('.feature-link');
-const targetUrl = "https://maxi.maxcredible.com/features/negative-interest-before-after.html";
 
 featureLinks.forEach(card => {
     card.addEventListener('click', () => {
-        window.location.href = targetUrl;
+        // Read the specific URL from the clicked card's data-target attribute
+        const targetUrl = card.getAttribute('data-target');
+        if (targetUrl) {
+            window.location.href = targetUrl;
+        }
     });
-    // Spotlight Tracker
+    
+    // Spotlight Tracker (Keep your existing spotlight logic here)
     card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
-        card.style.setProperty('--x', (e.clientX - rect.left) + 'px');
-        card.style.setProperty('--y', (e.clientY - rect.top) + 'px');
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--x', `${x}px`);
+        card.style.setProperty('--y', `${y}px`);
     });
 });

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible | Smart Routing</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .inbox-wrapper { padding: 1.5rem; display: flex; flex-direction: column; gap: 10px; width: 100%; box-sizing: border-box; min-height: 420px;}
+        
+        /* State 1: Inbox List */
+        #view-list { display: flex; flex-direction: column; gap: 10px; transition: opacity 0.4s; }
+        .email-row { background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;}
+        .email-row:hover { background: rgba(255,255,255,0.08); transform: translateX(5px); }
+        .email-unread { border-left: 3px solid #38bdf8; background: rgba(56, 189, 248, 0.05); }
+        .e-sender { font-weight: bold; color: #fff; font-size: 0.9rem; margin-bottom: 2px;}
+        .e-subject { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;}
+        .e-time { font-size: 0.7rem; color: #64748b; font-weight: bold; }
+
+        /* State 2: Reader & AI Scan */
+        #view-reader { display: none; opacity: 0; flex-direction: column; transition: opacity 0.4s; height: 100%;}
+        .reader-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem; }
+        .reader-body { font-size: 0.9rem; color: #cbd5e1; line-height: 1.6; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px; }
+        
+        /* The AI Scan Box */
+        .ai-scan-box { margin-top: 1.5rem; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(56, 189, 248, 0.3); padding: 1.5rem; border-radius: 12px; transform: translateY(20px); opacity: 0; transition: all 0.5s; display: none; }
+        .ai-scan-box.visible { transform: translateY(0); opacity: 1; display: block; }
+        
+        .ai-header { display: flex; align-items: center; gap: 10px; font-family: 'Outfit'; font-weight: bold; color: #38bdf8; margin-bottom: 10px; }
+        .ai-header i { animation: spin 3s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .ai-tag { display: inline-block; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; margin-top: 10px; opacity: 0; transition: opacity 0.5s;}
+        
+        .action-btn { margin-top: 1rem; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; width: 100%; opacity: 0; display: none;}
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.5); }
+
+        body.mode-routed .smart-card { border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 60px -10px rgba(239, 68, 68, 0.15); }
+        body.mode-routed .status-bar { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-top: 1px solid rgba(239, 68, 68, 0.2); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Smart Routing</h1>
+    </header>
+
+    <div class="stage-area">
+        <div class="smart-card">
+            <div class="inbox-wrapper">
+                
+                <div id="view-list">
+                    <div style="font-family: 'Outfit'; font-weight: bold; color: #fff; margin-bottom: 10px; font-size: 1.2rem;">Central Inbox</div>
+                    
+                    <div class="email-row email-unread" onclick="openEmail()">
+                        <div>
+                            <div class="e-sender">Acme Corp Purchasing</div>
+                            <div class="e-subject">Re: Invoice INV-2026-001</div>
+                        </div>
+                        <div class="e-time">10:42 AM <div style="width: 8px; height: 8px; background: #38bdf8; border-radius: 50%; float: right; margin-left: 8px; margin-top: 2px;"></div></div>
+                    </div>
+
+                    <div class="email-row">
+                        <div>
+                            <div class="e-sender">Globex Inc Accounts</div>
+                            <div class="e-subject">Payment scheduled for Friday</div>
+                        </div>
+                        <div class="e-time">Yesterday</div>
+                    </div>
+                </div>
+
+                <div id="view-reader">
+                    <button style="background:none; border:none; color:#64748b; cursor:pointer; text-align:left; padding:0; margin-bottom: 1rem; font-family: 'Plus Jakarta Sans';" onclick="backToList()"><i class="fa-solid fa-arrow-left"></i> Back to Inbox</button>
+                    
+                    <div class="reader-header">
+                        <div>
+                            <div class="e-sender" style="font-size: 1.1rem;">Acme Corp Purchasing</div>
+                            <div class="e-subject" style="color:#fff;">Re: Invoice INV-2026-001</div>
+                        </div>
+                        <div class="e-time">10:42 AM</div>
+                    </div>
+
+                    <div class="reader-body">
+                        Hi,<br><br>We cannot pay this invoice yet. The shipment arrived yesterday, but half of the boxes were completely damaged by water.<br><br>We need a credit note before we process payment.<br><br>Thanks,<br>Acme Team
+                    </div>
+
+                    <div class="ai-scan-box" id="ai-box">
+                        <div class="ai-header"><i class="fa-solid fa-microchip"></i> AI Analysis Running...</div>
+                        <p style="font-size: 0.8rem; color: #94a3b8; margin: 0;" id="ai-text">Scanning email intent and matching to ledger data.</p>
+                        
+                        <div class="ai-tag" id="ai-tag"><i class="fa-solid fa-triangle-exclamation"></i> Issue: Goods Damaged</div>
+                        
+                        <button class="action-btn" id="action-btn" onclick="routeIssue()"><i class="fa-solid fa-pause"></i> Pause Journey & Route to Support</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-inbox"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Waiting for replies</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">The Unread Black Hole</div>
+            <div class="narrative-text" id="narrative-text">
+                When a customer replies to an invoice with a complaint, the email usually sits in a crowded inbox. Meanwhile, the legacy software blindly sends another angry reminder the next day, ruining the relationship.
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        const viewList = document.getElementById('view-list');
+        const viewReader = document.getElementById('view-reader');
+        const aiBox = document.getElementById('ai-box');
+        const aiText = document.getElementById('ai-text');
+        const aiTag = document.getElementById('ai-tag');
+        const actionBtn = document.getElementById('action-btn');
+        
+        const actionBar = document.getElementById('action-bar');
+        const body = document.body;
+
+        function openEmail() {
+            viewList.style.opacity = '0';
+            
+            setTimeout(() => {
+                viewList.style.display = 'none';
+                viewReader.style.display = 'flex';
+                void viewReader.offsetWidth;
+                viewReader.style.opacity = '1';
+                
+                // Trigger AI Scan Sequence
+                setTimeout(() => {
+                    aiBox.classList.add('visible');
+                    
+                    setTimeout(() => {
+                        document.querySelector('.ai-header').innerHTML = '<i class="fa-solid fa-check" style="animation:none;"></i> Analysis Complete';
+                        document.querySelector('.ai-header').style.color = '#ef4444';
+                        aiBox.style.borderColor = "rgba(239, 68, 68, 0.3)";
+                        aiBox.style.background = "rgba(239, 68, 68, 0.1)";
+                        
+                        aiText.innerText = "Customer is disputing the invoice due to damaged goods.";
+                        aiTag.style.opacity = '1';
+                        
+                        actionBtn.style.display = 'block';
+                        void actionBtn.offsetWidth;
+                        actionBtn.style.opacity = '1';
+
+                        actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-brain"></i> &nbsp;AI Action</span><span style="opacity:0.7; font-size:0.75rem">Dispute Detected</span></div>';
+
+                    }, 2000);
+                }, 800);
+
+            }, 400);
+        }
+
+        function routeIssue() {
+            body.className = 'mode-routed';
+            actionBtn.innerHTML = '<i class="fa-solid fa-check"></i> Routed Successfully';
+            actionBtn.style.background = "#10b981";
+            actionBtn.style.boxShadow = "none";
+            
+            actionBar.className = "status-bar";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-route"></i> &nbsp;Action Taken</span><span style="opacity:0.7; font-size:0.75rem">Journey Paused • Support Notified</span></div>';
+            
+            document.getElementById('narrative-title').innerText = "Intelligent Intervention";
+            document.getElementById('narrative-text').innerText = "MaxCredible instantly reads the reply, recognizes the dispute, halts the automated collection journey, and alerts your support team to fix the issue.";
+        }
+
+        function backToList() {
+            // Reset state
+            viewReader.style.opacity = '0';
+            setTimeout(() => {
+                viewReader.style.display = 'none';
+                viewList.style.display = 'flex';
+                void viewList.offsetWidth;
+                viewList.style.opacity = '1';
+                
+                aiBox.classList.remove('visible');
+                aiTag.style.opacity = '0';
+                actionBtn.style.opacity = '0';
+                actionBtn.style.display = 'none';
+                actionBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause Journey & Route to Support';
+                actionBtn.style.background = "linear-gradient(135deg, #ef4444, #b91c1c)";
+                
+                document.querySelector('.ai-header').innerHTML = '<i class="fa-solid fa-microchip"></i> AI Analysis Running...';
+                document.querySelector('.ai-header').style.color = '#38bdf8';
+                aiBox.style.borderColor = "rgba(56, 189, 248, 0.3)";
+                aiBox.style.background = "rgba(30, 41, 59, 0.5)";
+                aiText.innerText = "Scanning email intent and matching to ledger data.";
+                
+                body.className = '';
+                actionBar.className = "status-bar s-legacy";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-inbox"></i> &nbsp;Status</span><span style="opacity:0.7; font-size:0.75rem">Waiting for replies</span></div>';
+                
+                document.getElementById('narrative-title').innerText = "The Unread Black Hole";
+                document.getElementById('narrative-text').innerText = "When a customer replies to an invoice with a complaint, the email usually sits in a crowded inbox. Meanwhile, the legacy software blindly sends another angry reminder.";
+            }, 400);
+        }
+    </script>
+</body>
+</html>
