@@ -7,18 +7,18 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             /* Theme Colors */
-            --bg-deep: #020617;
+            --bg-deep: #0f0c29;
             --card-bg: #0f172a; 
             --border: rgba(255, 255, 255, 0.1);
             
             /* State Colors */
-            --c-legacy: #ef4444; /* Angry Red */
+            --c-legacy: #ff4747; /* Synced Angry Red */
             --c-netting: #38bdf8; /* Friendly Sky Blue */
             --c-shield: #a855f7; /* Magic Purple */
 
@@ -29,23 +29,21 @@
         body {
             background-color: var(--bg-deep);
             color: #fff;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             margin: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-image: 
-                radial-gradient(at 50% 0%, #1e293b 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.05) 0px, transparent 50%);
             overflow-x: hidden;
             padding-bottom: 3rem;
+            position: relative;
         }
 
         /* --- Header --- */
         header {
             text-align: center;
-            margin-top: 3rem;
+            margin-top: 140px; /* Pushed down to clear the top nav */
             margin-bottom: 2.5rem;
             z-index: 5;
             padding: 0 1rem;
@@ -55,13 +53,76 @@
         
         h1 {
             font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            font-size: 2.2rem;
+            font-weight: 800;
+            font-size: 2.5rem;
             margin: 0;
-            background: linear-gradient(to bottom, #fff, #94a3b8);
+            background: linear-gradient(to right, #fff, #38bdf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            line-height: 1.1;
+            line-height: 1.25;
+            padding-bottom: 0.1em;
+        }
+
+        /* --- AMBIENT BG --- */
+        .ambient-background { position: fixed; inset: 0; z-index: -1; background: #0f0c29; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: float 10s infinite alternate; pointer-events: none; }
+        .b-1 { width: 500px; height: 500px; background: #ff00cc; top: -10%; left: -10%; }
+        .b-2 { width: 600px; height: 600px; background: #333399; bottom: -10%; right: -10%; }
+        .b-3 { width: 400px; height: 400px; background: #00d4ff; top: 40%; left: 30%; }
+        @keyframes float { 100% { transform: translate(30px, 50px); } }
+
+        /* --- NAVIGATION --- */
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 100px;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; padding: 0 5%;
+            background: linear-gradient(to bottom, rgba(2,6,23,0.8) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .nav-content {
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 100px;
+            padding: 8px 12px 8px 24px; display: flex; align-items: center; justify-content: space-between; 
+            pointer-events: auto; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+            width: 90%; max-width: 1200px; margin: 0 auto;
+        }
+        .logo-container { cursor: pointer; display: flex; align-items: center; text-decoration: none; }
+        .nav-logo { height: 32px; width: auto; display: block; }
+        .nav-controls { display: flex; align-items: center; gap: 12px; }
+        .nav-toggle { 
+            background: transparent; border: none; color: #fff; display: flex; align-items: center; gap: 12px; 
+            cursor: pointer; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; 
+            padding: 8px 12px; border-radius: 20px; transition: background 0.2s;
+        }
+        .nav-toggle:hover { background: rgba(255,255,255,0.05); }
+        .hamburger { width: 18px; height: 12px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .hamburger span { width: 100%; height: 2px; background: #fff; transition: 0.3s; border-radius: 2px; }
+
+        /* --- MEGA MENU --- */
+        .nav-overlay {
+            position: fixed; top: 105px; left: 50%; transform: translateX(-50%) scale(0.95);
+            width: 95%; max-width: 1000px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 3rem; 
+            opacity: 0; pointer-events: none; z-index: 999; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.8); display: flex; flex-direction: column; 
+        }
+        .nav-columns { display: flex; flex-direction: row; justify-content: space-between; width: 100%; gap: 2rem; }
+        .nav-overlay.open { opacity: 1; pointer-events: all; transform: translateX(-50%) scale(1); }
+        .nav-col { flex: 1; }
+        .nav-col h3 { font-family: 'Outfit', sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #64748b; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
+        .nav-item { display: flex; align-items: center; gap: 12px; color: #cbd5e1; text-decoration: none; margin-bottom: 1.2rem; font-weight: 500; transition: 0.2s; font-size: 1rem; }
+        .nav-item:hover { color: #38bdf8; transform: translateX(5px); }
+        .nav-item i { width: 24px; text-align: center; color: #38bdf8; opacity: 0.7; }
+        
+        @media (max-width: 768px) {
+            .nav-overlay {
+                top: 0; left: 0; width: 100%; height: 100vh; max-width: none; border-radius: 0; border: none;
+                transform: translateY(-20px); background: #0f172a; padding: 120px 2rem 4rem 2rem;
+                overflow-y: auto; justify-content: flex-start;
+            }
+            .nav-overlay.open { transform: translateY(0); }
+            .nav-columns { flex-direction: column; gap: 3rem; }
+            .top-nav { height: 80px; }
         }
 
         /* --- CONTROL DECK --- */
@@ -238,10 +299,10 @@
         /* Header Layout */
         .item-header { display: flex; justify-content: space-between; margin-bottom: 0.3rem; align-items: center; }
         .item-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #fff; }
-        .item-date { font-size: 0.85rem; color: #64748b; font-family: 'Inter'; }
+        .item-date { font-size: 0.85rem; color: #64748b; font-family: 'Plus Jakarta Sans', sans-serif; }
         
         .item-amount { 
-            font-family: 'Inter', monospace; 
+            font-family: 'Plus Jakarta Sans', monospace;
             font-weight: 600; 
             font-size: 1.2rem; 
             display: block; 
@@ -386,7 +447,7 @@
             padding: 8px 16px;
             border-radius: 50px;
             margin-top: 12px;
-            font-family: 'Inter', monospace;
+            font-family: 'Plus Jakarta Sans', monospace;
             font-size: 0.9rem;
             color: #e9d5ff;
         }
@@ -420,7 +481,7 @@
         /* === DESKTOP OPTIMIZATION (Scaling Up) === */
         /* ========================================= */
         @media (min-width: 768px) {
-            h1 { font-size: 3rem; margin-bottom: 0.5rem; }
+            h1 { font-size: 4rem; margin-bottom: 0.5rem; padding-bottom: 0.1em; }
             .logo { width: 220px; }
             
             /* Bigger Stage */
@@ -467,8 +528,53 @@
 </head>
 <body>
 
+    <div class="ambient-background">
+        <div class="blob b-1"></div>
+        <div class="blob b-2"></div>
+        <div class="blob b-3"></div>
+    </div>
+
+    <nav class="top-nav">
+        <div class="nav-content">
+            <a href="index.html" class="logo-container" title="Back to Features">
+                <img src="MaxCredible Icon with Text.png" alt="MaxCredible" class="nav-logo" style="filter: brightness(0) invert(1);">
+            </a>
+
+            <div class="nav-controls">
+                <button class="nav-toggle" id="menuToggle">
+                    <span class="toggle-txt">Modules</span>
+                    <div class="hamburger"><span></span><span></span></div>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="nav-overlay" id="navOverlay">
+        <div class="nav-columns">
+            <div class="nav-col">
+                <h3>Logic Core</h3>
+                <a href="index.html#interest" class="nav-item"><i class="fa-solid fa-microchip"></i> Interest Engine</a>
+                <a href="index.html#segmentation" class="nav-item"><i class="fa-solid fa-users-gear"></i> Segmentation</a>
+                <a href="index.html#routing" class="nav-item"><i class="fa-solid fa-arrow-right-arrow-left"></i> Smart Routing</a>
+                <a href="index.html#match" class="nav-item"><i class="fa-solid fa-check-double"></i> Reconciliation</a>
+            </div>
+            <div class="nav-col">
+                <h3>Engagement</h3>
+                <a href="index.html#templates" class="nav-item"><i class="fa-solid fa-wand-magic-sparkles"></i> Templates</a>
+                <a href="index.html#reminders" class="nav-item"><i class="fa-solid fa-stopwatch"></i> Auto-Reminders</a>
+                <a href="index.html#paylinks" class="nav-item"><i class="fa-solid fa-link"></i> PayLinks</a>
+                <a href="index.html#legal" class="nav-item"><i class="fa-solid fa-scale-balanced"></i> Legal Email</a>
+            </div>
+            <div class="nav-col">
+                <h3>Intelligence</h3>
+                <a href="index.html#dashboard" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="index.html#reputation" class="nav-item"><i class="fa-solid fa-star-half-stroke"></i> Reputation</a>
+                <a href="index.html#forecast" class="nav-item"><i class="fa-solid fa-crystal-ball"></i> Forecasting</a>
+            </div>
+        </div>
+    </div>
+
     <header>
-        <img src="https://assets.cdn.creditexpo.nl/wp-content/uploads/2013/10/15161232/MaxCredible_Logo_Blauw_RGB.png" alt="Logo" class="logo">
         <h1>Interest Logic Engine</h1>
     </header>
 
@@ -569,7 +675,30 @@
         </div>
     </div>
 
+    <div style="margin-top: 4rem; text-align: center; opacity: 0.7; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+        <span style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700;">Powered by MaxCredible</span>
+        <img src="MaxCredible Icon with Text.png" alt="MaxCredible Logo" style="height: 32px; filter: brightness(0) invert(1);">
+    </div>
+
     <script>
+        // --- MEGA MENU TOGGLE ---
+        const menuToggle = document.getElementById('menuToggle');
+        const navOverlay = document.getElementById('navOverlay');
+
+        if(menuToggle && navOverlay) {
+            menuToggle.addEventListener('click', () => {
+                navOverlay.classList.toggle('open');
+                const spans = menuToggle.querySelectorAll('span');
+                if(navOverlay.classList.contains('open')) {
+                    spans[0].style.transform = "rotate(45deg) translate(5px, 5px)";
+                    spans[1].style.transform = "rotate(-45deg) translate(5px, -5px)";
+                } else {
+                    spans[0].style.transform = "none";
+                    spans[1].style.transform = "none";
+                }
+            });
+        }
+
         const btnNetting = document.getElementById('btn-netting');
         const btnShield = document.getElementById('btn-shield');
         const body = document.body;

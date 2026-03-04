@@ -445,7 +445,7 @@ function scrambleText(el, finalText) {
 
 /* --- FEATURE CLICK REDIRECT --- */
 const featureLinks = document.querySelectorAll('.feature-link');
-const targetUrl = "https://maxi.maxcredible.com/negative-interest-before-after.html";
+const targetUrl = "https://maxi.maxcredible.com/features/negative-interest-before-after.html";
 
 featureLinks.forEach(card => {
     card.addEventListener('click', () => {
