@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible | Instant PayLinks</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .pay-wrapper { padding: 2rem; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; min-height: 420px; align-items: center; justify-content: center;}
+        
+        .phone-mockup { background: #fff; width: 100%; max-width: 300px; border-radius: 30px; padding: 15px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 6px solid #1e293b; position: relative; transition: all 0.5s; overflow: hidden;}
+        
+        /* State 1: Manual IBAN */
+        #view-manual { display: flex; flex-direction: column; gap: 15px; transition: opacity 0.3s;}
+        .m-text { color: #334155; font-size: 0.85rem; line-height: 1.5; }
+        .m-iban-box { background: #f1f5f9; border: 1px dashed #cbd5e1; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 0.75rem; color: #475569; word-break: break-all;}
+        
+        /* State 2: PayLink */
+        #view-paylink { display: none; opacity: 0; flex-direction: column; gap: 15px; transition: opacity 0.3s;}
+        .btn-pay-now { background: #000; color: #fff; border: none; padding: 12px; border-radius: 50px; font-family: 'Outfit'; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;}
+        .btn-pay-now:hover { transform: scale(1.05); }
+
+        /* State 3: Success */
+        #view-success { display: none; opacity: 0; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 180px;}
+        .success-check { width: 60px; height: 60px; background: #10b981; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px; animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);}
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        .action-btn { margin-top: 2rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4); width: 100%; max-width: 300px;}
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(16, 185, 129, 0.6); }
+
+        body.mode-paid .smart-card { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 60px -10px rgba(16, 185, 129, 0.15); }
+        body.mode-paid .status-bar { background: rgba(16, 185, 129, 0.1); color: #10b981; border-top: 1px solid rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body>
+    <header><h1>Instant Payment Links</h1></header>
+
+    <div class="stage-area">
+        <div class="smart-card">
+            <div class="pay-wrapper">
+                
+                <div class="phone-mockup">
+                    <div style="display:flex; justify-content: space-between; font-size: 0.6rem; color: #94a3b8; margin-bottom: 15px; font-weight: bold;">
+                        <span>9:41</span> <i class="fa-solid fa-battery-full"></i>
+                    </div>
+
+                    <h3 style="margin: 0 0 10px 0; font-family: 'Outfit'; color: #0f172a;">Invoice Overdue</h3>
+                    
+                    <div id="view-manual">
+                        <div class="m-text">Please transfer €500.00 to our bank account below. Ensure you include the reference number so we can find your payment.</div>
+                        <div class="m-iban-box">
+                            <strong>IBAN:</strong> NL99 INGB 0123 4567 89<br>
+                            <strong>Ref:</strong> INV-9982-XYZ-2026
+                        </div>
+                    </div>
+
+                    <div id="view-paylink">
+                        <div class="m-text">Your invoice of €500.00 is ready to be paid. Tap below to settle instantly via Apple Pay, iDeal, or Credit Card.</div>
+                        <button class="btn-pay-now" onclick="executePayment()"><i class="fa-brands fa-apple"></i> Pay</button>
+                    </div>
+
+                    <div id="view-success">
+                        <div class="success-check"><i class="fa-solid fa-check"></i></div>
+                        <h3 style="color: #0f172a; margin: 0; font-family: 'Outfit';">Payment Successful</h3>
+                        <p style="color: #64748b; font-size: 0.8rem; margin: 5px 0 0 0;">Matched instantly.</p>
+                    </div>
+                </div>
+
+                <button class="action-btn" id="btn-upgrade" onclick="injectPaylink()"><i class="fa-solid fa-bolt"></i> Upgrade to Smart PayLinks</button>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-keyboard"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">High friction checkout</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">The Checkout Barrier</div>
+            <div class="narrative-text" id="narrative-text">
+                Forcing customers to log into their banking app, manually copy-paste long IBANs, and type exact reference codes creates massive friction. Debtors put it off, and payments get delayed.
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        function injectPaylink() {
+            document.getElementById('view-manual').style.display = 'none';
+            document.getElementById('view-paylink').style.display = 'flex';
+            setTimeout(() => { document.getElementById('view-paylink').style.opacity = '1'; }, 50);
+
+            document.getElementById('btn-upgrade').style.display = 'none';
+
+            document.getElementById('action-bar').innerHTML = '<div class="status-content"><span><i class="fa-solid fa-link"></i> &nbsp;Status</span><span style="opacity:0.7; font-size:0.75rem">Frictionless link active</span></div>';
+            
+            document.getElementById('narrative-title').innerText = "1-Click Resolution";
+            document.getElementById('narrative-text').innerText = "By embedding dynamic PayLinks directly into your templates, customers can pay instantly using their preferred method. The Trace ID is automatically attached to the transaction.";
+        }
+
+        function executePayment() {
+            document.body.className = 'mode-paid';
+            document.getElementById('view-paylink').style.display = 'none';
+            
+            document.getElementById('view-success').style.display = 'flex';
+            setTimeout(() => { document.getElementById('view-success').style.opacity = '1'; }, 50);
+
+            document.getElementById('action-bar').className = "status-bar";
+            document.getElementById('action-bar').innerHTML = '<div class="status-content"><span><i class="fa-solid fa-bolt"></i> &nbsp;Action: Reconciled</span><span style="opacity:0.7; font-size:0.75rem">DSO Reduced by 14 Days</span></div>';
+            
+            document.getElementById('narrative-title').innerText = "Instant Cash Collection";
+            document.getElementById('narrative-text').innerText = "The payment is captured instantly, automatically matched to the correct invoice in your ledger, and the dunning journey is immediately halted. Zero manual work.";
+        }
+    </script>
+</body>
+</html>

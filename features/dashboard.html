@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible | Interactive Dashboard</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .dash-wrapper { padding: 2rem; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; min-height: 400px; justify-content: center;}
+        
+        /* State 1: Spreadsheet */
+        #view-sheet { display: flex; flex-direction: column; gap: 1rem; transition: opacity 0.4s; width: 100%; }
+        .spreadsheet-mock { border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; font-family: monospace; font-size: 0.85rem; background: rgba(0,0,0,0.2); }
+        .row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .row:last-child { border-bottom: none; }
+        .cell { padding: 12px; color: #94a3b8; }
+        .cell.header { background: rgba(255,255,255,0.05); font-weight: bold; color: #fff; text-transform: uppercase; }
+        
+        /* State 2: Dashboard */
+        #view-dash { display: none; opacity: 0; flex-direction: column; gap: 1.5rem; transition: opacity 0.4s; }
+        .heatmap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .hm-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1.5rem 1rem; text-align: center; display: flex; flex-direction: column; gap: 8px; transition: transform 0.3s;}
+        .hm-box:hover { transform: translateY(-3px); }
+        .hm-lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;}
+        .hm-val { font-family: 'Outfit'; font-size: 2rem; font-weight: 800; }
+        
+        .c-green { color: #10b981; border-color: rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.05); }
+        .c-amber { color: #f59e0b; border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.05); }
+        .c-red { color: #ef4444; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); }
+
+        .chart-mock { height: 120px; display: flex; align-items: flex-end; gap: 15px; padding-top: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+        .bar { width: 100%; background: #38bdf8; border-radius: 4px 4px 0 0; transition: height 1s cubic-bezier(0.34, 1.56, 0.64, 1); height: 0; }
+        
+        .action-btn { margin-top: 1rem; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4); width: 100%;}
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(139, 92, 246, 0.6); }
+
+        body.mode-dash .smart-card { border-color: rgba(139, 92, 246, 0.4); box-shadow: 0 0 60px -10px rgba(139, 92, 246, 0.15); }
+        body.mode-dash .status-bar { background: rgba(139, 92, 246, 0.1); color: #a855f7; border-top: 1px solid rgba(139, 92, 246, 0.2); }
+    </style>
+</head>
+<body>
+    <header><h1>Interactive Dashboard</h1></header>
+
+    <div class="stage-area">
+        <div class="smart-card">
+            <div class="dash-wrapper">
+                
+                <div id="view-sheet">
+                    <div class="spreadsheet-mock">
+                        <div class="row"><div class="cell header">Inv ID</div><div class="cell header">Status</div><div class="cell header">Age</div></div>
+                        <div class="row"><div class="cell">#1024</div><div class="cell">Open</div><div class="cell">45d</div></div>
+                        <div class="row"><div class="cell">#1025</div><div class="cell">Pending</div><div class="cell">62d</div></div>
+                        <div class="row"><div class="cell">#1026</div><div class="cell" style="color:#ef4444;">Dispute</div><div class="cell">94d</div></div>
+                        <div class="row"><div class="cell">#1027</div><div class="cell">Open</div><div class="cell">12d</div></div>
+                    </div>
+                    <button class="action-btn" onclick="transformData()"><i class="fa-solid fa-wand-magic-sparkles"></i> Visualize Data</button>
+                </div>
+
+                <div id="view-dash">
+                    <div class="heatmap-grid">
+                        <div class="hm-box c-green"><span class="hm-lbl">0-30 Days</span><span class="hm-val">142</span></div>
+                        <div class="hm-box c-amber"><span class="hm-lbl">31-60 Days</span><span class="hm-val">45</span></div>
+                        <div class="hm-box c-red"><span class="hm-lbl">60+ Days</span><span class="hm-val">12</span></div>
+                    </div>
+                    
+                    <div>
+                        <span class="hm-lbl">Recovery Trajectory</span>
+                        <div class="chart-mock" id="chart-bars">
+                            <div class="bar-col"><div class="bar" style="background: rgba(56, 189, 248, 0.4);" data-h="40%"></div></div>
+                            <div class="bar-col"><div class="bar" style="background: rgba(56, 189, 248, 0.6);" data-h="70%"></div></div>
+                            <div class="bar-col"><div class="bar" style="background: #ef4444;" data-h="100%"></div></div>
+                            <div class="bar-col"><div class="bar" style="background: rgba(56, 189, 248, 0.8);" data-h="30%"></div></div>
+                            <div class="bar-col"><div class="bar" style="background: #38bdf8;" data-h="50%"></div></div>
+                        </div>
+                    </div>
+                    <button class="action-btn" style="background: transparent; border: 1px solid #64748b; color: #94a3b8; box-shadow: none;" onclick="resetView()"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
+                </div>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-table"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Static rows of data</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">Drowning in Spreadsheets</div>
+            <div class="narrative-text" id="narrative-text">
+                Legacy software exports flat data. Trying to manually track who owes what, and which invoices are aging into critical territory, takes hours of manual filtering.
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        function transformData() {
+            document.body.className = 'mode-dash';
+            document.getElementById('view-sheet').style.display = 'none';
+            const dash = document.getElementById('view-dash');
+            dash.style.display = 'flex';
+            
+            setTimeout(() => {
+                dash.style.opacity = '1';
+                // Animate bars
+                document.querySelectorAll('.bar').forEach(bar => {
+                    bar.style.height = bar.getAttribute('data-h');
+                });
+
+                document.getElementById('action-bar').className = "status-bar";
+                document.getElementById('action-bar').innerHTML = '<div class="status-content"><span><i class="fa-solid fa-chart-pie"></i> &nbsp;Action: Visualized</span><span style="opacity:0.7; font-size:0.75rem">Real-time insights active</span></div>';
+                
+                document.getElementById('narrative-title').innerText = "The Command Center";
+                document.getElementById('narrative-text').innerText = "MaxCredible instantly transforms flat data into a living command center. See your critical aging buckets at a glance and track team performance in real-time.";
+            }, 50);
+        }
+
+        function resetView() {
+            document.body.className = '';
+            document.getElementById('view-dash').style.opacity = '0';
+            document.querySelectorAll('.bar').forEach(bar => bar.style.height = '0');
+            
+            setTimeout(() => {
+                document.getElementById('view-dash').style.display = 'none';
+                document.getElementById('view-sheet').style.display = 'flex';
+                
+                document.getElementById('action-bar').className = "status-bar s-legacy";
+                document.getElementById('action-bar').innerHTML = '<div class="status-content"><span><i class="fa-solid fa-table"></i> &nbsp;Status</span><span style="opacity:0.7; font-size:0.75rem">Static rows of data</span></div>';
+                
+                document.getElementById('narrative-title').innerText = "Drowning in Spreadsheets";
+                document.getElementById('narrative-text').innerText = "Legacy software exports flat data. Trying to manually track who owes what, and which invoices are aging into critical territory, takes hours of manual filtering.";
+            }, 400);
+        }
+    </script>
+</body>
+</html>

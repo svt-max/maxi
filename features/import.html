@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible | Import & Analyse Data</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .import-wrapper { padding: 3rem 2rem; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; min-height: 400px; align-items: center; justify-content: center;}
+        
+        .server-rack { width: 100px; height: 120px; background: #1e293b; border: 2px solid #475569; border-radius: 12px; display: flex; flex-direction: column; padding: 10px; gap: 8px; position: relative; transition: all 0.5s;}
+        .sr-slot { flex: 1; background: #0f172a; border-radius: 4px; position: relative; overflow: hidden; }
+        .sr-light { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; border-radius: 50%; background: #ef4444; transition: background 0.3s;}
+        
+        .progress-bar { width: 100%; max-width: 300px; height: 12px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 2rem; overflow: hidden; opacity: 0; transition: opacity 0.3s;}
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #38bdf8, #8b5cf6); border-radius: 10px; transition: width 2s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+        .stats-grid { display: none; opacity: 0; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; transition: all 0.5s; transform: scale(0.95); margin-top: 2rem;}
+        .stats-grid.visible { display: grid; opacity: 1; transform: scale(1); }
+        .s-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1.2rem; border-radius: 12px; text-align: center; }
+        .s-lbl { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; margin-bottom: 5px; display: block;}
+        .s-val { font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #fff;}
+
+        .action-btn { margin-top: 2rem; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4); width: 100%; max-width: 300px;}
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(139, 92, 246, 0.6); }
+
+        body.mode-synced .smart-card { border-color: rgba(139, 92, 246, 0.4); box-shadow: 0 0 60px -10px rgba(139, 92, 246, 0.15); }
+        body.mode-synced .status-bar { background: rgba(139, 92, 246, 0.1); color: #a855f7; border-top: 1px solid rgba(139, 92, 246, 0.2); }
+    </style>
+</head>
+<body>
+    <header><h1>Real-Time Sync</h1></header>
+
+    <div class="stage-area">
+        <div class="smart-card">
+            <div class="import-wrapper">
+                
+                <div class="server-rack" id="server">
+                    <div class="sr-slot"><div class="sr-light"></div></div>
+                    <div class="sr-slot"><div class="sr-light"></div></div>
+                    <div class="sr-slot"><div class="sr-light"></div></div>
+                </div>
+                <h3 style="font-family: 'Outfit'; color: #fff; margin: 15px 0 0 0;" id="server-txt">ERP Disconnected</h3>
+
+                <div class="progress-bar" id="p-bar"><div class="progress-fill" id="p-fill"></div></div>
+
+                <div class="stats-grid" id="stats">
+                    <div class="s-box"><span class="s-lbl">Total Invoices</span><span class="s-val">1,204</span></div>
+                    <div class="s-box"><span class="s-lbl">Total Debtors</span><span class="s-val">482</span></div>
+                    <div class="s-box"><span class="s-lbl">Outstanding</span><span class="s-val" style="color: #38bdf8;">€ 845k</span></div>
+                    <div class="s-box"><span class="s-lbl">Avg. Payment</span><span class="s-val" style="color: #10b981;">34 Days</span></div>
+                </div>
+
+                <button class="action-btn" id="btn-sync" onclick="startSync()"><i class="fa-solid fa-plug"></i> Connect & Sync Ledger</button>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-server"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Siloed Financial Data</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">The Data Silo</div>
+            <div class="narrative-text" id="narrative-text">
+                Your accounting software holds all the financial truth, but it isn't built to communicate or collect. To do anything with that data, you have to export messy CSV files manually.
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        function startSync() {
+            document.getElementById('btn-sync').style.display = 'none';
+            document.getElementById('server-txt').innerText = "Extracting Ledger...";
+            document.getElementById('server-txt').style.color = "#38bdf8";
+            
+            // Turn server lights blue
+            document.querySelectorAll('.sr-light').forEach(light => { light.style.background = '#38bdf8'; });
+            
+            // Show progress bar
+            const pBar = document.getElementById('p-bar');
+            pBar.style.opacity = '1';
+            
+            setTimeout(() => {
+                document.getElementById('p-fill').style.width = '100%';
+            }, 100);
+
+            // Finish Sync
+            setTimeout(() => {
+                document.body.className = 'mode-synced';
+                document.getElementById('server').style.display = 'none';
+                document.getElementById('server-txt').style.display = 'none';
+                pBar.style.display = 'none';
+
+                const stats = document.getElementById('stats');
+                stats.classList.add('visible');
+
+                document.getElementById('action-bar').className = "status-bar";
+                document.getElementById('action-bar').innerHTML = '<div class="status-content"><span><i class="fa-solid fa-database"></i> &nbsp;Action: Ingested</span><span style="opacity:0.7; font-size:0.75rem">Live bidirectional sync active</span></div>';
+                
+                document.getElementById('narrative-title').innerText = "Instant Intelligence";
+                document.getElementById('narrative-text').innerText = "MaxCredible connects directly to your ERP via API. Raw ledger data is instantly ingested and transformed into actionable financial intelligence without a single CSV export.";
+            }, 2100);
+        }
+    </script>
+</body>
+</html>

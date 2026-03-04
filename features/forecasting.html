@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible | Payment Forecasting</title>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .fore-wrapper { padding: 3rem 2rem; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; min-height: 380px; align-items: center; justify-content: center;}
+        
+        .fog-container { position: relative; width: 100%; max-width: 350px; height: 180px; display: flex; align-items: flex-end; gap: 10px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+        
+        .f-bar { flex: 1; background: #38bdf8; border-radius: 4px 4px 0 0; transition: all 1s ease-in-out; }
+        
+        /* The "Fog" effect */
+        .fog-overlay { position: absolute; inset: -20px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 10; display: flex; align-items: center; justify-content: center; transition: opacity 1.5s; flex-direction: column; border-radius: 12px;}
+        .fog-overlay i { font-size: 3rem; color: #64748b; margin-bottom: 10px; }
+        .fog-text { font-family: 'Outfit'; font-weight: bold; color: #94a3b8; }
+
+        .predict-box { margin-top: 2rem; text-align: center; opacity: 0; transform: translateY(10px); transition: all 1s; }
+        .predict-box.visible { opacity: 1; transform: translateY(0); }
+        .p-val { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 800; color: #10b981; }
+        .p-lbl { font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; font-weight: bold; letter-spacing: 1px;}
+
+        .action-btn { margin-top: 1rem; background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.4); width: 100%; max-width: 300px; z-index: 20; position: relative;}
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(56, 189, 248, 0.6); }
+
+        body.mode-clear .smart-card { border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 0 60px -10px rgba(56, 189, 248, 0.15); }
+        body.mode-clear .status-bar { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-top: 1px solid rgba(56, 189, 248, 0.2); }
+    </style>
+</head>
+<body>
+    <header><h1>Payment Forecasting</h1></header>
+
+    <div class="stage-area">
+        <div class="smart-card">
+            <div class="fore-wrapper">
+                
+                <div class="fog-container">
+                    <div class="fog-overlay" id="fog">
+                        <i class="fa-solid fa-cloud"></i>
+                        <div class="fog-text">Visibility Blocked</div>
+                    </div>
+                    
+                    <div class="f-bar" style="height: 30%;"></div>
+                    <div class="f-bar" style="height: 50%;"></div>
+                    <div class="f-bar" style="height: 80%;"></div>
+                    <div class="f-bar" id="f-future" style="height: 40%; background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.2);"></div>
+                </div>
+
+                <div class="predict-box" id="p-box">
+                    <div class="p-val">+ €125,400</div>
+                    <div class="p-lbl">Expected by Friday</div>
+                </div>
+
+                <button class="action-btn" id="btn-fore" onclick="clearFog()"><i class="fa-solid fa-crystal-ball"></i> Generate Forecast</button>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-eye-slash"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Operating on guesswork</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">Flying Blind</div>
+            <div class="narrative-text" id="narrative-text">
+                Most companies know what they are owed, but have no idea exactly *when* the money will arrive. Relying on guesswork leaves you vulnerable to cashflow dips.
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        function clearFog() {
+            document.getElementById('btn-fore').style.display = 'none';
+            document.body.className = 'mode-clear';
+            
+            // Fade out fog
+            document.getElementById('fog').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('fog').style.display = 'none';
+            }, 1500);
+
+            // Animate future bar
+            setTimeout(() => {
+                const future = document.getElementById('f-future');
+                future.style.height = '100%';
+                future.style.background = 'rgba(16, 185, 129, 0.2)';
+                future.style.borderColor = '#10b981';
+                
+                document.getElementById('p-box').classList.add('visible');
+
+                document.getElementById('action-bar').className = "status-bar";
+                document.getElementById('action-bar').innerHTML = '<div class="status-content"><span><i class="fa-solid fa-bolt"></i> &nbsp;Action: Predicted</span><span style="opacity:0.7; font-size:0.75rem">94% Accuracy Model Active</span></div>';
+                
+                document.getElementById('narrative-title').innerText = "The Cashflow Oracle";
+                document.getElementById('narrative-text').innerText = "By analyzing historical payment behavior per customer, MaxCredible accurately predicts your incoming cashflow, allowing you to make confident financial decisions.";
+            }, 800);
+        }
+    </script>
+</body>
+</html>
