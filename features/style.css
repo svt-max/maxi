@@ -359,9 +359,16 @@ body { background: var(--bg-dark); color: #fff; font-family: var(--font-body); m
 .hm-amber { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; }
 .hm-red { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; }
 
-.chart-mock { display: flex; align-items: flex-end; justify-content: space-around; width: 100%; max-width: 450px; height: 70px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 5px; gap: 12px; }
-.bar-col { flex: 1; display: flex; align-items: flex-end; justify-content: center; height: 100%; }
-.bar { width: 100%; max-width: 28px; background: var(--c-netting); border-radius: 4px 4px 0 0; transition: height 0.5s ease; opacity: 0.8; }
+/* Animate bars when the dashboard state is active */
+.demo-state.active-state .bar { 
+    animation: growBar 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+    transform-origin: bottom; 
+}
+
+@keyframes growBar { 
+    from { transform: scaleY(0); opacity: 0; } 
+    to { transform: scaleY(1); opacity: 0.8; } 
+}
 
 /* Reminders Timeline */
 .timeline { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 400px; padding: 0 1rem; }
@@ -415,10 +422,15 @@ body { background: var(--bg-dark); color: #fff; font-family: var(--font-body); m
 .lc-hash { font-family: monospace; font-size: 0.7rem; color: #94a3b8; margin-bottom: 15px; }
 .lc-stamp { background: var(--c-shield); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Ensure grids stack nicely on very small mobile screens */
+/* Ensure grids and widgets scale perfectly on very small mobile screens */
 @media (max-width: 480px) {
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .bucket { font-size: 0.7rem; padding: 8px 4px; }
+    
+    /* Dashboard specific mobile tweaks */
+    .hm-cell { font-size: 1.1rem; padding: 10px 5px; }
+    .hm-lbl { font-size: 0.55rem; white-space: nowrap; }
+    .chart-mock { gap: 8px; height: 60px; }
 }
 
 /* --- MOBILE OPTIMIZATION --- */
@@ -427,6 +439,11 @@ body { background: var(--bg-dark); color: #fff; font-family: var(--font-body); m
 @media (max-width: 768px) {
     /* 1. Maximize Screen Real Estate & Clip Corners */
     .snap-section { padding: 1rem; align-items: center; }
+    /* --- Nav Bar Overrides for Index Page --- */
+    .nav-content { padding: 8px 12px; width: 95%; }
+    .nav-controls { gap: 8px; }
+    .toggle-txt { display: none; }
+    .nav-toggle { padding: 8px; }
     
     .feature-card, .wide-card {
         padding: 2rem 1.5rem; /* More top/bottom padding */
