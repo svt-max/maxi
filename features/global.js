@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <a href="https://app.maxcredible.com/signup/" class="nav-cta-btn">Get Started</a>
                     <button class="nav-toggle" id="menuToggle">
                         <span class="toggle-txt">Modules</span>
-                        <div class="hamburger"><span></span><span></span></div>
+                        <div class="hamburger"><span></span><span></span><span></span></div>
                     </button>
                 </div>
             </div>
@@ -95,13 +95,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if(menuToggle && navOverlay) {
         menuToggle.addEventListener('click', () => {
             navOverlay.classList.toggle('open');
-            const spans = menuToggle.querySelectorAll('span');
+            // Target ONLY the lines, not the "Modules" text
+            const spans = menuToggle.querySelectorAll('.hamburger span');
+            
             if(navOverlay.classList.contains('open')) {
-                spans[0].style.transform = "rotate(45deg) translate(5px, 5px)";
-                spans[1].style.transform = "rotate(-45deg) translate(5px, -5px)";
+                // Clean, center-axis X animation
+                spans[0].style.transform = "translateY(5px) rotate(45deg)";
+                spans[1].style.opacity = "0";
+                spans[2].style.transform = "translateY(-5px) rotate(-45deg)";
             } else {
                 spans[0].style.transform = "none";
-                spans[1].style.transform = "none";
+                spans[1].style.opacity = "1";
+                spans[2].style.transform = "none";
             }
         });
     }

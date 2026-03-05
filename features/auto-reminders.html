@@ -8,13 +8,13 @@
     <style>
         .journey-wrapper { padding: 2rem; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
         
-        /* Controls */
-        .controls-deck { display: flex; gap: 10px; margin-bottom: 2rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .j-ctrl { flex: 1; text-align: center; }
-        .lbl { font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; display: block; }
-        .toggle-btn { background: #1e293b; border: 1px solid #475569; color: #cbd5e1; padding: 8px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; transition: all 0.3s; }
-        .toggle-btn:hover { background: rgba(56, 189, 248, 0.1); border-color: #38bdf8; color: #fff; }
-        .toggle-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+        /* Controls - Segmented Style */
+        .controls-deck { display: flex; gap: 15px; margin-bottom: 2rem; }
+        .j-ctrl { flex: 1; text-align: center; background: rgba(15, 23, 42, 0.8); padding: 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; position: relative; }
+        .lbl { font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; font-weight: 800; letter-spacing: 1px; position: absolute; top: -20px; left: 5px; }
+        .toggle-btn { background: transparent; border: none; color: #64748b; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; width: 100%; transition: all 0.3s; position: relative; z-index: 2; }
+        .toggle-btn:hover { color: #fff; }
+        .toggle-btn.active { background: #38bdf8; color: #0f172a; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3); }
 
         /* Timeline Nodes */
         .j-timeline { display: flex; flex-direction: column; position: relative; }

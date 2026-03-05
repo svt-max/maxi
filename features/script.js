@@ -18,17 +18,21 @@ const navItems = document.querySelectorAll('.nav-item'); // <--- THIS WAS MISSIN
 
 if(menuToggle && navOverlay) {
     menuToggle.addEventListener('click', () => {
-        navOverlay.classList.toggle('open');
-        // Simple Hamburger Animation
-        const spans = menuToggle.querySelectorAll('span');
-        if(navOverlay.classList.contains('open')) {
-            spans[0].style.transform = "rotate(45deg) translate(5px, 5px)";
-            spans[1].style.transform = "rotate(-45deg) translate(5px, -5px)";
-        } else {
-            spans[0].style.transform = "none";
-            spans[1].style.transform = "none";
-        }
-    });
+            navOverlay.classList.toggle('open');
+            // Target ONLY the lines, not the "Modules" text
+            const spans = menuToggle.querySelectorAll('.hamburger span');
+            
+            if(navOverlay.classList.contains('open')) {
+                // Clean, center-axis X animation
+                spans[0].style.transform = "translateY(5px) rotate(45deg)";
+                spans[1].style.opacity = "0";
+                spans[2].style.transform = "translateY(-5px) rotate(-45deg)";
+            } else {
+                spans[0].style.transform = "none";
+                spans[1].style.opacity = "1";
+                spans[2].style.transform = "none";
+            }
+        });
 
     // Close menu when a link is clicked
     navItems.forEach(item => {
@@ -235,11 +239,11 @@ function cycleDashboard() {
     if(step === 0) {
         s1.className = "demo-state active-state";
         s2.className = "demo-state hidden-state";
-        desc.innerText = "Instead of drowning in endless spreadsheets and trying to manually track who owes what...";
+        desc.innerText = "Transform raw data into visual heatmaps to instantly spot bottlenecks and prioritize team efforts.";
     } else {
         s1.className = "demo-state hidden-state";
         s2.className = "demo-state active-state";
-        desc.innerText = "Transform raw data into visual heatmaps to instantly spot bottlenecks and prioritize team efforts.";
+        desc.innerText = "Instead of drowning in endless spreadsheets and trying to manually track who owes what...";
     }
 }
 
