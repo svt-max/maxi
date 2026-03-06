@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MaxCredible | Customer Portal</title>    
+    <link rel="stylesheet" href="global.css">
+
+    <style>
+        :root {
+            --bg-deep: #0f0c29;
+            --card-bg: #0f172a; 
+            --c-legacy: #ef4444; 
+            --c-amber: #f59e0b;
+            --c-netting: #38bdf8; 
+            --c-success: #10b981;
+            --c-shield: #a855f7;
+            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden; padding-bottom: 3rem;
+        }
+
+        header { text-align: center; margin-top: 140px; margin-bottom: 2.5rem; z-index: 5; padding: 0 1rem; }
+        h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2.5rem; margin: 0; background: linear-gradient(to right, #fff, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.25; padding-bottom: 0.1em; }
+
+        .stage-area { perspective: 1000px; width: 100%; max-width: 480px; display: flex; flex-direction: column; align-items: center; padding: 0 1rem; box-sizing: border-box; transition: max-width 0.4s; }
+        .smart-card { width: 100%; background: var(--card-bg); box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 25px 50px -12px rgba(0,0,0,0.5); border-radius: 24px; position: relative; transition: all 0.6s var(--ease-elastic); transform-style: preserve-3d; display: flex; flex-direction: column; overflow: hidden; }
+        .portal-wrapper { padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 480px; width: 100%; box-sizing: border-box; position: relative;}
+        
+        .view-section { width: 100%; display: none; opacity: 0; flex-direction: column; transition: all 0.5s; align-items: center;}
+        .view-section.active { display: flex; opacity: 1; }
+
+        .action-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 1.5rem;}
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(56, 189, 248, 0.6); }
+
+        /* --- STAGE 1: The Dead End --- */
+        .dead-end-email { background: #e2e8f0; border-radius: 12px; padding: 20px; color: #334155; width: 100%; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.05); text-align: left;}
+        .email-head { border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 15px; font-size: 0.85rem;}
+        .email-body { font-size: 0.95rem; line-height: 1.5; font-family: 'Times New Roman', serif; color: #000;}
+        .frustration-marks { position: absolute; top: -10px; right: -10px; color: #ef4444; font-size: 2rem; font-weight: 900; transform: rotate(15deg); animation: shake 2s infinite; text-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);}
+        @keyframes shake { 0%, 100% { transform: rotate(15deg); } 50% { transform: rotate(5deg) scale(1.1); } }
+
+        /* --- STAGE 2: The Portal --- */
+        .portal-ui { background: #fff; border-radius: 16px; width: 100%; overflow: hidden; color: #0f172a; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .p-header { background: #f8fafc; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+        .p-logo { font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem; color: #0284c7; }
+        .p-balance-box { background: linear-gradient(135deg, #0ea5e9, #0284c7); padding: 25px 20px; color: #fff; text-align: center; }
+        .p-amount { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 800; line-height: 1; margin: 5px 0; }
+        
+        .p-list { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .p-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s; }
+        .p-item:hover { border-color: #38bdf8; background: #f0f9ff; }
+        .p-info { display: flex; flex-direction: column; }
+        .p-inv-num { font-weight: 700; font-size: 0.9rem; color: #0f172a; }
+        .p-inv-date { font-size: 0.75rem; color: #64748b; }
+        .p-actions { display: flex; gap: 8px; align-items: center; }
+        .btn-icon { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 6px; color: #475569; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-icon:hover { background: #e2e8f0; color: #0f172a; }
+
+        .p-footer-actions { display: flex; gap: 10px; padding: 15px; border-top: 1px solid #e2e8f0; background: #f8fafc;}
+        .btn-outline { flex: 1; background: transparent; border: 1px solid #cbd5e1; color: #475569; padding: 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: 0.2s; text-align: center;}
+        .btn-outline:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-primary { flex: 1; background: #10b981; border: none; color: #fff; padding: 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); transition: 0.2s;}
+        .btn-primary:hover { background: #059669; }
+
+        /* --- STAGE 3: Action Drawer --- */
+        .drawer-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 10; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.4s;}
+        .drawer-overlay.open { opacity: 1; pointer-events: all;}
+        .drawer-content { background: #fff; width: 100%; border-radius: 20px 20px 0 0; padding: 25px 20px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); color: #0f172a;}
+        .drawer-overlay.open .drawer-content { transform: translateY(0); }
+        .d-title { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; margin-bottom: 15px;}
+        .d-option { display: flex; align-items: center; gap: 12px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.2s;}
+        .d-option:hover { border-color: #38bdf8; background: #f0f9ff; }
+        .d-icon { width: 40px; height: 40px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0284c7; font-size: 1.1rem;}
+
+        /* --- STAGE 4: Success / ROI --- */
+        .success-circle { width: 80px; height: 80px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 2.5rem; margin-bottom: 20px; box-shadow: 0 0 30px rgba(16, 185, 129, 0.2); animation: popScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);}
+        @keyframes popScale { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        .roi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 15px;}
+        .roi-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; text-align: center; }
+        .r-lbl { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block;}
+        .r-val { font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #fff;}
+
+        /* --- Status Bar --- */
+        .status-bar { width: 100%; padding: 16px 2rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center; transition: all 0.4s; margin-top: auto; box-sizing: border-box; min-height: 80px; position: relative; z-index: 30; }
+        .status-content { display: flex; flex-direction: column; gap: 4px; }
+        .status-bar.s-legacy { background: rgba(239, 68, 68, 0.1); color: var(--c-legacy); border-top: 1px solid rgba(239, 68, 68, 0.2); box-shadow: inset 0 10px 20px -10px rgba(239, 68, 68, 0.1); }
+        .status-bar.s-netting { background: rgba(56, 189, 248, 0.1); color: var(--c-netting); border-top: 1px solid rgba(56, 189, 248, 0.2); }
+        .status-bar.s-success { background: rgba(16, 185, 129, 0.1); color: var(--c-success); border-top: 1px solid rgba(16, 185, 129, 0.2); }
+
+        /* --- Narrative Box --- */
+        .narrative-box { margin-top: 2.5rem; text-align: center; max-width: 450px; padding: 0 1rem; }
+        .narrative-title { font-weight: 800; color: #fff; margin-bottom: 0.8rem; font-family: 'Outfit'; font-size: 1.4rem;}
+        .narrative-text { color: #94a3b8; font-size: 1rem; line-height: 1.6; transition: all 0.3s; }
+
+        @media (min-width: 768px) {
+            h1 { font-size: 4rem; margin-bottom: 0.5rem; padding-bottom: 0.1em; }
+            .stage-area { max-width: 600px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Customer Portal</h1>
+    </header>
+
+    <div class="stage-area" style="margin-top: 1rem;">
+        <div class="smart-card">
+            <div class="portal-wrapper">
+                
+                <div class="view-section active" id="view-deadend">
+                    <div class="dead-end-email">
+                        <div class="email-head">
+                            <strong>From:</strong> Accounts Receivable<br>
+                            <strong>Subject:</strong> OVERDUE PAYMENT REQUIRED
+                        </div>
+                        <div class="email-body">
+                            Dear Customer,<br><br>
+                            Your account is past due. Please remit payment of $4,250 immediately to avoid further action. If you have questions or need a copy of your invoice, please reply to this email or call our support line between 9 AM and 5 PM.<br><br>
+                            Sincerely,<br>The Billing Team
+                        </div>
+                        <div class="frustration-marks">!?#</div>
+                    </div>
+                    
+                    <button class="action-btn" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none; margin-top: 30px;" onclick="showPortal()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Enable Self-Service
+                    </button>
+                </div>
+
+                <div class="view-section" id="view-portal">
+                    <div class="portal-ui">
+                        <div class="p-header">
+                            <span class="p-logo">Acme Corp</span>
+                            <i class="fa-regular fa-circle-user" style="font-size: 1.5rem; color: #cbd5e1;"></i>
+                        </div>
+                        <div class="p-balance-box">
+                            <div style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">Total Outstanding</div>
+                            <div class="p-amount">$4,250.00</div>
+                            <div style="font-size: 0.8rem; background: rgba(0,0,0,0.2); display: inline-block; padding: 4px 10px; border-radius: 20px; margin-top: 5px;">3 Invoices Due</div>
+                        </div>
+                        
+                        <div class="p-list">
+                            <div class="p-item">
+                                <div class="p-info">
+                                    <span class="p-inv-num">INV-8820</span>
+                                    <span class="p-inv-date">Due: Oct 12</span>
+                                </div>
+                                <div class="p-actions">
+                                    <span style="font-weight: 700; margin-right: 10px;">$2,000</span>
+                                    <button class="btn-icon" title="Download PDF"><i class="fa-solid fa-file-pdf"></i></button>
+                                </div>
+                            </div>
+                            <div class="p-item">
+                                <div class="p-info">
+                                    <span class="p-inv-num">INV-8901</span>
+                                    <span class="p-inv-date" style="color: #ef4444; font-weight: bold;">Overdue (15 Days)</span>
+                                </div>
+                                <div class="p-actions">
+                                    <span style="font-weight: 700; margin-right: 10px;">$1,500</span>
+                                    <button class="btn-icon" title="Download PDF"><i class="fa-solid fa-file-pdf"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-footer-actions">
+                            <button class="btn-outline" onclick="openDrawer()"><i class="fa-regular fa-circle-question"></i> Get Help</button>
+                            <button class="btn-primary" onclick="showROI()"><i class="fa-solid fa-credit-card"></i> Pay All Now</button>
+                        </div>
+                    </div>
+
+                    <div class="drawer-overlay" id="action-drawer">
+                        <div class="drawer-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px;">
+                                <div class="d-title" style="margin: 0;">How can we help?</div>
+                                <button style="background: none; border: none; font-size: 1.2rem; color: #94a3b8; cursor: pointer;" onclick="closeDrawer()"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            
+                            <div class="d-option" onclick="processAction()">
+                                <div class="d-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 1rem;">Request Payment Plan</div>
+                                    <div style="font-size: 0.8rem; color: #64748b;">Split your balance into monthly installments</div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-option" onclick="processAction()">
+                                <div class="d-icon" style="color: #ef4444; background: #fee2e2;"><i class="fa-solid fa-hand-paper"></i></div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 1rem;">Lodge a Dispute</div>
+                                    <div style="font-size: 0.8rem; color: #64748b;">Report missing goods or incorrect pricing</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="view-section" id="view-roi">
+                    <div class="success-circle">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 10px;">Self-Service Success</div>
+                    <p style="color: #94a3b8; font-size: 0.9rem; text-align: center; margin-bottom: 20px;">The customer resolved their issue instantly without consuming your team's time.</p>
+
+                    <div class="roi-grid">
+                        <div class="roi-box">
+                            <span class="r-lbl">Inbound Calls</span>
+                            <span class="r-val" style="color: #10b981;">-40%</span>
+                        </div>
+                        <div class="roi-box">
+                            <span class="r-lbl">Payment Speed</span>
+                            <span class="r-val" style="color: #38bdf8;">3x Faster</span>
+                        </div>
+                    </div>
+
+                    <button class="action-btn" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none; margin-top: 30px;" onclick="resetFlow()">
+                        <i class="fa-solid fa-rotate-left"></i> Run Scenario Again
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-lock"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">High Friction & Frustration</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">The Friction Trap</div>
+            <div class="narrative-text" id="narrative-text">
+                Legacy software sends demands but offers no way out. If a customer needs an invoice copy or wants to set up a payment plan, they are forced to call during business hours or send emails into a black hole.
+            </div>
+        </div>
+    </div>
+
+
+    <script src="global.js"></script>
+    <script>
+        const vDeadEnd = document.getElementById('view-deadend');
+        const vPortal = document.getElementById('view-portal');
+        const vRoi = document.getElementById('view-roi');
+        const drawer = document.getElementById('action-drawer');
+        
+        const actionBar = document.getElementById('action-bar');
+        const narrativeTitle = document.getElementById('narrative-title');
+        const narrativeText = document.getElementById('narrative-text');
+
+        function switchView(hideView, showView) {
+            hideView.style.opacity = "0";
+            setTimeout(() => {
+                hideView.classList.remove('active');
+                showView.classList.add('active');
+                void showView.offsetWidth; // Force reflow
+                showView.style.opacity = "1";
+            }, 400);
+        }
+
+        // Action 1: Show Portal
+        function showPortal() {
+            switchView(vDeadEnd, vPortal);
+            
+            actionBar.className = "status-bar s-netting";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-door-open"></i>&nbsp; Portal Activated</span><span style="opacity:0.7; font-size:0.75rem">White-Labeled Experience</span></div>';
+            
+            narrativeTitle.innerText = 'The Self-Service Hub';
+            narrativeText.innerText = 'MaxCredible provides a secure, branded portal link in every communication. Customers can instantly view their balance, download missing PDFs, and pay via integrated PayLinks.';
+        }
+
+        // Action 2: Open Drawer
+        function openDrawer() {
+            drawer.classList.add('open');
+            narrativeTitle.innerText = 'The Resolution Path';
+            narrativeText.innerText = 'If they cannot pay in full, they don\'t need to call you. They can request a structured payment arrangement or lodge a specific dispute directly through the portal UI.';
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            narrativeTitle.innerText = 'The Self-Service Hub';
+            narrativeText.innerText = 'MaxCredible provides a secure, branded portal link in every communication. Customers can instantly view their balance, download missing PDFs, and pay via integrated PayLinks.';
+        }
+
+        // Action 3: Process Action & Show ROI
+        function processAction() {
+            closeDrawer();
+            setTimeout(showROI, 500); // Wait for drawer to close before transitioning
+        }
+
+        function showROI() {
+            switchView(vPortal, vRoi);
+            
+            document.body.className = 'mode-netting'; 
+            
+            actionBar.className = "status-bar s-success";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-headset"></i>&nbsp; Deflection Achieved</span><span style="opacity:0.7; font-size:0.75rem">Zero Support Cost</span></div>';
+            
+            narrativeTitle.innerText = 'The Automated Outcome';
+            narrativeText.innerText = 'The system routes their dispute directly to the right department, or automatically approves their payment plan based on your rules. Your inbound call volume drops by 40%.';
+        }
+
+        // Action 4: Reset
+        function resetFlow() {
+            document.body.className = '';
+            closeDrawer();
+            switchView(vRoi, vDeadEnd);
+
+            actionBar.className = "status-bar s-legacy";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-lock"></i> &nbsp;Status</span><span style="opacity:0.7; font-size:0.75rem">High Friction & Frustration</span></div>';
+            
+            narrativeTitle.innerText = 'The Friction Trap';
+            narrativeText.innerText = 'Legacy software sends demands but offers no way out. If a customer needs an invoice copy or wants to set up a payment plan, they are forced to call during business hours or send emails into a black hole.';
+        }
+    </script>
+</body>
+</html>

@@ -2,101 +2,423 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MaxCredible | Payment Reputation</title>
     <link rel="stylesheet" href="global.css">
-    <style>
-        .rep-wrapper { padding: 3rem 2rem; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; min-height: 400px; align-items: center; justify-content: center;}
-        
-        .profile-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; width: 100%; max-width: 350px; text-align: center; transition: all 0.5s; position: relative; overflow: hidden;}
-        
-        .p-avatar { width: 80px; height: 80px; border-radius: 50%; background: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #64748b; margin: 0 auto 1rem auto; transition: all 0.5s; border: 3px solid transparent;}
-        
-        .p-name { font-family: 'Outfit'; font-size: 1.5rem; font-weight: bold; color: #fff; margin-bottom: 5px; }
-        .p-status { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 1.5rem;}
-        
-        .score-box { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 1.5rem; opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); display: none;}
-        .score-box.visible { opacity: 1; transform: translateY(0); display: block;}
-        
-        .s-num { font-family: 'Outfit'; font-size: 3.5rem; font-weight: 800; line-height: 1; margin-bottom: 5px; color: #10b981; }
-        .s-lbl { font-size: 0.75rem; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; }
 
-        .action-btn { margin-top: 2rem; background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.4); width: 100%; max-width: 350px;}
+    <style>
+        :root {
+            /* Theme Colors */
+            --bg-deep: #0f0c29;
+            --card-bg: #0f172a; 
+            --border: rgba(255, 255, 255, 0.1);
+            
+            /* State Colors */
+            --c-legacy: #ef4444; 
+            --c-amber: #f59e0b;
+            --c-netting: #38bdf8; 
+            --c-success: #10b981;
+
+            /* Transitions */
+            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding-bottom: 3rem;
+            position: relative;
+        }
+
+        /* --- Header --- */
+        header { text-align: center; margin-top: 140px; margin-bottom: 2.5rem; z-index: 5; padding: 0 1rem; }
+        h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2.5rem; margin: 0; background: linear-gradient(to right, #fff, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.25; padding-bottom: 0.1em; }
+
+        /* --- STAGE & SMART CARD --- */
+        .stage-area { perspective: 1000px; width: 100%; max-width: 480px; display: flex; flex-direction: column; align-items: center; padding: 0 1rem; box-sizing: border-box; transition: max-width 0.4s; }
+        .smart-card { width: 100%; background: var(--card-bg); box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 25px 50px -12px rgba(0,0,0,0.5); border-radius: 24px; position: relative; transition: all 0.6s var(--ease-elastic); transform-style: preserve-3d; display: flex; flex-direction: column; overflow: hidden; }
+
+        .rep-wrapper { padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 440px; width: 100%; box-sizing: border-box; position: relative;}
+        
+        .view-section { width: 100%; display: none; opacity: 0; flex-direction: column; transition: all 0.5s; align-items: center;}
+        .view-section.active { display: flex; opacity: 1; }
+
+        /* --- Action Button --- */
+        .action-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 1.5rem;}
         .action-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(56, 189, 248, 0.6); }
 
-        body.mode-scored .smart-card { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 60px -10px rgba(16, 185, 129, 0.15); }
-        body.mode-scored .status-bar { background: rgba(16, 185, 129, 0.1); color: #10b981; border-top: 1px solid rgba(16, 185, 129, 0.2); }
+        /* --- STAGE 1: The Behavioral Scan --- */
+        .scan-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; width: 100%; text-align: center; position: relative; overflow: hidden; height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--c-netting); box-shadow: 0 0 15px var(--c-netting); animation: scanLoop 1.5s infinite linear; }
+        @keyframes scanLoop { 0% { top: 0; opacity: 0;} 10% { opacity: 1;} 90% {opacity: 1;} 100% { top: 100%; opacity: 0;} }
+        .dynamic-icon { font-size: 3rem; margin-bottom: 10px; color: #64748b; transition: all 0.2s;}
+        .dynamic-text { font-family: 'Outfit'; font-weight: 700; font-size: 1.1rem; color: #fff; }
+
+        /* --- STAGE 2: The Relationship Scorecard (Donut & Grid) --- */
+        .scorecard { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+        .donut-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: flex-end;}
+        .donut-svg { width: 220px; overflow: visible; }
+        .donut-score { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); text-align: center; display: flex; flex-direction: column; align-items: center;}
+        .donut-score .num { font-family: 'Outfit'; font-size: 3.5rem; font-weight: 800; color: #fff; line-height: 0.9; }
+        .donut-score .lbl { font-size: 0.75rem; color: #f59e0b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; white-space: nowrap;}
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .stat-block { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px; justify-content: space-between;}
+        .sb-lbl { font-size: 0.7rem; color: #94a3b8; font-weight: 600; display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .sb-val { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #fff; }
+        
+        .signal-bars { display: flex; gap: 3px; align-items: flex-end; height: 14px;}
+        .bar { width: 4px; background: #334155; border-radius: 2px; }
+        .bar.active-green { background: #10b981; }
+        .bar.active-red { background: #ef4444; }
+        .bar-1 { height: 40%; } .bar-2 { height: 60%; } .bar-3 { height: 80%; } .bar-4 { height: 100%; }
+
+        /* --- STAGE 3: Worsening Trend --- */
+        .timeline-track { display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%; padding: 20px 10px; margin-bottom: 20px;}
+        .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); z-index: 1; transform: translateY(-50%);}
+        .t-dot { width: 20px; height: 20px; border-radius: 50%; z-index: 2; border: 3px solid var(--card-bg); display: flex; align-items: center; justify-content: center;}
+        .t-dot.green { background: #10b981; }
+        .t-dot.red { background: #ef4444; }
+        .t-dot.pulse { animation: redPulse 1.5s infinite; }
+        @keyframes redPulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        .trend-alert { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 15px; border-radius: 12px; width: 100%; text-align: left;}
+        .trend-alert h4 { color: #ef4444; margin: 0 0 5px 0; font-family: 'Outfit'; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;}
+        .trend-alert p { color: #cbd5e1; font-size: 0.85rem; margin: 0; line-height: 1.4;}
+
+        /* --- STAGE 4: Automated Escalation (Shutter) --- */
+        .journey-box { position: relative; width: 100%; height: 200px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .j-friendly { position: absolute; inset: 0; background: rgba(16, 185, 129, 0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;}
+        
+        .j-shutter { position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: #1e1b4b; border-bottom: 4px solid var(--c-shield); transition: top 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; z-index: 10;}
+        .j-shutter.closed { top: 0; }
+        
+        .j-title { font-family: 'Outfit'; font-weight: 800; font-size: 1.3rem; margin-bottom: 5px;}
+        .j-tag { font-size: 0.7rem; font-weight: bold; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 1px;}
+
+        /* --- STAGE 5: Recommendation --- */
+        .ai-card { background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(168, 85, 247, 0.1)); border: 1px solid rgba(56, 189, 248, 0.3); padding: 25px 20px; border-radius: 16px; text-align: center; width: 100%; box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.05);}
+        .ai-icon { font-size: 2.5rem; color: #38bdf8; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4));}
+        .ai-title { font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; color: #fff; margin-bottom: 10px;}
+        .ai-desc { color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin-bottom: 0;}
+
+        /* --- Status Bar --- */
+        .status-bar { width: 100%; padding: 16px 2rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center; transition: all 0.4s; margin-top: auto; box-sizing: border-box; min-height: 80px; position: relative; z-index: 30; }
+        .status-content { display: flex; flex-direction: column; gap: 4px; }
+        .status-bar.s-legacy { background: rgba(239, 68, 68, 0.1); color: var(--c-legacy); border-top: 1px solid rgba(239, 68, 68, 0.2); box-shadow: inset 0 10px 20px -10px rgba(239, 68, 68, 0.1); }
+        .status-bar.s-amber { background: rgba(245, 158, 11, 0.1); color: var(--c-amber); border-top: 1px solid rgba(245, 158, 11, 0.2); }
+        .status-bar.s-shield { background: #1e1b4b; color: var(--c-shield); border-top: 1px solid var(--c-shield); }
+        .status-bar.s-netting { background: rgba(56, 189, 248, 0.1); color: var(--c-netting); border-top: 1px solid rgba(56, 189, 248, 0.2); }
+
+        /* --- Narrative Box --- */
+        .narrative-box { margin-top: 2.5rem; text-align: center; max-width: 450px; padding: 0 1rem; }
+        .narrative-title { font-weight: 800; color: #fff; margin-bottom: 0.8rem; font-family: 'Outfit'; font-size: 1.4rem;}
+        .narrative-text { color: #94a3b8; font-size: 1rem; line-height: 1.6; transition: all 0.3s; }
+
+        @media (min-width: 768px) {
+            h1 { font-size: 4rem; margin-bottom: 0.5rem; padding-bottom: 0.1em; }
+            .stage-area { max-width: 600px; }
+        }
     </style>
 </head>
 <body>
-    <header><h1>Payment Reputation</h1></header>
 
-    <div class="stage-area">
+    <header>
+        <h1>Payment Reputation</h1>
+    </header>
+
+    <div class="stage-area" style="margin-top: 1rem;">
         <div class="smart-card">
             <div class="rep-wrapper">
                 
-                <div class="profile-card" id="p-card">
-                    <div class="p-avatar" id="p-avatar"><i class="fa-solid fa-user-tie"></i></div>
-                    <div class="p-name">Wayne Enterprises</div>
-                    <div class="p-status" id="p-status">Risk Level: Unknown</div>
-                    
-                    <div class="score-box" id="s-box">
-                        <div class="s-num">92</div>
-                        <div class="s-lbl">Excellent Payer (Avg 12 Days)</div>
-                        <div style="margin-top: 15px; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-                            <i class="fa-solid fa-wand-magic-sparkles" style="color:#38bdf8;"></i> Workflow adjusted to 'VIP Gentle'
-                        </div>
+                <div class="view-section active" id="view-scan">
+                    <div class="scan-box">
+                        <div class="scan-line"></div>
+                        <i class="fa-solid fa-magnifying-glass dynamic-icon" id="scan-icon"></i>
+                        <div class="dynamic-text" id="scan-text">Initiating Historical Scan...</div>
                     </div>
+                    <button class="action-btn" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none;" onclick="startScan()">
+                        <i class="fa-solid fa-play"></i> Run Behavioral Analysis
+                    </button>
                 </div>
 
-                <button class="action-btn" id="btn-rep" onclick="runScoring()"><i class="fa-solid fa-radar"></i> Analyze Historical Data</button>
+                <div class="view-section" id="view-scorecard">
+                    <div class="scorecard">
+                        <div class="donut-container">
+                            <svg class="donut-svg" viewBox="0 0 100 65">
+                                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="#1e293b" stroke-width="10" stroke-linecap="round"/>
+                                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="#f59e0b" stroke-width="10" stroke-linecap="round" stroke-dasharray="125.6" stroke-dashoffset="125.6" id="gauge-fill" style="transition: stroke-dashoffset 1.5s ease-out;"/>
+                            </svg>
+                            <div class="donut-score">
+                                <div class="num" id="score-num">0</div>
+                                <div class="lbl">Below Average Payer</div>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-block">
+                                <span class="sb-lbl"><i class="fa-solid fa-clock-rotate-left"></i> Avg Delay</span>
+                                <span class="sb-val" style="color: #ef4444;">18 Days</span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="sb-lbl"><i class="fa-solid fa-calendar-check"></i> On Time</span>
+                                <span class="sb-val" style="color: #f59e0b;">45%</span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="sb-lbl"><i class="fa-solid fa-building-columns"></i> Ext. Credit</span>
+                                <span class="sb-val" style="color: #f59e0b;">High Risk</span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="sb-lbl"><i class="fa-solid fa-handshake-angle"></i> Broken Promises</span>
+                                <span class="sb-val" style="color: #ef4444;">3 <span style="font-size: 0.7rem; color: #64748b;">(6 mo)</span></span>
+                            </div>
+                            <div class="stat-block">
+                                <span class="sb-lbl"><i class="fa-regular fa-envelope"></i> Email Resp.</span>
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span class="sb-val">80%</span>
+                                    <div class="signal-bars">
+                                        <div class="bar bar-1 active-green"></div><div class="bar bar-2 active-green"></div><div class="bar bar-3 active-green"></div><div class="bar bar-4 active-green"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stat-block">
+                                <span class="sb-lbl"><i class="fa-solid fa-phone"></i> Call Answer</span>
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span class="sb-val" style="color: #ef4444;">5%</span>
+                                    <div class="signal-bars">
+                                        <div class="bar bar-1 active-red"></div><div class="bar bar-2"></div><div class="bar bar-3"></div><div class="bar bar-4"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn" onclick="showTrend()">
+                        <i class="fa-solid fa-arrow-right"></i> Track Recent Activity
+                    </button>
+                </div>
+
+                <div class="view-section" id="view-trend">
+                    <div style="font-family: 'Outfit'; font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; text-align: left; width: 100%;">Historical Pulse (6 Mo)</div>
+                    <div class="timeline-track">
+                        <div class="timeline-line"></div>
+                        <div class="t-dot green" title="Paid on Time"><i class="fa-solid fa-check" style="font-size: 0.6rem; color: #0f172a;"></i></div>
+                        <div class="t-dot green" title="Paid on Time"><i class="fa-solid fa-check" style="font-size: 0.6rem; color: #0f172a;"></i></div>
+                        <div class="t-dot red" title="Late Payment"><i class="fa-solid fa-xmark" style="font-size: 0.6rem; color: #0f172a;"></i></div>
+                        <div class="t-dot green" title="Paid on Time"><i class="fa-solid fa-check" style="font-size: 0.6rem; color: #0f172a;"></i></div>
+                        <div class="t-dot red" title="Broken Promise"><i class="fa-solid fa-xmark" style="font-size: 0.6rem; color: #0f172a;"></i></div>
+                        <div class="t-dot red pulse" title="Current Dispute"><i class="fa-solid fa-exclamation" style="font-size: 0.6rem; color: #0f172a;"></i></div>
+                    </div>
+
+                    <div class="trend-alert">
+                        <h4><i class="fa-solid fa-triangle-exclamation"></i> Risk Deteriorating</h4>
+                        <p>In the last 30 days, payment velocity has dropped by 15% and two new disputes were logged without merit. Threshold for 'Friendly' journey has been breached.</p>
+                    </div>
+
+                    <button class="action-btn" style="background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);" onclick="triggerEscalation()">
+                        <i class="fa-solid fa-lock"></i> Authorize Escalation
+                    </button>
+                </div>
+
+                <div class="view-section" id="view-escalation">
+                    <div class="journey-box">
+                        <div class="j-friendly">
+                            <i class="fa-solid fa-handshake" style="font-size: 3rem; color: #10b981; margin-bottom: 10px;"></i>
+                            <div class="j-title" style="color: #10b981;">Friendly Journey Active</div>
+                            <div class="j-tag" style="color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">Polite Nudges • Grace Periods</div>
+                        </div>
+                        
+                        <div class="j-shutter" id="shutter">
+                            <i class="fa-solid fa-gavel" style="font-size: 3rem; color: var(--c-shield); margin-bottom: 10px;"></i>
+                            <div class="j-title" style="color: #fff;">Strict Enforcement</div>
+                            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                <div class="j-tag" style="color: #e9d5ff; border: 1px solid rgba(168, 85, 247, 0.4);">+ Interest Added</div>
+                                <div class="j-tag" style="color: #e9d5ff; border: 1px solid rgba(168, 85, 247, 0.4);">Pre-Legal Warning</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="action-btn" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none;" onclick="showRecommendation()">
+                        <i class="fa-solid fa-brain"></i> View AI Strategy
+                    </button>
+                </div>
+
+                <div class="view-section" id="view-recommendation">
+                    <div class="ai-card">
+                        <i class="fa-solid fa-wand-magic-sparkles ai-icon"></i>
+                        <div class="ai-title">Strategic Recommendation</div>
+                        <p class="ai-desc"><strong>Stop calling.</strong> This debtor actively ignores phone calls but opens emails within 2 hours.<br><br>Deploy 'Legal Tone' email securely at <strong>09:00 AM on Tuesdays</strong>—their peak response window.</p>
+                    </div>
+
+                    <button class="action-btn" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none; margin-top: 20px;" onclick="resetFlow()">
+                        <i class="fa-solid fa-rotate-left"></i> Run Scenario Again
+                    </button>
+                </div>
 
             </div>
 
             <div class="status-bar s-legacy" id="action-bar">
                 <div class="status-content">
-                    <span><i class="fa-solid fa-user-ninja"></i> &nbsp;Status</span>
-                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Treating all clients equally</span>
+                    <span><i class="fa-solid fa-eye-slash"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Judging purely by balance owed</span>
                 </div>
             </div>
         </div>
 
         <div class="narrative-box">
-            <div class="narrative-title" id="narrative-title">The "One Size Fits All" Mistake</div>
+            <div class="narrative-title" id="narrative-title">Beyond the Balance</div>
             <div class="narrative-text" id="narrative-text">
-                Legacy software sends the exact same aggressive reminder to a loyal, 10-year VIP customer as it does to a chronic late-payer, actively damaging your best business relationships.
+                A customer owing $10k and 5 days late might be a loyal partner having a glitch, or a serial late-payer testing boundaries. The balance alone doesn't tell you which is which.
             </div>
         </div>
     </div>
 
     <script src="global.js"></script>
     <script>
-        function runScoring() {
-            const btn = document.getElementById('btn-rep');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Ledger...';
-            btn.style.opacity = '0.7';
-            btn.style.pointerEvents = 'none';
+        const vScan = document.getElementById('view-scan');
+        const vScorecard = document.getElementById('view-scorecard');
+        const vTrend = document.getElementById('view-trend');
+        const vEscalation = document.getElementById('view-escalation');
+        const vRecommendation = document.getElementById('view-recommendation');
+        
+        const actionBar = document.getElementById('action-bar');
+        const narrativeTitle = document.getElementById('narrative-title');
+        const narrativeText = document.getElementById('narrative-text');
+
+        function switchView(hideView, showView) {
+            hideView.style.opacity = "0";
+            setTimeout(() => {
+                hideView.classList.remove('active');
+                showView.classList.add('active');
+                void showView.offsetWidth; // Force reflow
+                showView.style.opacity = "1";
+            }, 400);
+        }
+
+        // --- STAGE 1: Scan Animation ---
+        function startScan() {
+            const iconEl = document.getElementById('scan-icon');
+            const textEl = document.getElementById('scan-text');
+            const btn = vScan.querySelector('.action-btn');
+            
+            btn.style.display = 'none';
+
+            const scanData = [
+                { i: "fa-check-double", c: "#10b981", t: "Paid on Time (Jan)" },
+                { i: "fa-xmark", c: "#ef4444", t: "Broken Promise (Mar)" },
+                { i: "fa-phone-slash", c: "#f59e0b", t: "Call Ignored (Apr)" },
+                { i: "fa-envelope-open-text", c: "#38bdf8", t: "Email Opened (May)" }
+            ];
+
+            let index = 0;
+            const scanInterval = setInterval(() => {
+                const data = scanData[index % scanData.length];
+                iconEl.className = `fa-solid ${data.i} dynamic-icon`;
+                iconEl.style.color = data.c;
+                textEl.innerText = data.t;
+                index++;
+            }, 600);
 
             setTimeout(() => {
-                btn.style.display = 'none';
-                document.body.className = 'mode-scored';
-                
-                const avatar = document.getElementById('p-avatar');
-                avatar.style.borderColor = '#10b981';
-                avatar.style.color = '#10b981';
-                avatar.style.background = 'rgba(16, 185, 129, 0.1)';
-                
-                document.getElementById('p-status').innerText = "Risk Level: Low";
-                document.getElementById('p-status').style.color = "#10b981";
-                
-                document.getElementById('s-box').classList.add('visible');
+                clearInterval(scanInterval);
+                goToScorecard();
+            }, 3000);
+        }
 
-                document.getElementById('action-bar').className = "status-bar";
-                document.getElementById('action-bar').innerHTML = '<div class="status-content"><span><i class="fa-solid fa-star"></i> &nbsp;Action: Profiled</span><span style="opacity:0.7; font-size:0.75rem">VIP Status Recognized</span></div>';
-                
-                document.getElementById('narrative-title').innerText = "Predictive Intelligence";
-                document.getElementById('narrative-text').innerText = "MaxCredible analyzes years of payment history to generate a live Reputation Score. Good payers automatically receive extra grace days and polite nudges, while bad actors are escalated immediately.";
-            }, 1200);
+        // --- STAGE 2: Scorecard ---
+        function goToScorecard() {
+            switchView(vScan, vScorecard);
+            
+            actionBar.className = "status-bar s-amber";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-chart-pie"></i>&nbsp; Profile Generated</span><span style="opacity:0.7; font-size:0.75rem">Behavioral Data Parsed</span></div>';
+            
+            narrativeTitle.innerText = 'The Relationship Scorecard';
+            narrativeText.innerText = 'Analyzing 24 months of payment behavior. This client is a "Below Average Payer". They pay late and break promises, yet read every email within 2 hours. Reputation Score: 42 (Fair).';
+
+            // Animate Donut Fill & Number
+            setTimeout(() => {
+                const fill = document.getElementById('gauge-fill');
+                // Target score is 42. Length is 125.6. 
+                // 125.6 - (125.6 * 0.42) = 72.84
+                fill.style.strokeDashoffset = "72.84";
+
+                const scoreNum = document.getElementById('score-num');
+                let count = 0;
+                const counter = setInterval(() => {
+                    count += 2;
+                    scoreNum.innerText = count;
+                    if(count >= 42) {
+                        scoreNum.innerText = 42;
+                        clearInterval(counter);
+                    }
+                }, 40);
+            }, 600);
+        }
+
+        // --- STAGE 3: Worsening Trend ---
+        function showTrend() {
+            switchView(vScorecard, vTrend);
+            
+            actionBar.className = "status-bar s-legacy";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-arrow-trend-down"></i>&nbsp; Warning Triggered</span><span style="opacity:0.7; font-size:0.75rem">Velocity Dropping</span></div>';
+            
+            narrativeTitle.innerText = 'The Worsening Trend';
+            narrativeText.innerText = 'Warning: Reputation is deteriorating. The system detects a sharp drop in payment velocity and stalling tactics via unwarranted disputes.';
+        }
+
+        // --- STAGE 4: Automated Escalation (Shutter) ---
+        function triggerEscalation() {
+            switchView(vTrend, vEscalation);
+            
+            actionBar.className = "status-bar s-shield";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-gavel"></i>&nbsp; Journey Updated</span><span style="opacity:0.7; font-size:0.75rem">Strict Policies Applied</span></div>';
+            
+            narrativeTitle.innerText = 'The Automated Escalation';
+            narrativeText.innerText = 'Threshold met. MaxCredible automatically migrates this debtor to the High-Risk track. Every reminder now includes accrued interest and a firm notice of legal escalation.';
+
+            // Drop the shutter
+            setTimeout(() => {
+                document.getElementById('shutter').classList.add('closed');
+            }, 800);
+        }
+
+        // --- STAGE 5: Strategic Recommendation ---
+        function showRecommendation() {
+            switchView(vEscalation, vRecommendation);
+            
+            document.body.className = 'mode-netting'; 
+            
+            actionBar.className = "status-bar s-netting";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-bolt"></i>&nbsp; Strategy Optimized</span><span style="opacity:0.7; font-size:0.75rem">Focusing on High-Impact Channels</span></div>';
+            
+            narrativeTitle.innerText = 'Maximize Impact';
+            narrativeText.innerText = 'Instead of wasting time on unanswered calls, the AI focuses purely on the channels and tones that statistically force this specific debtor to pay.';
+        }
+
+        // --- Reset Flow ---
+        function resetFlow() {
+            document.body.className = '';
+            
+            // Reset UI states
+            document.getElementById('shutter').classList.remove('closed');
+            document.getElementById('gauge-fill').style.strokeDashoffset = "125.6";
+            document.getElementById('score-num').innerText = "0";
+            
+            vScan.querySelector('.action-btn').style.display = 'flex';
+            
+            switchView(vRecommendation, vScan);
+
+            actionBar.className = "status-bar s-legacy";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-eye-slash"></i> &nbsp;Status</span><span style="opacity:0.7; font-size:0.75rem">Judging purely by balance owed</span></div>';
+            
+            narrativeTitle.innerText = 'Beyond the Balance';
+            narrativeText.innerText = 'A customer owing $10k and 5 days late might be a loyal partner having a glitch, or a serial late-payer testing boundaries. The balance alone doesn\'t tell you which is which.';
         }
     </script>
 </body>

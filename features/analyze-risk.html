@@ -216,10 +216,42 @@
         .scan-btn { margin-top: 1.5rem; background: linear-gradient(135deg, #ec4899, #be185d); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(236, 72, 153, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;}
         .scan-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(236, 72, 153, 0.6); }
 
-        /* State 2: Scanning Animation */
-        .scan-view { display: none; opacity: 0; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; background: var(--card-bg); z-index: 10; transition: opacity 0.5s;}
-        .radar-spinner { width: 80px; height: 80px; border: 4px solid rgba(236, 72, 153, 0.2); border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem;}
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* State 2: Diagnostic Pipeline (The Journey) */
+        .scan-view { display: none; opacity: 0; position: absolute; inset: 0; flex-direction: column; background: var(--card-bg); z-index: 10; transition: opacity 0.5s; padding: 1.5rem 1rem;}
+        
+        .pipeline { display: flex; flex-direction: column; gap: 0; width: 100%; max-width: 350px; margin: 0 auto; margin-top: 1rem;}
+        .pipe-node { display: flex; align-items: flex-start; gap: 15px; opacity: 0.3; transform: translateX(-10px); transition: all 0.5s var(--ease-elastic); position: relative; padding-bottom: 1.5rem; }
+        .pipe-node.active { opacity: 1; transform: translateX(0); }
+        
+        /* Connecting Line */
+        .pipe-node:not(:last-child)::after {
+            content: ''; position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px;
+            background: rgba(255,255,255,0.1); z-index: 1;
+        }
+        .pipe-node.line-active:not(:last-child)::after {
+            background: linear-gradient(to bottom, #ec4899, rgba(255,255,255,0.1));
+        }
+
+        .pipe-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #64748b; z-index: 2; border: 1px solid rgba(255,255,255,0.1); transition: all 0.4s; }
+        .pipe-node.active .pipe-icon { background: rgba(236, 72, 153, 0.15); color: #ec4899; border-color: rgba(236, 72, 153, 0.4); box-shadow: 0 0 15px rgba(236, 72, 153, 0.2); }
+        .pipe-node.critical .pipe-icon { background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
+        
+        .pipe-content { flex-grow: 1; padding-top: 8px; }
+        .pipe-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; color: #fff; margin-bottom: 4px; }
+        .pipe-desc { font-size: 0.75rem; color: #94a3b8; line-height: 1.4; display: none; }
+        .pipe-node.active .pipe-desc { display: block; animation: fadeIn 0.5s forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Dashboard Specifics (Step 5) */
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 1.5rem; }
+        .d-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; text-align: center; }
+        .d-box.alert { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); }
+        .d-lbl { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+        .d-val { font-family: 'Outfit'; font-size: 1.4rem; font-weight: 800; color: #fff; display: block; margin-bottom: 4px; }
+        .d-sub { font-size: 0.65rem; color: #ef4444; display: block; line-height: 1.2; }
+        
+        .owner-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+        .owner-badge.sales { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); color: #f59e0b; }
         
         /* State 3: Dashboard */
         .dash-view { display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s; flex-direction: column; gap: 1rem; width: 100%;}
@@ -238,10 +270,26 @@
         .r-icon { background: rgba(239, 68, 68, 0.1); color: #ef4444; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 1.2rem;}
 
         /* State 4: Deep Dive */
-        .deep-dive-view { display: none; opacity: 0; transform: translateX(20px); transition: all 0.5s; flex-direction: column; width: 100%; height: 100%; position: absolute; inset: 0; background: var(--card-bg); padding: 2rem; box-sizing: border-box; z-index: 20;}
+        .deep-dive-view { display: none; opacity: 0; transform: translateX(20px); transition: all 0.5s; flex-direction: column; width: 100%; }
         .deep-dive-view.visible { display: flex; opacity: 1; transform: translateX(0); }
         .back-btn { background: none; border: none; color: #94a3b8; cursor: pointer; font-family: 'Plus Jakarta Sans'; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; padding: 0;}
         .back-btn:hover { color: #fff; }
+
+        /* --- Deep Dive Action Cards --- */
+        .action-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 0.5rem; }
+        .action-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px 15px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; }
+        .action-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+        
+        /* Recommended Styling */
+        .action-card.recommended { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1); }
+        .action-card.recommended:hover { background: rgba(16, 185, 129, 0.15); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25); }
+        
+        .ac-left { display: flex; align-items: center; gap: 12px; }
+        .ac-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+        .ac-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; color: #fff; line-height: 1.2;}
+        .ac-sub { font-size: 0.75rem; color: #94a3b8; margin-top: 2px;}
+        
+        .rec-badge { background: #10b981; color: #fff; font-size: 0.6rem; padding: 3px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; }
 
         body.mode-analyzed .smart-card { border-color: rgba(236, 72, 153, 0.4); box-shadow: 0 0 60px -10px rgba(236, 72, 153, 0.15); }
         body.mode-analyzed .status-bar { background: rgba(236, 72, 153, 0.1); color: #ec4899; border-top: 1px solid rgba(236, 72, 153, 0.2); }
@@ -257,7 +305,18 @@
             .nav-overlay.open { transform: translateY(0); }
             .nav-columns { flex-direction: column; gap: 3rem; }
             .top-nav { height: 80px; }
-            .smart-card { width: 100%; border-radius: 24px; min-height: 50vh; display: flex; flex-direction: column; justify-content: space-between; margin: 0 -1.5rem; width: calc(100% + 3rem);}
+            /* FIX 1: Remove negative margins so it fits the screen properly */
+            .smart-card { width: 100%; border-radius: 24px; min-height: 50vh; display: flex; flex-direction: column; justify-content: space-between; margin: 0;}
+            
+            /* FIX 2: Stack the dashboard grid on mobile so it's not crammed */
+            .dash-grid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 1rem; }            
+            /* Tighten up spacing for the Action Grid on mobile */
+            .risk-wrapper { padding: 1.25rem; }
+            .action-card { padding: 10px; }
+            .ac-icon { width: 32px; height: 32px; font-size: 0.85rem; }
+            .ac-title { font-size: 0.85rem; }
+            .ac-sub { font-size: 0.7rem; }
+            .rec-badge { font-size: 0.55rem; padding: 2px 4px; }
         }
         @media (min-width: 768px) {
             h1 { font-size: 4rem; margin-bottom: 0.5rem; padding-bottom: 0.1em; }
@@ -290,33 +349,100 @@
                 </div>
 
                 <div class="scan-view" id="view-scan">
-                    <div class="radar-spinner"></div>
-                    <h3 style="font-family: 'Outfit'; margin: 0; color: #fff;">Analyzing Ledger...</h3>
-                    <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 5px;">Cross-referencing payment histories.</p>
+                    <div class="pipeline">
+                        <div class="pipe-node" id="pipe-1">
+                            <div class="pipe-icon"><i class="fa-solid fa-database"></i></div>
+                            <div class="pipe-content">
+                                <div class="pipe-title">The Intake</div>
+                                <div class="pipe-desc">Loading 1,200 Debtors...</div>
+                            </div>
+                        </div>
+                        <div class="pipe-node" id="pipe-2">
+                            <div class="pipe-icon"><i class="fa-solid fa-earth-europe"></i></div>
+                            <div class="pipe-content">
+                                <div class="pipe-title">The Filter</div>
+                                <div class="pipe-desc">Scanning regions... <strong style="color: #ef4444;">Benelux</strong> shows high dispute density.</div>
+                            </div>
+                        </div>
+                        <div class="pipe-node" id="pipe-3">
+                            <div class="pipe-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                            <div class="pipe-content">
+                                <div class="pipe-title">The Diagnosis</div>
+                                <div class="pipe-desc">Alert: 14% of disputes are <strong style="color: #ef4444;">90+ days old</strong> (Critical DSO Impact).</div>
+                            </div>
+                        </div>
+                        <div class="pipe-node" id="pipe-4">
+                            <div class="pipe-icon"><i class="fa-solid fa-users-gear"></i></div>
+                            <div class="pipe-content">
+                                <div class="pipe-title">The Assignment</div>
+                                <div class="pipe-desc">Pending: 42 tickets with <strong>Sales</strong>, 12 with <strong>CS</strong>.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="dash-view" id="view-dash">
-                    <div class="dash-card card-exposure">
-                        <span class="dash-lbl">Current Risk Exposure</span>
-                        <span class="dash-val" style="color: #ef4444;">$42,350.00</span>
+                    
+                    <div class="dash-grid">
+                        <div class="d-box alert">
+                            <span class="d-lbl"><i class="fa-solid fa-triangle-exclamation"></i> Critical Region</span>
+                            <span class="d-val" style="color: #ef4444;">Benelux</span>
+                            <span class="d-sub">High Dispute Density</span>
+                        </div>
+                        <div class="d-box">
+                            <span class="d-lbl">Ticket Blockers</span>
+                            <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                                <div class="owner-badge sales"><i class="fa-solid fa-handshake"></i> Sales: 42</div>
+                                <div class="owner-badge"><i class="fa-solid fa-headset"></i> CS: 12</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="dash-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="dash-lbl" style="margin:0;"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> Critical Risk Identified</span>
-                            <span style="font-size: 0.7rem; color: #94a3b8;">Click to expand</span>
+                    <div class="dash-card" style="padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 8px;">
+                            <span class="dash-lbl" style="margin:0; color: #fff;">Follow-up Candidates (20)</span>
+                            <span class="dash-lbl" style="margin:0; color: #64748b;">Write-offs (5)</span>
                         </div>
                         
-                        <div class="risk-item" onclick="showDeepDive()">
+                        <div class="risk-item" onclick="showDeepDive('acme')">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <div class="r-icon">A</div>
                                 <div>
                                     <div style="font-weight: bold; color: #fff; font-size: 0.9rem;">Acme Corp</div>
-                                    <div style="font-size: 0.75rem; color: #ef4444;">58 Days Late (Avg)</div>
+                                    <div style="font-size: 0.75rem; color: #ef4444;">92 Days Old • $12,500</div>
                                 </div>
                             </div>
-                            <div style="font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem;">$12,500 <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: #64748b; margin-left: 8px;"></i></div>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                                <div class="owner-badge sales"><i class="fa-solid fa-handshake"></i> J. Doe</div>
+                            </div>
                         </div>
+
+                        <div class="risk-item" onclick="showDeepDive('globex')">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="r-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">G</div>
+                                <div>
+                                    <div style="font-weight: bold; color: #fff; font-size: 0.9rem;">Globex Inc.</div>
+                                    <div style="font-size: 0.75rem; color: #f59e0b;">3 Broken Promises</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                                <div class="owner-badge"><i class="fa-solid fa-headset"></i> CS Team</div>
+                            </div>
+                        </div>
+
+                        <div class="risk-item" onclick="showDeepDive('wayne')">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="r-icon" style="background: rgba(100, 116, 139, 0.2); color: #94a3b8;">W</div>
+                                <div>
+                                    <div style="font-weight: bold; color: #fff; font-size: 0.9rem;">Wayne Ent.</div>
+                                    <div style="font-size: 0.75rem; color: #94a3b8;">Out of Business</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                                <div class="owner-badge sales"><i class="fa-solid fa-handshake"></i> J. Doe</div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -324,46 +450,88 @@
                     <button class="back-btn" onclick="backToDashboard()"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
                     
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
-                        <div class="r-icon">A</div>
+                        <div class="r-icon" id="dd-icon">A</div>
                         <div>
-                            <h2 style="font-family: 'Outfit'; margin: 0; color: #fff; font-size: 1.5rem;">Acme Corp</h2>
-                            <p style="color: #ef4444; font-size: 0.85rem; margin: 0; font-weight: bold;">High Flight Risk</p>
+                            <h2 id="dd-title" style="font-family: 'Outfit'; margin: 0; color: #fff; font-size: 1.5rem;">Acme Corp</h2>
+                            <p id="dd-status" style="color: #ef4444; font-size: 0.85rem; margin: 0; font-weight: bold;">High Flight Risk</p>
                         </div>
                     </div>
 
                     <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
                         <span class="dash-lbl">AI Risk Factors</span>
-                        <ul style="margin: 0; padding-left: 1rem; color: #cbd5e1; font-size: 0.85rem; line-height: 1.6;">
-                            <li>Payment velocity dropped by 40% in Q3.</li>
-                            <li>Ignored last 3 standard reminders.</li>
-                            <li>Opened emails but did not click PayLinks.</li>
-                        </ul>
+                        <ul id="dd-factors" style="margin: 0; padding-left: 1rem; color: #cbd5e1; font-size: 0.85rem; line-height: 1.6;">
+                            </ul>
                     </div>
 
-                    <button class="scan-btn" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);">
-                        <i class="fa-solid fa-bolt"></i> Deploy Aggressive Workflow
-                    </button>
-                </div>
+                    <div class="action-grid">
+                        <div class="action-card" id="act-update">
+                            <div class="ac-left">
+                                <div class="ac-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;"><i class="fa-solid fa-bolt"></i></div>
+                                <div>
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="ac-title">Update Journey</span>
+                                        <span class="rec-badge" style="display: none;"><i class="fa-solid fa-star" style="font-size: 0.5rem;"></i> AI Recommended</span>
+                                    </div>
+                                    <div class="ac-sub">Deploy 'Aggressive Email + Call' workflow</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color: #64748b; font-size: 0.8rem;"></i>
+                        </div>
+                        
+                        <div class="action-card" id="act-call">
+                            <div class="ac-left">
+                                <div class="ac-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;"><i class="fa-solid fa-phone"></i></div>
+                                <div>
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="ac-title">Schedule Direct Call</span>
+                                        <span class="rec-badge" style="display: none;"><i class="fa-solid fa-star" style="font-size: 0.5rem;"></i> AI Recommended</span>
+                                    </div>
+                                    <div class="ac-sub">Assign priority task to Account Manager</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color: #64748b; font-size: 0.8rem;"></i>
+                        </div>
 
-            </div>
+                        <div class="action-card" id="act-escalate">
+                            <div class="ac-left">
+                                <div class="ac-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;"><i class="fa-solid fa-gavel"></i></div>
+                                <div>
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="ac-title">Send to Collections</span>
+                                        <span class="rec-badge" style="display: none;"><i class="fa-solid fa-star" style="font-size: 0.5rem;"></i> AI Recommended</span>
+                                    </div>
+                                    <div class="ac-sub">Instantly escalate to external legal partner</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color: #64748b; font-size: 0.8rem;"></i>
+                        </div>
 
-            <div class="status-bar s-legacy" id="action-bar">
+                        <div class="action-card" id="act-write-off">
+                            <div class="ac-left">
+                                <div class="ac-icon" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                                <div>
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="ac-title">Write-off Balance</span>
+                                        <span class="rec-badge" style="display: none;"><i class="fa-solid fa-star" style="font-size: 0.5rem;"></i> AI Recommended</span>
+                                    </div>
+                                    <div class="ac-sub">Close dispute and absorb the loss</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color: #64748b; font-size: 0.8rem;"></i>
+                        </div>
+                    </div> </div> </div> <div class="status-bar s-legacy" id="action-bar">
                 <div class="status-content">
                     <span><i class="fa-solid fa-eye-slash"></i> &nbsp;Status</span>
                     <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Data Hidden in Spreadsheets</span>
                 </div>
             </div>
-        </div>
-
-        <div class="narrative-box">
+        </div> <div class="narrative-box">
             <div class="narrative-title" id="narrative-title">The Blind Spot</div>
             <div class="narrative-text" id="narrative-text">
                 Raw ledger data shows you who owes you money, but it doesn't tell you who is actually a risk. It's impossible to manually calculate behavioral trends across thousands of rows.
             </div>
         </div>
-    </div>
-
-
+    </div> 
     <script src="global.js"></script>
     <script>
     // Your feature-specific javascript starts here...
@@ -377,7 +545,12 @@
         const narrativeTitle = document.getElementById('narrative-title');
         const narrativeText = document.getElementById('narrative-text');
 
-        // Flow 1: Trigger the scan
+        // Pipeline Nodes
+        const p1 = document.getElementById('pipe-1');
+        const p2 = document.getElementById('pipe-2');
+        const p3 = document.getElementById('pipe-3');
+        const p4 = document.getElementById('pipe-4');
+
         function startScan() {
             // Fade out raw data
             viewRaw.style.opacity = "0";
@@ -385,16 +558,52 @@
             setTimeout(() => {
                 viewRaw.style.display = "none";
                 viewScan.style.display = "flex";
-                // Trigger reflow
-                void viewScan.offsetWidth;
+                void viewScan.offsetWidth; // Trigger reflow
                 viewScan.style.opacity = "1";
                 
-                // Simulate processing time, then show dashboard
-                setTimeout(showDashboard, 2500);
-            }, 500);
+                runDiagnosticJourney();
+            }, 400);
         }
 
-        // Flow 2: Reveal the Dashboard
+        function runDiagnosticJourney() {
+            // Step 1: The Intake
+            p1.classList.add('active');
+            updateNarrative('The Intake', 'Loading 1,200 Debtors... gathering raw ledger data into the diagnostic engine.');
+            
+            // Step 2: The Filter
+            setTimeout(() => {
+                p1.classList.add('line-active');
+                p2.classList.add('active');
+                updateNarrative('The Filter', 'Scanning regions... Benelux immediately flags for high dispute density compared to global averages.');
+            }, 1800);
+
+            // Step 3: The Diagnosis
+            setTimeout(() => {
+                p2.classList.add('line-active');
+                p3.classList.add('active');
+                p3.classList.add('critical'); // Turns icon red
+                updateNarrative('The Diagnosis', 'Alert triggered: 14% of these Benelux disputes are 90+ days old. This is causing a critical negative impact on DSO.');
+            }, 3600);
+
+            // Step 4: The Assignment
+            setTimeout(() => {
+                p3.classList.add('line-active');
+                p4.classList.add('active');
+                updateNarrative('The Assignment', 'Mapping accountability... We found 42 tickets stalled with the Sales team, and 12 with Customer Service.');
+            }, 5400);
+
+            // Step 5: Reveal Dashboard
+            setTimeout(() => {
+                showDashboard();
+            }, 7500);
+        }
+
+        function updateNarrative(title, text) {
+            actionBar.innerHTML = `<div class="status-content"><span><i class="fa-solid fa-microchip"></i>&nbsp; Diagnostic Step</span><span style="opacity:0.7; font-size:0.75rem">${title}</span></div>`;
+            narrativeTitle.innerText = title;
+            narrativeText.innerText = text;
+        }
+
         function showDashboard() {
             body.className = 'mode-analyzed';
             viewScan.style.opacity = "0";
@@ -404,43 +613,125 @@
                 viewDash.classList.add('visible');
 
                 actionBar.className = "status-bar";
-                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-magnifying-glass-chart"></i>&nbsp; Action: Risk Detected</span><span style="opacity:0.7; font-size:0.75rem">$42,350 Exposure Found</span></div>';
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-magnifying-glass-chart"></i>&nbsp; Action Required</span><span style="opacity:0.7; font-size:0.75rem">20 Follow-ups / 5 Write-offs</span></div>';
 
-                narrativeTitle.innerText = 'Instant Clarity';
-                narrativeText.innerText = 'MaxCredible ingests your ledger instantly, calculates behavioral scores, and flags critical risks. You go from looking at static spreadsheets to a targeted action plan.';
+                narrativeTitle.innerText = 'The Call to Action';
+                narrativeText.innerText = 'The diagnostic is complete. You instantly know the problematic region (Benelux), the age (90+ days), and the bottleneck (Sales). Now, take action on the highest-value candidate.';
+                
+                // Reset pipeline for potential replay
+                [p1, p2, p3, p4].forEach(p => {
+                    p.classList.remove('active', 'line-active', 'critical');
+                });
             }, 500);
         }
 
-        // Flow 3: Click a row to see the Deep Dive
-        function showDeepDive() {
+        const riskData = {
+            'acme': {
+                name: 'Acme Corp',
+                status: 'High Flight Risk',
+                iconColor: '#ef4444',
+                iconBg: 'rgba(239, 68, 68, 0.1)',
+                factors: [
+                    'Payment velocity dropped by 40% in Q3.',
+                    'Ignored last 3 standard reminders.',
+                    'Opened emails but did not click PayLinks.'
+                ],
+                recAction: 'update',
+                narrative: 'Instead of blindly sending another email, MaxCredible presents the statistically best options. You can write it off, escalate to collections, or deploy the AI-recommended hybrid workflow (Email + Call) to maximize recovery chances.'
+            },
+            'globex': {
+                name: 'Globex Inc.',
+                status: 'Habitual Delinquent',
+                iconColor: '#f59e0b',
+                iconBg: 'rgba(245, 158, 11, 0.1)',
+                factors: [
+                    '3 broken promises to pay in the last 60 days.',
+                    'Consistently disputes invoices to delay payment.',
+                    'Currently avoiding calls from Customer Service.'
+                ],
+                recAction: 'call',
+                narrative: 'Globex has a pattern of breaking promises. Automated emails are no longer effective. The AI recommends assigning a direct call task to force a verbal commitment and bypass the inbox entirely.'
+            },
+            'wayne': {
+                name: 'Wayne Ent.',
+                status: 'Out of Business',
+                iconColor: '#94a3b8',
+                iconBg: 'rgba(100, 116, 139, 0.2)',
+                factors: [
+                    'Company website is offline (Error 504).',
+                    'All automated emails are bouncing back.',
+                    'Registered phone numbers are disconnected.'
+                ],
+                recAction: 'write-off',
+                narrative: 'Wayne Ent. shows clear signs of insolvency. Spending more time and money on collection is a sunk cost. The AI recommends an immediate write-off to clean up the ledger and save resources.'
+            }
+        };
+
+        function showDeepDive(companyId) {
+            const data = riskData[companyId];
+
+            // 1. Populate details (The IDs are now present to receive this data!)
+            document.getElementById('dd-title').innerText = data.name;
+            document.getElementById('dd-status').innerText = data.status;
+            document.getElementById('dd-status').style.color = data.iconColor;
+            
+            const ddIcon = document.getElementById('dd-icon');
+            ddIcon.innerText = data.name.charAt(0);
+            ddIcon.style.color = data.iconColor;
+            ddIcon.style.background = data.iconBg;
+
+            // 2. Populate factors list
+            const factorsList = document.getElementById('dd-factors');
+            factorsList.innerHTML = '';
+            data.factors.forEach(f => {
+                factorsList.innerHTML += `<li>${f}</li>`;
+            });
+
+            // 3. Reset all action cards
+            const cards = document.querySelectorAll('.action-card');
+            cards.forEach(c => {
+                c.classList.remove('recommended');
+                c.querySelector('.rec-badge').style.display = 'none';
+                c.querySelector('.fa-chevron-right').style.color = '#64748b'; 
+            });
+
+            // 4. Highlight the Recommended Action
+            const recCard = document.getElementById('act-' + data.recAction);
+            if (recCard) {
+                recCard.classList.add('recommended');
+                recCard.querySelector('.rec-badge').style.display = 'inline-flex';
+                recCard.querySelector('.fa-chevron-right').style.color = '#10b981'; 
+            }
+
+            // 5. Run the view transition
             viewDash.classList.remove('visible');
             
             setTimeout(() => {
                 viewDash.style.display = "none";
+                viewDeep.style.display = "flex"; // Fix: explicitly tell the browser to show it
+                void viewDeep.offsetWidth; // Force CSS repaint
                 viewDeep.classList.add('visible');
 
-                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-crosshairs"></i>&nbsp; Action: Focused</span><span style="opacity:0.7; font-size:0.75rem">Reviewing Acme Corp</span></div>';
+                actionBar.innerHTML = `<div class="status-content"><span><i class="fa-solid fa-crosshairs"></i>&nbsp; Action: Focused</span><span style="opacity:0.7; font-size:0.75rem">Reviewing ${data.name}</span></div>`;
 
                 narrativeTitle.innerText = 'Data-Driven Action';
-                narrativeText.innerText = 'Now you know exactly why they are a flight risk. Instead of sending a generic reminder, you can instantly deploy a highly aggressive, customized workflow designed specifically to recover this exact debt.';
+                narrativeText.innerText = data.narrative;
             }, 500);
         }
 
-        // Flow 4: Go back to the Dashboard
         function backToDashboard() {
             viewDeep.classList.remove('visible');
             
             setTimeout(() => {
                 viewDeep.style.display = "none";
-                viewDash.style.display = "flex";
-                // Trigger reflow
-                void viewDash.offsetWidth;
+                viewDash.style.display = "flex"; // Fix: explicitly tell the browser to show it
+                void viewDash.offsetWidth; // Force CSS repaint
                 viewDash.classList.add('visible');
 
-                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-magnifying-glass-chart"></i>&nbsp; Action: Risk Detected</span><span style="opacity:0.7; font-size:0.75rem">$42,350 Exposure Found</span></div>';
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-magnifying-glass-chart"></i>&nbsp; Action Required</span><span style="opacity:0.7; font-size:0.75rem">20 Follow-ups / 5 Write-offs</span></div>';
 
-                narrativeTitle.innerText = 'Instant Clarity';
-                narrativeText.innerText = 'MaxCredible ingests your ledger instantly, calculates behavioral scores, and flags critical risks. You go from looking at static spreadsheets to a targeted action plan.';
+                narrativeTitle.innerText = 'The Call to Action';
+                narrativeText.innerText = 'Instead of blindly sending another email, MaxCredible presents the statistically best options. You can write it off, escalate to collections, or deploy the AI-recommended hybrid workflow (Email + Call) to maximize recovery chances.';            
             }, 500);
         }
     </script>

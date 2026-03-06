@@ -81,6 +81,7 @@ document.querySelectorAll('.snap-section').forEach(sec => observer.observe(sec))
 let autoCycle = setInterval(runCycles, 3500);
 
 function runCycles() {
+    cycleIssues();
     cycleInterest();
     cycleImport();
     cycleSegmentation();
@@ -107,6 +108,7 @@ document.querySelectorAll('.visual-cycle').forEach(el => {
         else if(el.id === 'dash-visual') cycleDashboard();
         else if(el.id === 'rem-visual') cycleReminders();
         else if(el.id === 'route-visual') cycleRouting();
+        else if(el.id === 'issue-visual') cycleIssues();
         else if(el.id === 'pay-visual') cyclePaylinks();
         else if(el.id === 'tpl-visual') cycleTemplates();
         else if(el.id === 'match-visual') cycleMatch();
@@ -290,6 +292,29 @@ function cycleRouting() {
         s1.className = "demo-state hidden-state";
         s2.className = "demo-state active-state";
         desc.innerText = "Dispute detected! The system instantly halts the workflow and routes the ticket to a specialist.";
+    }
+}
+
+function cycleIssues() {
+    const visual = document.getElementById('issue-visual');
+    const desc = document.getElementById('issue-desc');
+    if(!visual) return;
+
+    let step = parseInt(visual.getAttribute('data-step'));
+    step = (step + 1) % 2; 
+    visual.setAttribute('data-step', step);
+
+    const s1 = document.getElementById('issue-state-1');
+    const s2 = document.getElementById('issue-state-2');
+
+    if(step === 0) {
+        s1.className = "demo-state active-state";
+        s2.className = "demo-state hidden-state";
+        desc.innerText = "Internal disputes sit in limbo for weeks, stalling the dunning process and bloating your DSO.";
+    } else {
+        s1.className = "demo-state hidden-state";
+        s2.className = "demo-state active-state";
+        desc.innerText = "Set strict 7-day SLAs. Unresolved disputes auto-escalate to managers, unblocking revenue instantly.";
     }
 }
 

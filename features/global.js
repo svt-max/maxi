@@ -54,6 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <a href="auto-reminders.html" class="nav-item"><i class="fa-solid fa-stopwatch"></i> Auto-Reminders</a>
                     <a href="paylinks.html" class="nav-item"><i class="fa-solid fa-link"></i> PayLinks</a>
                     <a href="legal-email.html" class="nav-item"><i class="fa-solid fa-scale-balanced"></i> Legal Email</a>
+                    <a href="issue-management.html" class="nav-item"><i class="fa-solid fa-triangle-exclamation"></i> Issue Management</a>
+                    <a href="customer-portal.html" class="nav-item"><i class="fa-solid fa-door-open"></i> Customer Portal</a>
                 </div>
                 <div class="nav-col">
                     <h3>Intelligence</h3>
@@ -119,18 +121,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Only inject if we are on a feature page (not index or empty root)
     if (currentPage && currentPage !== 'index.html' && currentPage !== '') {
         const features = [
+            // Logic Core
             { title: 'Segmentation', url: 'smart-segmentation.html' },
+            { title: 'Analyze Risk', url: 'analyze-risk.html' },
+            { title: 'Routing', url: 'smart-routing.html' },
+            { title: 'Reconciliation', url: 'reconciliation.html' },
+            { title: 'Interest Engine', url: 'negative-interest-before-after.html' },
+            
+            // Engagement
             { title: 'Templates', url: 'templates.html' },
             { title: 'Auto-Reminders', url: 'auto-reminders.html' },
-            { title: 'Routing', url: 'smart-routing.html' },
-            { title: 'Reputation', url: 'reputation.html' },
             { title: 'PayLinks', url: 'paylinks.html' },
+            { title: 'Legal Email', url: 'legal-email.html' },
+            { title: 'Issue Management', url: 'issue-management.html' },
+            { title: 'Customer Portal', url: 'customer-portal.html' },
+            
+            // Intelligence
             { title: 'Import Data', url: 'import.html' },
-            { title: 'Reconciliation', url: 'reconciliation.html' },
-            { title: 'Forecasting', url: 'forecasting.html' },
             { title: 'Dashboard', url: 'dashboard.html' },
-            { title: 'Interest Engine', url: 'negative-interest-before-after.html' },
-            { title: 'Legal Email', url: 'legal-email.html' }
+            { title: 'Reputation', url: 'reputation.html' },
+            { title: 'Forecasting', url: 'forecasting.html' }
         ];
 
         const currentIndex = features.findIndex(f => f.url === currentPage);

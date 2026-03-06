@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MaxCredible | Issue Management</title>    
+    <link rel="stylesheet" href="global.css">
+
+    <style>
+        :root {
+            /* Theme Colors */
+            --bg-deep: #0f0c29;
+            --card-bg: #0f172a; 
+            --border: rgba(255, 255, 255, 0.1);
+            
+            /* State Colors */
+            --c-legacy: #ef4444; 
+            --c-amber: #f59e0b;
+            --c-netting: #38bdf8; 
+            --c-success: #10b981;
+
+            /* Transitions */
+            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding-bottom: 3rem;
+            position: relative;
+        }
+
+        /* --- Header --- */
+        header {
+            text-align: center;
+            margin-top: 140px; 
+            margin-bottom: 2.5rem;
+            z-index: 5;
+            padding: 0 1rem;
+        }
+        
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(to right, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.25;
+            padding-bottom: 0.1em;
+        }
+
+        /* --- STAGE & SMART CARD --- */
+        .stage-area {
+            perspective: 1000px; width: 100%; max-width: 480px;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 0 1rem; box-sizing: border-box; transition: max-width 0.4s;
+        }
+        
+        .smart-card {
+            width: 100%; background: var(--card-bg);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 25px 50px -12px rgba(0,0,0,0.5);
+            border-radius: 24px; position: relative; transition: all 0.6s var(--ease-elastic);
+            transform-style: preserve-3d; display: flex; flex-direction: column; overflow: hidden; 
+        }
+
+        .issue-wrapper { padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 440px; width: 100%; box-sizing: border-box; position: relative;}
+        
+        .view-section { width: 100%; display: none; opacity: 0; flex-direction: column; transition: all 0.5s; align-items: center;}
+        .view-section.active { display: flex; opacity: 1; }
+
+        /* --- Action Button --- */
+        .action-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 1.5rem;}
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(56, 189, 248, 0.6); }
+        .action-btn:disabled { background: #334155; box-shadow: none; color: #94a3b8; cursor: not-allowed; transform: none; }
+
+        /* --- STAGE 1: Bottleneck Visual --- */
+        .dso-creep-box { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; width: 100%; max-width: 300px; box-sizing: border-box;}
+        
+        .ghost-stream { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; margin-bottom: 20px;}
+        .stream-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 8px; animation: pushDown 2s infinite; }
+        .stream-item:nth-child(2) { animation-delay: 0.3s; }
+        .stream-item:nth-child(3) { animation-delay: 0.6s; }
+        
+        .s-tag { font-size: 0.65rem; font-weight: bold; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; display: inline-block;}
+        .tag-amber { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tag-red { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        
+        .wall-block { width: 100%; max-width: 300px; background: rgba(239, 68, 68, 0.15); border: 2px solid #ef4444; color: #ef4444; padding: 15px; text-align: center; font-weight: 800; font-family: 'Outfit'; border-radius: 12px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);}
+        
+        @keyframes pushDown { 0% { transform: translateY(-10px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
+
+        /* --- STAGE 2 & 3: Stacked Cards & Slider --- */
+        .category-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 1rem; }
+        .cat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s;}
+        .cat-card.active-target { border-color: var(--c-netting); background: rgba(56, 189, 248, 0.05); box-shadow: 0 0 15px rgba(56, 189, 248, 0.1); }
+        .cat-left { display: flex; align-items: center; gap: 12px; }
+        .cat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; background: rgba(255,255,255,0.05); color: #94a3b8; }
+        .cat-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; color: #fff;}
+        .cat-sla { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #f59e0b; transition: color 0.3s; }
+        .cat-sla.optimized { color: #38bdf8; }
+
+        .slider-box { width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); padding: 20px; border-radius: 16px; text-align: center; margin-top: 10px; box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.05); display: flex; flex-direction: column; align-items: center;}
+        .slider-lbl { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px; display: block;}
+        
+        /* Standard Intuitive Range Slider */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 28px; width: 28px; border-radius: 50%; background: #38bdf8; cursor: pointer; margin-top: -10px; box-shadow: 0 0 10px rgba(56, 189, 248, 0.5); transition: transform 0.1s; }
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.1); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: rgba(255,255,255,0.1); border-radius: 4px; }
+        input[type=range]:focus { outline: none; }
+        
+        .drag-hint { font-size: 0.75rem; color: #38bdf8; margin-top: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; animation: slideLeftHint 2s infinite; }
+        @keyframes slideLeftHint { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-5px); } }
+
+        /* --- STAGE 4: Escalation Pulse --- */
+        .ticket-pulse-card { border-radius: 16px; padding: 20px; width: 100%; position: relative; overflow: hidden; transition: all 0.3s; }
+        /* Safe State (Counting up) */
+        .ticket-pulse-card.alert-pending { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); }
+        /* Escalation State */
+        .ticket-pulse-card.alert-active { background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); animation: redAlert 2s infinite; }
+        
+        .tp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 10px;}
+        .ticket-pulse-card.alert-active .tp-header { border-color: rgba(239, 68, 68, 0.2); }
+        
+        @keyframes redAlert { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        .toast-overlay { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(50px); opacity: 0; background: #f59e0b; color: #000; padding: 12px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); white-space: nowrap; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.5); z-index: 10;}
+        .toast-overlay.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* --- STAGE 5: ROI Finale --- */
+        .dash-grid { display: grid; grid-template-columns: 1fr; gap: 15px; width: 100%; margin-bottom: 1rem; }
+        .d-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; text-align: center; }
+        .d-box.success { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.2);}
+        .d-lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; display: block; margin-bottom: 10px;}
+        .d-val { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 800; color: #fff; line-height: 1; display: flex; justify-content: center; align-items: baseline; gap: 10px;}
+        .d-val.green { color: #10b981; }
+        .d-old { font-size: 1.2rem; color: #64748b; text-decoration: line-through; font-weight: 500;}
+
+        /* --- Status Bar --- */
+        .status-bar { width: 100%; padding: 16px 2rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center; transition: all 0.4s; margin-top: auto; box-sizing: border-box; min-height: 80px; position: relative; z-index: 30; }
+        .status-content { display: flex; flex-direction: column; gap: 4px; }
+        .status-bar.s-legacy { background: rgba(239, 68, 68, 0.1); color: var(--c-legacy); border-top: 1px solid rgba(239, 68, 68, 0.2); box-shadow: inset 0 10px 20px -10px rgba(239, 68, 68, 0.1); }
+        .status-bar.s-netting { background: rgba(56, 189, 248, 0.1); color: var(--c-netting); border-top: 1px solid rgba(56, 189, 248, 0.2); }
+        .status-bar.s-success { background: rgba(16, 185, 129, 0.1); color: var(--c-success); border-top: 1px solid rgba(16, 185, 129, 0.2); }
+
+        /* --- Narrative Box --- */
+        .narrative-box { margin-top: 2.5rem; text-align: center; max-width: 450px; padding: 0 1rem; }
+        .narrative-title { font-weight: 800; color: #fff; margin-bottom: 0.8rem; font-family: 'Outfit'; font-size: 1.4rem;}
+        .narrative-text { color: #94a3b8; font-size: 1rem; line-height: 1.6; transition: all 0.3s; }
+
+        @media (min-width: 768px) {
+            h1 { font-size: 4rem; margin-bottom: 0.5rem; padding-bottom: 0.1em; }
+            .stage-area { max-width: 600px; }
+            .dash-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Issue Management</h1>
+    </header>
+
+    <div class="stage-area" style="margin-top: 1rem;">
+        <div class="smart-card">
+            <div class="issue-wrapper">
+                
+                <div class="view-section active" id="view-bottleneck">
+                    
+                    <div class="dso-creep-box">
+                        <i class="fa-solid fa-arrow-trend-up" style="color: #ef4444; font-size: 1.5rem; animation: pushDown 2s infinite reverse;"></i>
+                        <div>
+                            <div style="font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Global DSO Impact</div>
+                            <div style="font-family: 'Outfit'; font-size: 1.5rem; font-weight: 800; color: #fff; line-height: 1.2;">Rising: <span id="dso-creep" style="color: #ef4444; font-variant-numeric: tabular-nums;">42.0</span></div>
+                        </div>
+                    </div>
+
+                    <div class="ghost-stream">
+                        <div class="stream-item">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <i class="fa-solid fa-file-invoice" style="color: #64748b; font-size: 1.2rem;"></i>
+                                <span style="font-size: 0.85rem; font-weight: bold;">INV-2024</span>
+                            </div>
+                            <span class="s-tag tag-amber">Wrong Price</span>
+                        </div>
+                        <div class="stream-item">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <i class="fa-solid fa-file-invoice" style="color: #64748b; font-size: 1.2rem;"></i>
+                                <span style="font-size: 0.85rem; font-weight: bold;">INV-2041</span>
+                            </div>
+                            <span class="s-tag tag-red">Damaged Goods</span>
+                        </div>
+                    </div>
+                    
+                    <div class="wall-block">
+                        <i class="fa-solid fa-hand"></i> 14-Day Limbo Wall
+                    </div>
+
+                    <button class="action-btn" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none;" onclick="goToSettings()">
+                        <i class="fa-solid fa-sliders"></i> Configure Issue Settings
+                    </button>
+                </div>
+
+                <div class="view-section" id="view-settings">
+                    <div class="category-stack">
+                        <div class="cat-card">
+                            <div class="cat-left">
+                                <div class="cat-icon"><i class="fa-solid fa-building-columns"></i></div>
+                                <span class="cat-title">Payment Related</span>
+                            </div>
+                            <span class="cat-sla" style="color: #10b981;">3 Days</span>
+                        </div>
+                        <div class="cat-card active-target" id="product-card">
+                            <div class="cat-left">
+                                <div class="cat-icon" style="background: rgba(56, 189, 248, 0.1); color: #38bdf8;"><i class="fa-solid fa-box-open"></i></div>
+                                <span class="cat-title">Product Related</span>
+                            </div>
+                            <span class="cat-sla" id="sla-val">14 Days</span>
+                        </div>
+                        <div class="cat-card">
+                            <div class="cat-left">
+                                <div class="cat-icon"><i class="fa-solid fa-users"></i></div>
+                                <span class="cat-title">Approval Delays</span>
+                            </div>
+                            <span class="cat-sla" style="color: #10b981;">5 Days</span>
+                        </div>
+                    </div>
+
+                    <div class="slider-box">
+                        <span class="slider-lbl">Optimize Resolution Target</span>
+                        <div style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 5px;" id="slider-display">14 <span style="font-size: 1.2rem; color: #94a3b8;">Days</span></div>
+                        
+                        <div style="display: flex; align-items: center; gap: 12px; width: 100%; max-width: 250px;">
+                            <span style="font-size: 0.8rem; color: #10b981; font-weight: 800;">7d</span>
+                            <input type="range" min="7" max="14" value="14" id="sla-slider" oninput="updateSlider(this.value)">
+                            <span style="font-size: 0.8rem; color: #ef4444; font-weight: 800;">14d</span>
+                        </div>
+
+                        <div class="drag-hint" id="drag-hint"><i class="fa-solid fa-arrow-left"></i> Drag left to reduce SLA target</div>
+                    </div>
+
+                    <button class="action-btn" id="deploy-btn" disabled onclick="runEscalation()">
+                        <i class="fa-solid fa-rocket"></i> Deploy Escalation Rules
+                    </button>
+                </div>
+
+                <div class="view-section" id="view-escalation">
+                    <div class="ticket-pulse-card alert-pending" id="ticket-card">
+                        <div class="tp-header">
+                            <span style="font-weight: bold; font-size: 1.1rem; color: #fff;">Acme Corp</span>
+                            <span class="s-tag tag-red" style="font-size: 0.75rem;">Price Dispute</span>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fa-solid fa-clock" style="color: #94a3b8;" id="clock-icon"></i>
+                                <span style="font-size: 0.85rem; color: #cbd5e1;">Time in Limbo: <strong id="limbo-counter" style="color: #cbd5e1; font-variant-numeric: tabular-nums; display: inline-block; width: 50px;">Day 1</strong></span>
+                            </div>
+                            <span style="font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #fff;">$12,500</span>
+                        </div>
+
+                        <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #334155; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fa-solid fa-user"></i></div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: #94a3b8;">Assigned Solver</div>
+                                <div style="font-size: 0.85rem; font-weight: bold; color: #fff;">Account Manager</div>
+                            </div>
+                        </div>
+
+                        <div class="toast-overlay" id="toast-alert">
+                            <i class="fa-solid fa-bell-concierge"></i> Escalate: Message Sent to Sales Director
+                        </div>
+                    </div>
+                </div>
+
+                <div class="view-section" id="view-roi">
+                    <div class="dash-grid">
+                        <div class="d-box success">
+                            <span class="d-lbl"><i class="fa-solid fa-arrow-trend-down"></i> Global DSO Impact</span>
+                            <div class="d-val green"><span class="d-old">42</span> 38 <span style="font-size: 1rem; color: #94a3b8;">Days</span></div>
+                        </div>
+                        <div class="d-box" style="display: flex; flex-direction: column; justify-content: center;">
+                            <span class="d-lbl">Revenue Unblocked</span>
+                            <span class="d-val" style="color: #38bdf8;">$125k</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <i class="fa-solid fa-play" style="color: #10b981;"></i>
+                        <span style="font-size: 0.9rem; font-weight: bold; color: #fff;">Dunning Flow Automatically Resumed</span>
+                    </div>
+
+                    <button class="action-btn" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: none; margin-top: 20px;" onclick="resetFlow()">
+                        <i class="fa-solid fa-rotate-left"></i> Run Scenario Again
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-lock"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Revenue Trapped in Internal Friction</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">The Resolution Gap</div>
+            <div class="narrative-text" id="narrative-text">
+                Your organization is losing cash flow not because customers won't pay, but because internal disputes sit in limbo for weeks. While you wait 14 days for answers, your DSO quietly keeps rising.
+            </div>
+        </div>
+    </div>
+
+
+    <script src="global.js"></script>
+    <script>
+        const vBottleneck = document.getElementById('view-bottleneck');
+        const vSettings = document.getElementById('view-settings');
+        const vEscalation = document.getElementById('view-escalation');
+        const vRoi = document.getElementById('view-roi');
+        
+        const actionBar = document.getElementById('action-bar');
+        const narrativeTitle = document.getElementById('narrative-title');
+        const narrativeText = document.getElementById('narrative-text');
+
+        // DSO Creep Animation
+        let creepInterval;
+        function startDsoCreep() {
+            let val = 42.0;
+            const el = document.getElementById('dso-creep');
+            if(!el) return;
+            clearInterval(creepInterval);
+            creepInterval = setInterval(() => {
+                val += 0.1;
+                el.innerText = val.toFixed(1);
+            }, 800);
+        }
+
+        // Start creep immediately on load
+        window.onload = startDsoCreep;
+
+        function switchView(hideView, showView) {
+            hideView.style.opacity = "0";
+            setTimeout(() => {
+                hideView.classList.remove('active');
+                showView.classList.add('active');
+                void showView.offsetWidth; // Force reflow
+                showView.style.opacity = "1";
+            }, 400);
+        }
+
+        // Action 1: To Settings
+        function goToSettings() {
+            clearInterval(creepInterval); // Stop the pain
+            switchView(vBottleneck, vSettings);
+            
+            actionBar.className = "status-bar";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-sliders"></i>&nbsp; Action Required</span><span style="opacity:0.7; font-size:0.75rem">Optimize "Product Related" SLA target</span></div>';
+            
+            narrativeTitle.innerText = 'The Command Center';
+            narrativeText.innerText = 'Navigating to Issue Settings. Here, every friction point is categorized. Currently, "Product Related" issues have a 14-day survival time before anything happens. Drag the slider to cut it down.';
+        }
+
+        // Action 2: Slider Logic (Now standard LTR)
+        function updateSlider(val) {
+            const display = document.getElementById('slider-display');
+            const slaText = document.getElementById('sla-val');
+            const deployBtn = document.getElementById('deploy-btn');
+            const card = document.getElementById('product-card');
+            const hint = document.getElementById('drag-hint');
+
+            display.innerHTML = `${val} <span style="font-size: 1.2rem; color: #94a3b8;">Days</span>`;
+            slaText.innerText = `${val} Days`;
+
+            if (val <= 7) {
+                // Optimized State
+                slaText.classList.add('optimized');
+                deployBtn.disabled = false;
+                deployBtn.classList.add('pulse-guide');
+                hint.style.display = 'none'; // Hide hint once they figured it out
+                
+                actionBar.className = "status-bar s-netting";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-check"></i>&nbsp; Target Optimized</span><span style="opacity:0.7; font-size:0.75rem">Ready to Deploy Escalations</span></div>';
+                
+                narrativeTitle.innerText = 'The Active Optimization';
+                narrativeText.innerText = 'By shortening the resolution window from 14 to 7 days, you force the system to prioritize these blocks before they impact your quarterly DSO. Deploy the rules to see it in action.';
+            } else {
+                slaText.classList.remove('optimized');
+                deployBtn.disabled = true;
+                deployBtn.classList.remove('pulse-guide');
+                hint.style.display = 'flex';
+            }
+        }
+
+        // Action 3: Trigger Escalation Flow with Live Counter
+        function runEscalation() {
+            switchView(vSettings, vEscalation);
+            
+            actionBar.className = "status-bar";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-eye"></i>&nbsp; System Monitoring</span><span style="opacity:0.7; font-size:0.75rem">Tracking Issue Resolution</span></div>';
+            
+            narrativeTitle.innerText = 'The Escalation Pulse';
+            narrativeText.innerText = 'A price dispute for Acme Corp is logged. Watch what happens as the days tick by and the assigned solver fails to act...';
+
+            const counter = document.getElementById('limbo-counter');
+            const card = document.getElementById('ticket-card');
+            const toast = document.getElementById('toast-alert');
+            const icon = document.getElementById('clock-icon');
+            
+            // Reset state
+            card.className = "ticket-pulse-card alert-pending";
+            toast.classList.remove('show');
+            let day = 1;
+            counter.innerText = `Day ${day}`;
+            counter.style.color = "#cbd5e1"; 
+            icon.style.color = "#94a3b8";
+
+            // The Countdown Interval
+            const dayInterval = setInterval(() => {
+                day++;
+                counter.innerText = `Day ${day}`;
+                
+                // Color shifts as it gets closer to SLA
+                if(day === 5) {
+                    counter.style.color = "#f59e0b"; // Amber warning
+                    icon.style.color = "#f59e0b";
+                }
+                
+                if(day >= 7) {
+                    clearInterval(dayInterval);
+                    
+                    // Trigger the Alarm
+                    counter.style.color = "#ef4444";
+                    icon.style.color = "#ef4444";
+                    card.classList.remove('alert-pending');
+                    card.classList.add('alert-active');
+                    
+                    actionBar.className = "status-bar s-legacy";
+                    actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-stopwatch"></i>&nbsp; System Alert</span><span style="opacity:0.7; font-size:0.75rem">7-Day SLA Breached</span></div>';
+                    
+                    setTimeout(() => toast.classList.add('show'), 300);
+                    
+                    // Transition to ROI
+                    setTimeout(() => {
+                        showROI();
+                    }, 4000);
+                }
+            }, 600); // Ticks every 0.6 seconds
+        }
+
+        // Action 4: Show ROI Explicitly
+        function showROI() {
+            switchView(vEscalation, vRoi);
+            
+            document.body.className = 'mode-netting'; // Blue success glow
+            
+            actionBar.className = "status-bar s-success";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-money-bill-wave"></i>&nbsp; Resolution Engine Active</span><span style="opacity:0.7; font-size:0.75rem">Cashflow Unblocked</span></div>';
+            
+            narrativeTitle.innerText = 'The ROI Finale';
+            narrativeText.innerText = 'By cutting the resolution time of this issue category by 7 days, you saved exactly 4 global DSO days and unblocked $125k in stalled revenue.';
+        }
+
+        // Action 5: Reset
+        function resetFlow() {
+            document.body.className = '';
+            document.getElementById('toast-alert').classList.remove('show');
+            
+            // Reset Slider
+            const slider = document.getElementById('sla-slider');
+            slider.value = 14;
+            updateSlider(14); 
+            
+            switchView(vRoi, vBottleneck);
+            startDsoCreep(); // Restart the pain
+
+            actionBar.className = "status-bar s-legacy";
+            actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-lock"></i> &nbsp;Status</span><span style="opacity:0.7; font-size:0.75rem">Revenue Trapped in Internal Friction</span></div>';
+            
+            narrativeTitle.innerText = 'The Resolution Gap';
+            narrativeText.innerText = 'Your organization is losing cash flow not because customers won\'t pay, but because internal disputes sit in limbo for weeks. While you wait 14 days for answers, your DSO quietly keeps rising.';
+        }
+    </script>
+</body>
+</html>

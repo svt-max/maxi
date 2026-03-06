@@ -149,6 +149,39 @@
             </div>
         </section>
 
+        <section id="issue-management" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="issue-management.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">The Resolution Engine</div>
+                    <h2>Issue Management</h2>
+                    <p id="issue-desc">Internal disputes sit in limbo for weeks, stalling the dunning process and bloating your DSO.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="issue-visual" data-step="0">
+                    <div class="issue-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <div id="issue-state-1" class="demo-state active-state">
+                            <div class="issue-wall">
+                                <div class="ghost-stream">
+                                    <i class="fa-solid fa-file-invoice invoice-bounce red"></i>
+                                    <i class="fa-solid fa-file-invoice invoice-bounce amber"></i>
+                                    <i class="fa-solid fa-file-invoice invoice-bounce red"></i>
+                                </div>
+                                <div class="wall-block"><i class="fa-solid fa-hand"></i> 14-Day Bottleneck</div>
+                            </div>
+                        </div>
+                        <div id="issue-state-2" class="demo-state hidden-state">
+                            <div class="issue-resolved">
+                                <div class="sla-slider">
+                                    <div class="sla-track"><div class="sla-fill"></div><div class="sla-thumb">7d Target</div></div>
+                                </div>
+                                <div class="toast-alert"><i class="fa-solid fa-bell"></i> Escalated: Sales Dir.</div>
+                                <div class="dso-drop"><i class="fa-solid fa-arrow-trend-down"></i> DSO: 35 Days <span class="old-dso">(was 42)</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="reputation" class="snap-section">
             <div class="feature-card feature-link" data-target="reputation.html">
                 <div class="card-text stagger-1">

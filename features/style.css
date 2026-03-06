@@ -466,6 +466,24 @@ body { background: var(--bg-dark); color: #fff; font-family: var(--font-body); m
 .lc-hash { font-family: monospace; font-size: 0.7rem; color: #94a3b8; margin-bottom: 15px; }
 .lc-stamp { background: var(--c-shield); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 1px; }
 
+/* Issue Management Specifics */
+.issue-wall { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.ghost-stream { display: flex; gap: 15px; margin-bottom: 5px; }
+.invoice-bounce { font-size: 2rem; animation: bounceWall 0.8s infinite alternate ease-in; }
+.invoice-bounce.red { color: #ef4444; }
+.invoice-bounce.amber { color: #f59e0b; animation-delay: 0.2s; }
+@keyframes bounceWall { 0% { transform: translateY(-15px); opacity: 0.5; } 100% { transform: translateY(0); opacity: 1; } }
+.wall-block { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; padding: 12px 24px; border-radius: 8px; font-weight: bold; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;}
+
+.issue-resolved { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 250px; }
+.sla-slider { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; position: relative; margin-top: 15px; margin-bottom: 15px; }
+.sla-fill { width: 50%; height: 100%; background: var(--c-netting); border-radius: 4px; }
+.sla-thumb { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--c-netting); color: #0f172a; font-size: 0.75rem; font-weight: bold; padding: 6px 12px; border-radius: 12px; white-space: nowrap;}
+.toast-alert { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 10px 15px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 10px; animation: slideUpToast 0.5s ease-out; }
+.dso-drop { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; padding: 15px; border-radius: 8px; font-weight: bold; text-align: center; font-size: 1.1rem;}
+.dso-drop .old-dso { text-decoration: line-through; color: #64748b; font-size: 0.8rem; margin-left: 5px; font-weight: normal;}
+@keyframes slideUpToast { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
 /* Ensure grids and widgets scale perfectly on very small mobile screens */
 @media (max-width: 480px) {
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
