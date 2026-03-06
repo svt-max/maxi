@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MaxCredible | Project €15M for JET</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-deep: #0f0c29;
+            --card-bg: #0f172a; 
+            --c-legacy: #ef4444; 
+            --c-amber: #f59e0b;
+            --c-netting: #38bdf8; 
+            --c-success: #10b981;
+            --c-shield: #a855f7;
+            --c-jet: #ff8000; 
+            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-deep); color: #fff; overflow: hidden; }
+
+        /* Ambient Blobs */
+        .ambient-background { position: fixed; inset: 0; z-index: 0; background: #0f0c29; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: float 10s infinite alternate; pointer-events: none; }
+        .b-1 { width: 500px; height: 500px; background: #ff8000; top: -10%; left: -10%; } 
+        .b-2 { width: 600px; height: 600px; background: #333399; bottom: -10%; right: -10%; }
+        .b-3 { width: 400px; height: 400px; background: #38bdf8; top: 40%; left: 30%; }
+        @keyframes float { 100% { transform: translate(30px, 50px); } }
+
+        /* --- GLOBAL HUD & HEADER --- */
+        .global-header { position: fixed; top: 20px; left: 40px; right: 40px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 1000; pointer-events: none; }
+        .header-logos { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); padding: 12px 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 20px; pointer-events: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); height: 40px;}
+        
+        .hud-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .hud-tracker { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); padding: 12px 24px; border-radius: 16px; text-align: right; pointer-events: auto; transition: all 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px);}
+        .hud-tracker.t-amber { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); }
+        .hud-tracker.t-green { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); }
+        
+        .hud-lbl { font-size: 0.75rem; color: #cbd5e1; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .hud-val { font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800; color: #ef4444; line-height: 1; transition: color 0.5s; font-variant-numeric: tabular-nums; }
+        .hud-tracker.t-amber .hud-val { color: #f59e0b; }
+        .hud-tracker.t-green .hud-val { color: #10b981; }
+
+        .metric-toast { background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; padding: 10px 20px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; opacity: 0; transform: translateX(20px); transition: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px);}
+        .metric-toast.show { opacity: 1; transform: translateX(0); }
+
+        /* --- NEW HUD MULTI-METRIC GRID & SLIDER --- */
+        .hud-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .hud-mini { background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); text-align: center; transition: all 0.3s;}
+        .hud-mini .hud-lbl { font-size: 0.6rem; margin-bottom: 2px; color: #94a3b8; display: block; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold;}
+        .hud-mini .hud-val { font-family: 'Outfit'; font-size: 1.2rem; color: #fff; font-weight: 800; }
+        
+        .issue-slider { -webkit-appearance: none; width: 100%; max-width: 400px; height: 12px; border-radius: 10px; background: rgba(255,255,255,0.1); outline: none; margin: 30px auto; display: block; }
+        .issue-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 30px; height: 30px; border-radius: 50%; background: var(--c-netting); cursor: pointer; transition: 0.2s; box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); border: 3px solid #fff;}
+        .issue-slider::-webkit-slider-thumb:hover { transform: scale(1.1); }
+
+        /* --- PIPELINE ANIMATION (Slide 2) --- */
+        .pipeline { display: flex; flex-direction: column; gap: 0; width: 100%; max-width: 450px; margin: 0 auto; margin-top: 1rem; text-align: left; }
+        .pipe-node { display: flex; align-items: flex-start; gap: 15px; opacity: 0; transform: translateX(-20px); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; padding-bottom: 2rem; }
+        .pipe-node.active { opacity: 1; transform: translateX(0); }
+        .pipe-node:not(:last-child)::after {
+            content: ''; position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px;
+            background: rgba(255,255,255,0.1); z-index: 1; transition: background 0.5s;
+        }
+        .pipe-node.line-active:not(:last-child)::after { background: linear-gradient(to bottom, #38bdf8, rgba(255,255,255,0.1)); }
+        
+        .pipe-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #64748b; z-index: 2; border: 1px solid rgba(255,255,255,0.1); transition: all 0.4s; }
+        .pipe-node.active .pipe-icon { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+        .pipe-node.success .pipe-icon { background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+        
+        .pipe-content { flex-grow: 1; padding-top: 8px; }
+        .pipe-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 4px; }
+        .pipe-desc { font-size: 0.85rem; color: #94a3b8; line-height: 1.4; display: none; }
+        .pipe-node.active .pipe-desc { display: block; animation: pipeFadeIn 0.5s forwards; }
+        @keyframes pipeFadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- DIAGNOSTIC STATS GRID (Slide 2) --- */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; width: 100%; opacity: 0; transform: translateY(20px); transition: all 0.6s; display: none; }
+        .stats-grid.visible { display: grid; opacity: 1; transform: translateY(0); }
+        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 12px; text-align: left; }
+        .stat-lbl { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        .stat-val { font-family: 'Outfit'; font-size: 1.2rem; font-weight: 800; color: #fff; }
+        .stat-list { margin: 5px 0 0 0; padding-left: 15px; font-size: 0.8rem; color: #cbd5e1; }
+        .stat-list li { margin-bottom: 3px; }
+
+        /* --- AUTOMATED JOURNEY TIMELINE (Slide 3) --- */
+        .j-timeline { display: flex; flex-direction: column; position: relative; width: 100%; max-width: 400px; margin: 20px auto 0 auto; opacity: 0; display: none; transition: opacity 0.5s; text-align: left;}
+        .j-node { display: flex; gap: 1rem; position: relative; margin-bottom: 1.5rem; }
+        .j-node:last-child { margin-bottom: 0; }
+        .j-line { position: absolute; left: 19px; top: 40px; bottom: -20px; width: 2px; background: rgba(255,255,255,0.1); z-index: 1; }
+        .j-icon { width: 40px; height: 40px; border-radius: 50%; background: #1e293b; border: 2px solid #38bdf8; display: flex; align-items: center; justify-content: center; color: #38bdf8; z-index: 2; position: relative; font-size: 1.1rem; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        .j-content { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; flex: 1; display: flex; justify-content: space-between; align-items: center;}
+        .j-text h3 { margin: 0 0 4px 0; font-family: 'Outfit', sans-serif; font-size: 1rem; color: #fff; }
+        .j-text p { margin: 0; font-size: 0.75rem; color: #64748b; }
+        .j-delay { text-align: right; }
+        .d-val { font-size: 1rem; font-weight: 800; font-family: 'Outfit'; color: #fff; }
+        .d-lbl { font-size: 0.6rem; color: #64748b; text-transform: uppercase; font-weight: bold; }
+        .node-esc .j-icon { border-color: #ef4444; color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+
+        /* --- LANGUAGE PICKER (Slide 4) --- */
+        .lang-picker { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .lang-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; color: #94a3b8; font-family: 'Outfit'; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .lang-btn.active { background: rgba(56, 189, 248, 0.15); border-color: #38bdf8; color: #fff; }
+
+        /* --- INBOX ROUTING (Slide 6) --- */
+        .inbox-wrapper { display: flex; flex-direction: column; gap: 15px; width: 100%; text-align: left; }
+        .email-row { background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;}
+        .email-row:hover { background: rgba(255,255,255,0.06); transform: translateY(-3px); border-color: rgba(56, 189, 248, 0.3); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
+        .email-unread { border-left: 4px solid #38bdf8; background: linear-gradient(90deg, rgba(56, 189, 248, 0.05), transparent); }
+        .e-sender { font-family: 'Outfit'; font-weight: 700; color: #fff; font-size: 1.1rem; margin-bottom: 5px;}
+        .e-subject { font-size: 0.95rem; color: #94a3b8; }
+        .e-time { font-size: 0.85rem; color: #64748b; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        
+        #s6-view-reader { display: none; opacity: 0; transition: opacity 0.5s; width: 100%; text-align: left; gap: 2rem; align-items: flex-start; }
+        .reader-panel { flex: 1.5; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 2rem; border-radius: 16px; display: flex; flex-direction: column; gap: 1.5rem; }
+        .reader-body { font-size: 1.05rem; color: #cbd5e1; line-height: 1.7; }
+        
+        .action-panel { flex: 1; display: flex; flex-direction: column; width: 100%; }
+        .ai-scan-box { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); padding: 2rem; border-radius: 16px; transform: translateY(20px); opacity: 0; transition: all 0.5s; display: flex; flex-direction: column; gap: 1.2rem; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); }
+        .ai-scan-box.visible { transform: translateY(0); opacity: 1; }
+        .ai-header { font-family: 'Outfit'; font-size: 1.2rem; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 10px; }
+        .ai-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 700; opacity: 0; transition: opacity 0.5s; width: fit-content; }
+        @media (max-width: 768px) { #s6-view-reader { flex-direction: column; } }
+
+        /* --- DECK ENGINE --- */
+        #deck-container { position: relative; width: 100%; height: 100vh; z-index: 10; overflow: hidden; }
+        .slide { position: absolute; inset: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; box-sizing: border-box; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s; opacity: 0; transform: translateX(100%); pointer-events: none; padding-top: 100px;}
+        .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .slide.prev { opacity: 0; transform: translateX(-100%); }
+
+        /* --- SMART CARD BASE --- */
+        .smart-card { width: 100%; max-width: 900px; background: var(--card-bg); box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 25px 50px -12px rgba(0,0,0,0.5); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; position: relative; min-height: 550px;}
+        .card-header { padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2);}
+        .card-body { padding: 30px; flex-grow: 1; position: relative; display: flex; flex-direction: column; justify-content: center;}
+        
+        /* Typography & Buttons */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; margin: 0; }
+        .headline { font-size: 3rem; font-weight: 800; background: linear-gradient(to right, #fff, var(--c-jet)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; line-height: 1.1;}
+        .btn-jet { background: linear-gradient(135deg, var(--c-jet), #e67300); color: #fff; border: none; padding: 15px 30px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px -5px rgba(255, 128, 0, 0.4); display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-jet:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(255, 128, 0, 0.6); }
+
+        /* Navigation Controls */
+        .deck-controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; align-items: center; gap: 15px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; background: #475569; cursor: pointer; transition: 0.3s; }
+        .nav-dot.active { background: var(--c-jet); transform: scale(1.3); }
+        .nav-arrow { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; padding: 5px; opacity: 0.7; transition: 0.2s; }
+        .nav-arrow:hover { opacity: 1; color: var(--c-jet); }
+
+        /* --- SLIDE 2: DIAGNOSTIC --- */
+        .data-stream { height: 150px; width: 100%; display: flex; align-items: flex-end; gap: 5px; margin-bottom: 20px; overflow: hidden; opacity: 0; transition: 0.5s; }
+        .ds-bar { flex: 1; background: var(--c-netting); border-radius: 4px 4px 0 0; animation: equalize 1s infinite alternate; }
+        @keyframes equalize { 0% { height: 20%; } 100% { height: 100%; } }
+        .toast-critical { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fff; padding: 15px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; opacity: 0; transform: translateY(20px); transition: 0.4s; width: 100%; max-width: 500px; margin: 0 auto;}
+        .toast-critical.show { opacity: 1; transform: translateY(0); }
+        
+        /* --- LEDGER TERMINAL (Slide 2) --- */
+        .ledger-terminal { background: #000; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 15px; font-family: monospace; font-size: 0.75rem; color: #10b981; height: 140px; overflow-y: hidden; text-align: left; margin: 15px auto; width: 100%; max-width: 450px; display: none; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+        .ledger-terminal::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(transparent, #000); pointer-events: none; }
+        .ledger-line { margin-bottom: 4px; opacity: 0.8; animation: terminalSlideUp 0.15s ease-out; }
+        @keyframes terminalSlideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 0.8; } }
+
+        /* --- SLIDE 3: SEGMENTATION (Matrix) --- */
+        .matrix-toggles { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; width: 100%; }
+        .ui-toggle { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s; color: #94a3b8; font-family: 'Outfit'; }
+        .ui-toggle.active { background: rgba(56, 189, 248, 0.15); border-color: #38bdf8; color: #fff; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+        .matrix-grid { display: grid; gap: 15px; width: 100%; max-width: 700px; margin: 0 auto; transition: all 0.4s; }
+        .matrix-grid.grid-1 { grid-template-columns: 1fr; }
+        .matrix-grid.grid-2 { grid-template-columns: 1fr 1fr; }
+        .matrix-grid.grid-4 { grid-template-columns: 1fr 1fr; }
+        .seg-box { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 6px; animation: popIn 0.4s; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .seg-box-title { font-size: 0.75rem; font-weight: 800; color: #cbd5e1; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; margin-bottom: 4px; letter-spacing: 0.5px;}
+        .cust-pill { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 6px; font-size: 0.8rem; color: #fff; font-weight: 500; border-left: 3px solid transparent; transition: all 0.3s;}
+        .cust-pill.risk-hi { border-left-color: var(--c-legacy); background: rgba(239, 68, 68, 0.05); }
+        .cust-pill.risk-lo { border-left-color: var(--c-success); background: rgba(16, 185, 129, 0.05); }
+        .cust-pill.risk-neutral { border-left-color: #64748b; }
+
+        /* --- SLIDE 4: PAYLINKS --- */
+        .phone-mockup { background: #fff; width: 100%; max-width: 300px; border-radius: 30px; padding: 15px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 6px solid #1e293b; margin: 0 auto; overflow: hidden; position: relative;}
+        .btn-pay-now { background: #000; color: #fff; border: none; padding: 12px; border-radius: 50px; font-family: 'Outfit'; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; width: 100%; margin-top: 15px;}
+        .btn-pay-now:hover { transform: scale(1.05); }
+
+        /* --- SLIDE 5: CUSTOMER PORTAL --- */
+        .portal-ui { background: #fff; border-radius: 16px; width: 100%; max-width: 400px; margin: 0 auto; overflow: hidden; color: #0f172a; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .p-header { background: #f8fafc; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem; color: #0284c7;}
+        .p-balance { background: linear-gradient(135deg, #0ea5e9, #0284c7); padding: 25px 20px; color: #fff; text-align: center; }
+        .p-amount { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 800; line-height: 1; margin: 5px 0; }
+        .p-footer-actions { display: flex; gap: 10px; padding: 15px; border-top: 1px solid #e2e8f0; background: #f8fafc;}
+        .btn-outline { flex: 1; background: transparent; border: 1px solid #cbd5e1; color: #475569; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s;}
+        .btn-outline:hover { background: #f1f5f9; border-color: #94a3b8; }
+
+        /* --- SLIDE 6: REPUTATION --- */
+        .rep-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 16px; transition: 0.5s; width: 100%; max-width: 500px; margin: 0 auto; }
+        .rep-card.strict { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
+        .timeline { display: flex; align-items: center; justify-content: space-between; margin: 25px 0; position: relative; }
+        .tl-line { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.1); z-index: 1; }
+        .tl-dot { width: 16px; height: 16px; border-radius: 50%; background: #334155; position: relative; z-index: 2; transition: 0.3s; }
+        .tl-dot.bad { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+        .gauge { font-family: 'Outfit'; font-size: 3rem; font-weight: 800; color: #f59e0b; transition: color 0.3s; }
+        .gauge.low { color: #ef4444; }
+        .strict-ui { display: none; margin-top: 20px; gap: 15px; flex-direction: column; animation: popIn 0.5s; }
+
+        /* --- SLIDE 7: ROI --- */
+        .roi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; }
+        .roi-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 30px 20px; border-radius: 16px; text-align: center; }
+        .roi-val { font-family: 'Outfit'; font-size: 3.5rem; font-weight: 800; color: #10b981; line-height: 1; margin: 10px 0;}
+        .roi-lbl { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="global-header">
+        <div class="header-logos">
+            <img src="wordmark logo.png" alt="MaxCredible" style="height: 20px; filter: brightness(0) invert(1);" onerror="this.alt='MaxCredible'; this.style.fontSize='1.2rem'; this.style.fontWeight='bold'; this.style.fontFamily='Outfit'">
+            <span style="color: #64748b; font-weight: bold;">✕</span>
+            <img src="JET.png" alt="JET" style="height: 24px;" onerror="this.alt='JET'; this.style.color='#ff8000'; this.style.fontWeight='bold'; this.style.fontFamily='Outfit'">
+        </div>
+        
+        <div class="hud-right">
+            <div class="hud-tracker" id="hud-tracker">
+                <span class="hud-lbl">Outstanding Blocked Revenue</span>
+                <span class="hud-val" id="val-balance">€ 15,000,000</span>
+                
+                <div class="hud-grid">
+                    <div class="hud-mini" id="box-csat">
+                        <span class="hud-lbl">CSAT</span>
+                        <span class="hud-val" id="val-csat">72%</span>
+                    </div>
+                    <div class="hud-mini" id="box-esat">
+                        <span class="hud-lbl">ESAT</span>
+                        <span class="hud-val" id="val-esat">65%</span>
+                    </div>
+                    <div class="hud-mini" id="box-ltv">
+                        <span class="hud-lbl">LTV Shift</span>
+                        <span class="hud-val" id="val-ltv">Base</span>
+                    </div>
+                </div>
+            </div>
+            <div id="toast-container" style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;"></div>
+        </div>
+    </div>
+
+    <div class="ambient-background">
+        <div class="blob b-1"></div><div class="blob b-2"></div><div class="blob b-3"></div>
+    </div>
+
+    <div id="deck-container">
+        
+        <div class="slide active" id="slide-1">
+            <div class="smart-card">
+                <div class="card-body" style="align-items: center; text-align: center;">
+                    <img src="JET.png" alt="JET" style="height: 50px; margin-bottom: 20px;" onerror="this.style.display='none'">
+                    <h1 class="headline">Accelerating JET's €15M Recovery</h1>
+                    <p style="font-size: 1.2rem; color: #94a3b8; max-width: 600px; line-height: 1.6;">A systematic methodology to reduce DSO from 45 to 30 days, optimizing cash flow while protecting and enhancing Customer Lifetime Value.</p>
+                    <button class="btn-jet" style="margin-top: 30px;" onclick="nextSlide()">Initiate €15M Recovery <i class="fa-solid fa-power-off"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-2">
+            <div class="smart-card">
+                <div class="card-header">
+                    <h2>1. Diagnostic Intake</h2>
+                    <span style="color: #94a3b8; font-family: monospace;">Module: Analyze Risk</span>
+                </div>
+                <div class="card-body" style="align-items: center; text-align: center; justify-content: flex-start; padding-top: 20px;">
+                    
+                    <button class="btn-jet" id="btn-load-ledger" onclick="loadLedger()" style="background: transparent; border: 1px solid #38bdf8; color: #38bdf8; box-shadow: none; margin-bottom: 20px;"><i class="fa-solid fa-database"></i> Stream €15M Ledger</button>
+
+                    <div class="pipeline" id="s2-pipeline" style="display: none;">
+                        <div class="pipe-node" id="pipe-1">
+                            <div class="pipe-icon"><i class="fa-solid fa-file-import"></i></div>
+                            <div class="pipe-content">
+                                <div class="pipe-title">1. Data Ingestion</div>
+                                <div class="pipe-desc">Streaming global ERP environments...</div>
+                            </div>
+                        </div>
+                        <div class="pipe-node" id="pipe-2">
+                            <div class="pipe-icon"><i class="fa-solid fa-brain"></i></div>
+                            <div class="pipe-content">
+                                <div class="pipe-title">2. AI Analysis & Structuring</div>
+                                <div class="pipe-desc">Cross-referencing payment histories and dispute logs.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ledger-terminal" id="s2-terminal"></div>
+
+                    <div class="stats-grid" id="s2-stats">
+                        <div class="stat-card">
+                            <span class="stat-lbl"><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> High Risk Region</span>
+                            <span class="stat-val" style="color: #ef4444;">Benelux Market</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-lbl"><i class="fa-solid fa-tag" style="color: #f59e0b;"></i> Most Frequent Issue</span>
+                            <span class="stat-val">Missing PO Numbers</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-lbl"><i class="fa-solid fa-clock" style="color: #38bdf8;"></i> Aging Profile</span>
+                            <span class="stat-val">Avg: 62 Days Past Due</span>
+                            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 5px;">
+                                vs Global Avg: 44 Days <span style="color: #ef4444; font-weight: bold;">(+18)</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-lbl"><i class="fa-solid fa-skull" style="color: #94a3b8;"></i> Top 3 Delinquent Accounts</span>
+                            <ul class="stat-list">
+                                <li>Global Delivery Corp (€210k)</li>
+                                <li>Euro Eateries (€185k)</li>
+                                <li>City Bistro LLC (€95k)</li>
+                            </ul>
+                            <button onclick="nextSlide()" style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; margin-top: 10px; width: 100%; font-family: 'Outfit'; font-weight: bold; transition: 0.2s;" onmouseover="this.style.background='#38bdf8'; this.style.color='#0f172a';" onmouseout="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.color='#38bdf8';"><i class="fa-solid fa-sliders"></i> Personalize</button>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 25px; display: none; opacity: 0; transform: translateY(20px); transition: 0.5s;" id="s2-action-container">
+                        <p style="color: #f59e0b; font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-triangle-exclamation"></i> The stream identified highly delinquent accounts. Standard dunning will fail here.</p>
+                        <button class="btn-jet" onclick="nextSlide()" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4);"><i class="fa-solid fa-users-viewfinder"></i> Route to Smart Segmentation <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-3">
+            <div class="smart-card">
+                <div class="card-header">
+                    <h2>2. Targeted Engagement Strategy</h2>
+                    <span style="color: #94a3b8; font-family: monospace;">Module: Smart Segmentation</span>
+                </div>
+                <div class="card-body">
+                    <p id="s3-desc" style="color: #94a3b8; text-align: center; margin-bottom: 20px;">The diagnostic flagged accounts like <strong>City Bistro LLC</strong> and <strong>Euro Eateries</strong> as critical risks. A standard reminder process will result in churn. We must segment the portfolio to deploy risk-appropriate journeys.</p>                    
+                    <div id="s3-matrix-container">
+                        <div class="matrix-toggles">
+                            <button class="ui-toggle" id="tog-size" onclick="toggleMatrix('size')"><i class="fa-solid fa-building"></i> Segment by Account Value</button>
+                            <button class="ui-toggle" id="tog-risk" onclick="toggleMatrix('risk')"><i class="fa-solid fa-heart-pulse"></i> Segment by Risk Profile</button>
+                        </div>
+
+                        <div id="matrix-grid" class="matrix-grid grid-1">
+                            </div>
+                        <div style="text-align: center; margin-top: 20px; min-height: 50px;">
+                            <button class="btn-jet" id="btn-apply-seg" style="display: none; background: #10b981; box-shadow: none;" onclick="applySegmentation()"><i class="fa-solid fa-check-double"></i> Deploy Targeted Workflows</button>
+                        </div>
+                    </div>
+
+                    <div class="j-timeline" id="s3-timeline">
+                        </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-4">
+            <div class="smart-card">
+                <div class="card-header">
+                    <h2>3. Hyper-Personalization</h2>
+                    <span style="color: #94a3b8; font-family: monospace;">Module: Instant PayLinks</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: #94a3b8; text-align: center; margin-bottom: 15px;">Hyper-localized messages with frictionless 1-click Payment Links convert instantly. Select a region to preview.</p>
+                    
+                    <div class="lang-picker" id="lang-picker">
+                        <button class="lang-btn active" onclick="setLang('en', this)">🇬🇧 EN</button>
+                        <button class="lang-btn" onclick="setLang('nl', this)">🇳🇱 NL</button>
+                        <button class="lang-btn" onclick="setLang('he', this)">🇮🇱 HE</button>
+                        <button class="lang-btn" onclick="setLang('jp', this)">🇯🇵 JP</button>
+                    </div>
+
+                    <div class="phone-mockup">
+                        <div style="font-size: 0.6rem; color: #94a3b8; margin-bottom: 15px; font-weight: bold;"><span>9:41</span> <i class="fa-solid fa-battery-full" style="float: right;"></i></div>
+                        
+                        <div id="phone-content" style="text-align: left;" dir="ltr">
+                            <h3 id="ph-title" style="color: #0f172a; margin-bottom: 10px;">JET Invoice #882</h3>
+                            <p id="ph-body" style="color: #475569; font-size: 0.85rem;">Your account shows an open balance of €4,500. Click below to settle instantly.</p>
+                        </div>
+
+                        <div id="pay-success" style="display: none; text-align: center; padding: 20px 0;">
+                            <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 3rem; margin-bottom: 10px;"></i>
+                            <div style="color: #10b981; font-weight: bold;">Payment Cleared</div>
+                        </div>
+
+                        <button class="btn-pay-now" id="btn-pay" onclick="capturePayment()"><i class="fa-brands fa-apple"></i> <span id="ph-btn-txt">Pay €4,500</span></button>
+                        <button id="btn-show-dispute" onclick="showDisputeForm()" style="background: transparent; color: #64748b; border: 1px solid #cbd5e1; padding: 10px; border-radius: 50px; font-family: 'Outfit'; font-weight: bold; font-size: 0.9rem; cursor: pointer; width: 100%; margin-top: 10px; transition: 0.2s;">Issue with invoice?</button>
+
+                        <div id="dispute-form" style="display: none; text-align: left; margin-top: 15px; animation: popIn 0.3s;">
+                            <textarea id="dispute-text" style="width: 100%; height: 80px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; color: #0f172a; resize: none; box-sizing: border-box;" placeholder="Describe the issue... (e.g., Missing 15% discount)"></textarea>
+                            <button class="btn-jet" onclick="submitDispute()" style="width: 100%; margin-top: 10px; padding: 12px; font-size: 0.95rem; background: #ef4444; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);"><i class="fa-solid fa-paper-plane"></i> Log Issue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-5">
+            <div class="smart-card" style="max-width: 1000px;">
+                <div class="card-header">
+                    <h2>4. Smart Routing & Resolution</h2>
+                    <span style="color: #94a3b8; font-family: monospace;">Module: Issue Management</span>
+                </div>
+                <div class="card-body">
+                    <p id="s6-desc" style="color: #94a3b8; text-align: center; margin-bottom: 30px; font-size: 1.1rem; max-width: 750px; margin-left: auto; margin-right: auto;">When a customer logs an issue from the PayLink, MaxCredible instantly routes it to A/R Central, reads the intent, and halts the dunning engine.</p>
+                    
+                    <div class="inbox-wrapper">
+                        <div id="s6-view-list" style="max-width: 800px; margin: 0 auto; width: 100%;">
+                            <div style="font-family: 'Outfit'; font-weight: bold; color: #94a3b8; margin-bottom: 15px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">A/R Central Inbox</div>
+                            <div class="email-row email-unread" onclick="openEmail()">
+                                <div>
+                                    <div class="e-sender">City Bistro LLC</div>
+                                    <div class="e-subject">Dispute Logged via PayLink</div>
+                                </div>
+                                <div class="e-time">Just Now <div style="width: 10px; height: 10px; background: #38bdf8; border-radius: 50%; box-shadow: 0 0 10px #38bdf8;"></div></div>
+                            </div>
+                        </div>
+
+                        <div id="s6-view-reader">
+                            <div class="reader-panel">
+                                <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+                                    <div class="e-sender" style="font-size: 1.4rem;">City Bistro LLC</div>
+                                    <div class="e-subject" style="font-size: 1rem; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Customer Dispute Submitted</div>
+                                </div>
+                                <div class="reader-body" style="font-style: italic; border-left: 3px solid #cbd5e1; border-radius: 0; padding-left: 15px; background: transparent;">
+                                    "<span id="dynamic-dispute-text">We cannot pay this yet. Your sales rep promised us a 15% discount on this bulk order, but the invoice shows the full price.</span>"
+                                </div>
+                            </div>
+
+                            <div class="action-panel">
+                                <div class="ai-scan-box" id="ai-box">
+                                    <div class="ai-header" id="ai-header-txt"><i class="fa-solid fa-spinner fa-spin"></i> Analyzing Intent...</div>
+                                    <p style="font-size: 0.95rem; color: #94a3b8; margin: 0; line-height: 1.5;" id="ai-text">Scanning submission for dispute indicators to prevent inappropriate automated follow-ups.</p>
+                                    <div class="ai-tag" id="ai-tag" style="display: none;"><i class="fa-solid fa-triangle-exclamation"></i> Issue Detected</div>
+                                    <button class="btn-jet" id="btn-route" onclick="routeIssue()" style="display:none; width: 100%; margin-top: 10px; background: #ef4444; box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4); font-size: 1rem;"><i class="fa-solid fa-hand"></i> Confirm Halt & Assign to Sales</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-6">
+            <div class="smart-card">
+                <div class="card-header">
+                    <h2>5. Empowerment via Self-Service</h2>
+                    <span style="color: #94a3b8; font-family: monospace;">Module: Customer Portal</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: #94a3b8; text-align: center; margin-bottom: 20px;">The customer can also be directed to their self-service portal to finalize their payment(s).</p>
+                    
+                    <div class="portal-ui">
+                        <div class="p-header"><span>JET Partner Portal</span><i class="fa-regular fa-circle-user" style="color: #cbd5e1;"></i></div>
+                        <div class="p-balance">
+                            <div style="font-size: 0.8rem; text-transform: uppercase;">Total Upcoming</div>
+                            <div class="p-amount">€ 2,100</div>
+                        </div>
+                        <div style="padding: 20px; text-align: center;" id="portal-actions">
+                            <button style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;" onclick="resolvePortal()"><i class="fa-solid fa-file-pdf" style="color: #38bdf8;"></i> Download Corrected Invoice</button>
+                            <button style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;" onclick="resolvePortal()"><i class="fa-solid fa-layer-group" style="color: #10b981;"></i> Batch Pay All</button>
+                        </div>
+                        <div id="portal-success" style="display: none; padding: 30px; text-align: center; background: #ecfdf5;">
+                            <i class="fa-solid fa-check" style="color: #10b981; font-size: 2rem; margin-bottom: 10px;"></i>
+                            <div style="color: #065f46; font-weight: bold;">Resolved & Paid</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-7">
+            <div class="smart-card">
+                <div class="card-header">
+                    <h2>6. Dynamic Protection</h2>
+                    <span style="color: #94a3b8; font-family: monospace;">Module: Reputation Intelligence</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: #94a3b8; text-align: center; margin-bottom: 20px;">For the stubborn final €800k, the friendly approach stops. The system detects broken promises and pivots to strict enforcement.</p>
+                    
+                    <div class="rep-card" id="rep-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+                            <div>
+                                <div style="font-family: 'Outfit'; font-size: 1.4rem; font-weight: 700;">Client: Chronic Late Payer</div>
+                                <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 5px;" id="rep-status">Standard Relationship Track</div>
+                            </div>
+                            <div class="gauge" id="rep-gauge">72</div>
+                        </div>
+
+                        <div class="timeline" id="rep-timeline">
+                            <div class="tl-line"></div>
+                            <div class="tl-dot"></div><div class="tl-dot"></div><div class="tl-dot"></div><div class="tl-dot"></div>
+                        </div>
+
+                        <button class="btn-jet" id="btn-sim" onclick="simulateReputation()" style="width: 100%; justify-content: center; background: transparent; border: 1px solid #f59e0b; color: #f59e0b; box-shadow: none;"><i class="fa-solid fa-triangle-exclamation"></i> Detect 3 Broken Promises</button>
+
+                        <div class="strict-ui" id="strict-ui">
+                            <div style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #ef4444; padding: 12px; border-radius: 8px; font-weight: bold; display: flex; flex-direction: column; gap: 5px;">
+                                <span><i class="fa-solid fa-gavel"></i> Strict Profile Activated</span>
+                                <span style="font-size: 0.8rem; font-weight: normal;">Collection Costs Applied. Order Block Enforced.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-8">
+            <div class="smart-card">
+                <div class="card-header">
+                    <h2>The MaxCredible Effect</h2>
+                    <span style="color: #94a3b8; font-family: monospace;">Executive Summary</span>
+                </div>
+                <div class="card-body" style="align-items: center; text-align: center; justify-content: center;">
+                    
+                    <h1 class="headline" style="font-size: 3rem; margin-bottom: 30px;">We didn't just collect the money.<br>We fixed the machine.</h1>
+
+                    <div class="roi-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 40px; gap: 15px;">
+                        <div class="roi-box">
+                            <div class="roi-lbl">Balance</div>
+                            <div class="roi-val" style="font-size: 2.5rem;">€150k</div>
+                            <div style="font-size: 0.8rem; color: #10b981;">Managed Strictly</div>
+                        </div>
+                        <div class="roi-box">
+                            <div class="roi-lbl">Global DSO</div>
+                            <div class="roi-val" style="font-size: 2.5rem;">30</div>
+                            <div style="font-size: 0.8rem; color: #10b981;"><i class="fa-solid fa-arrow-down"></i> From 45 Days</div>
+                        </div>
+                        <div class="roi-box">
+                            <div class="roi-lbl">Customer Sat</div>
+                            <div class="roi-val" style="font-size: 2.5rem;">85%</div>
+                            <div style="font-size: 0.8rem; color: #10b981;"><i class="fa-solid fa-arrow-up"></i> Frictionless UI</div>
+                        </div>
+                        <div class="roi-box">
+                            <div class="roi-lbl">Employee Sat</div>
+                            <div class="roi-val" style="font-size: 2.5rem;">88%</div>
+                            <div style="font-size: 0.8rem; color: #10b981;"><i class="fa-solid fa-arrow-up"></i> Zero Manual Chasing</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 20px; justify-content: center;">
+                        <button class="btn-jet" style="background: transparent; border: 1px solid #fff; box-shadow: none;" onclick="window.location.href='index.html'">Browse Module Features</button>
+                        <button class="btn-jet" onclick="window.location.href='https://app.maxcredible.com/signup/'">Start JET Pilot <i class="fa-solid fa-rocket"></i></button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="deck-controls">
+            <button class="nav-arrow" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
+            <div id="dot-container" style="display: flex; gap: 10px;"></div>
+            <button class="nav-arrow" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- MULTI-METRIC HUD TRACKER LOGIC ---
+        let state = {
+            balance: 15000000,
+            csat: 72,
+            esat: 65,
+            ltv: 0 
+        };
+
+        const hudTracker = document.getElementById('hud-tracker');
+        
+        function updateMetrics(newBalance, newCsat, newEsat, newLtv, metricText) {
+            animateValue('val-balance', state.balance, newBalance, '€ ', '');
+            animateValue('val-csat', state.csat, newCsat, '', '%');
+            animateValue('val-esat', state.esat, newEsat, '', '%');
+            
+            if(newLtv > state.ltv) {
+                document.getElementById('val-ltv').innerText = `+${newLtv}%`;
+                document.getElementById('box-ltv').style.borderColor = '#10b981';
+                document.getElementById('val-ltv').style.color = '#10b981';
+            }
+            
+            state.balance = newBalance;
+            state.csat = newCsat;
+            state.esat = newEsat;
+            state.ltv = newLtv;
+            
+            if(newBalance <= 5000000) hudTracker.className = "hud-tracker t-green";
+            else if(newBalance <= 10000000) hudTracker.className = "hud-tracker t-amber";
+
+            if(metricText) {
+                const toast = document.createElement('div');
+                toast.className = 'metric-toast';
+                toast.innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${metricText}`;
+                document.getElementById('toast-container').appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 100);
+            }
+        }
+
+        function animateValue(id, start, end, prefix = '', suffix = '') {
+            const el = document.getElementById(id);
+            if(!el) return;
+            
+            // FIX: Prevent infinite loop if value hasn't changed
+            if (start === end) {
+                el.innerHTML = prefix + Math.round(end).toLocaleString('en-US') + suffix;
+                return;
+            }
+
+            let current = start;
+            const steps = 30;
+            const increment = (end - start) / steps;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    clearInterval(timer);
+                    current = end;
+                }
+                el.innerHTML = prefix + Math.round(current).toLocaleString('en-US') + suffix;
+            }, 30);
+        }
+
+        // --- DECK NAVIGATION ---
+        const totalSlides = 8;
+        let currentSlide = 1;
+        const dotContainer = document.getElementById('dot-container');
+
+        for(let i=1; i<=totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = i === 1 ? 'nav-dot active' : 'nav-dot';
+            dot.onclick = () => goToSlide(i);
+            dotContainer.appendChild(dot);
+        }
+
+        function updateDots() {
+            const dots = dotContainer.children;
+            for(let i=0; i<dots.length; i++) {
+                dots[i].className = (i+1 === currentSlide) ? 'nav-dot active' : 'nav-dot';
+            }
+        }
+
+        function goToSlide(n) {
+            if(n < 1 || n > totalSlides) return;
+            for(let i=1; i<=totalSlides; i++) {
+                const slide = document.getElementById(`slide-${i}`);
+                if(i < n) slide.className = 'slide prev';
+                else if (i > n) slide.className = 'slide'; 
+                else slide.className = 'slide active';
+            }
+            currentSlide = n;
+            updateDots();
+        }
+
+        function nextSlide() { goToSlide(currentSlide + 1); }
+        function prevSlide() { goToSlide(currentSlide - 1); }
+
+        // --- SLIDE 2: DIAGNOSTIC STATS ---
+        function loadLedger() {
+            document.getElementById('btn-load-ledger').style.display = 'none';
+            
+            const pipeline = document.getElementById('s2-pipeline');
+            pipeline.style.display = 'flex';
+            
+            const p1 = document.getElementById('pipe-1');
+            const p2 = document.getElementById('pipe-2');
+            const stats = document.getElementById('s2-stats');
+            const alertBox = document.getElementById('s2-alert');
+            const terminal = document.getElementById('s2-terminal');
+
+            // 1. Start pipeline animation
+            setTimeout(() => { p1.classList.add('active'); }, 100);
+
+            // 2. Trigger Live Terminal & Real-Time Burndown
+            setTimeout(() => {
+                terminal.style.display = 'block';
+                let lines = 0;
+                let runningBalance = state.balance;
+                
+                const streamInterval = setInterval(() => {
+                    const id = Math.floor(10000 + Math.random() * 90000);
+                    const amt = Math.floor(Math.random() * 8000);
+                    // 15% chance to find an anomaly (orphaned payment)
+                    const isAnomaly = Math.random() > 0.85; 
+                    const color = isAnomaly ? '#ef4444' : '#10b981';
+                    const text = isAnomaly ? `[ORPHANED PAYMENT FOUND] Auto-reconciling €${amt}` : `[OK] Record JET-${id} parsed.`;
+                    
+                    if (isAnomaly) {
+                        runningBalance -= amt;
+                        // Fast update without toast to simulate live processing
+                        document.getElementById('val-balance').innerHTML = '€ ' + Math.round(runningBalance).toLocaleString('en-US');
+                    }
+
+                    const line = document.createElement('div');
+                    line.className = 'ledger-line';
+                    line.style.color = color;
+                    line.innerText = `> ${text}`;
+                    terminal.appendChild(line);
+                    
+                    // Keep terminal scrolled to bottom
+                    terminal.scrollTop = terminal.scrollHeight;
+                    
+                    lines++;
+                    if(lines > 25) {
+                        clearInterval(streamInterval);
+                        state.balance = runningBalance; // Sync global state
+                    }
+                }, 100);
+            }, 500);
+
+            // 3. Move pipeline to stage 2
+            setTimeout(() => {
+                p1.classList.add('line-active');
+                p2.classList.add('active');
+            }, 1500);
+
+            // 4. Hide streams, show static insights, bump ESAT
+            setTimeout(() => {
+                pipeline.style.display = 'none';
+                terminal.style.display = 'none';
+                stats.classList.add('visible');
+                // Give a small bump to Employee Satisfaction (ESAT) for automating the spreadsheet work
+                updateMetrics(state.balance, state.csat, 68, state.ltv, "Initial ERP sync complete. Spreadsheets eliminated.");
+            }, 3800);
+
+            // 5. Present the transition to Segmentation
+            setTimeout(() => {
+                const actionContainer = document.getElementById('s2-action-container');
+                actionContainer.style.display = 'block';
+                setTimeout(() => {
+                    actionContainer.style.opacity = '1';
+                    actionContainer.style.transform = 'translateY(0)';
+                }, 50);
+            }, 4500);
+        }
+
+
+        // --- SLIDE 3: SEGMENTATION & JOURNEY ---
+        const jetCustomers = [
+            { name: "Global Delivery Corp", size: "Enterprise", risk: "High", icon: "fa-building" },
+            { name: "National Dining Group", size: "Enterprise", risk: "Low", icon: "fa-building" },
+            { name: "City Bistro LLC", size: "SMB", risk: "High", icon: "fa-store" },
+            { name: "Corner Cafe", size: "SMB", risk: "Low", icon: "fa-store" },
+            { name: "Euro Eateries", size: "Enterprise", risk: "High", icon: "fa-building" },
+            { name: "Family Pizzeria", size: "SMB", risk: "Low", icon: "fa-store" }
+        ];
+
+        function createSegBox(title, titleColor, filterFn, applyRiskColors = false) {
+            const filtered = jetCustomers.filter(filterFn);
+            if(filtered.length === 0) return '';
+            let html = `<div class="seg-box"><div class="seg-box-title" style="color: ${titleColor}; border-bottom-color: ${titleColor}40;">${title}</div>`;
+            filtered.forEach(c => {
+                let riskClass = 'risk-neutral';
+                if(applyRiskColors) riskClass = c.risk === 'High' ? 'risk-hi' : 'risk-lo';
+                html += `<div class="cust-pill ${riskClass}"><i class="fa-solid ${c.icon}" style="opacity:0.5; font-size: 0.7rem;"></i> <span>${c.name}</span></div>`;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+        let sFilter = false; let rFilter = false;
+
+        function renderMatrix() {
+            const grid = document.getElementById('matrix-grid');
+            grid.innerHTML = '';
+            if (sFilter && rFilter) {
+                grid.className = 'matrix-grid grid-4';
+                grid.innerHTML += createSegBox('Strategic / High Risk', '#f59e0b', c => c.size === 'Enterprise' && c.risk === 'High', true);
+                grid.innerHTML += createSegBox('Strategic / Low Risk', '#38bdf8', c => c.size === 'Enterprise' && c.risk === 'Low', true);
+                grid.innerHTML += createSegBox('Standard / High Risk', '#ef4444', c => c.size === 'SMB' && c.risk === 'High', true);
+                grid.innerHTML += createSegBox('Standard / Low Risk', '#10b981', c => c.size === 'SMB' && c.risk === 'Low', true);
+                document.getElementById('btn-apply-seg').style.display = 'inline-flex';
+            } 
+            else if (sFilter) {
+                grid.className = 'matrix-grid grid-2';
+                grid.innerHTML += createSegBox('Strategic Accounts (VIP)', '#38bdf8', c => c.size === 'Enterprise', false);
+                grid.innerHTML += createSegBox('Standard Accounts (SMB)', '#cbd5e1', c => c.size === 'SMB', false);
+                document.getElementById('btn-apply-seg').style.display = 'none';
+            } 
+            else if (rFilter) {
+                grid.className = 'matrix-grid grid-2';
+                grid.innerHTML += createSegBox('High Risk Profile', '#ef4444', c => c.risk === 'High', true);
+                grid.innerHTML += createSegBox('Low Risk Profile', '#10b981', c => c.risk === 'Low', true);
+                document.getElementById('btn-apply-seg').style.display = 'none';
+            } 
+            else {
+                grid.className = 'matrix-grid grid-1';
+                grid.innerHTML += createSegBox('<i class="fa-solid fa-users"></i> Unsorted Global Portfolio', '#cbd5e1', c => true, false);
+                document.getElementById('btn-apply-seg').style.display = 'none';
+            }
+        }
+
+        function toggleMatrix(type) {
+            if(type === 'size') sFilter = !sFilter;
+            if(type === 'risk') rFilter = !rFilter;
+            document.getElementById('tog-size').className = sFilter ? 'ui-toggle active' : 'ui-toggle';
+            document.getElementById('tog-risk').className = rFilter ? 'ui-toggle active' : 'ui-toggle';
+            renderMatrix();
+        }
+        renderMatrix();
+
+        function applySegmentation() {
+            document.getElementById('s3-matrix-container').style.display = 'none';
+            document.getElementById('s3-desc').style.display = 'none';
+            
+            const timeline = document.getElementById('s3-timeline');
+            
+            // Build tailored journey based on the active filters
+            let journeyHTML = '';
+            
+            // If they segmented by Risk, show how we aggressively handle the High-Risk accounts found in Slide 2
+            if (rFilter) {
+                journeyHTML = `
+                    <div style="text-align: center; font-family: 'Outfit'; font-weight: bold; margin-bottom: 15px; color: #ef4444;">High-Risk Priority Workflow Activated</div>
+                    <div class="j-node">
+                        <div class="j-line"></div>
+                        <div class="j-icon" style="color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.1);"><i class="fa-solid fa-mobile-screen"></i></div>
+                        <div class="j-content" style="border-color: rgba(245, 158, 11, 0.3);">
+                            <div class="j-text"><h3>Omnichannel Alert</h3><p>Email + SMS PayLink</p></div>
+                            <div class="j-delay"><div class="d-val">Day 1</div><div class="d-lbl">After Due</div></div>
+                        </div>
+                    </div>
+                    <div class="j-node node-esc">
+                        <div class="j-line"></div>
+                        <div class="j-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                        <div class="j-content" style="border-color: rgba(239, 68, 68, 0.3);">
+                            <div class="j-text"><h3 style="color: #ef4444;">Legal Pre-Warning</h3><p>Automated Strict Notice</p></div>
+                            <div class="j-delay"><div class="d-val">+ 3</div><div class="d-lbl">Days Later</div></div>
+                        </div>
+                    </div>
+                    <div class="j-node">
+                        <div class="j-icon" style="color: #ef4444; border-color: #ef4444; background: rgba(239, 68, 68, 0.1);"><i class="fa-solid fa-lock"></i></div>
+                        <div class="j-content" style="border-color: rgba(239, 68, 68, 0.3);">
+                            <div class="j-text"><h3 style="color: #ef4444;">Order Block & Route</h3><p>API trigger to ERP + Sales Alert</p></div>
+                            <div class="j-delay"><div class="d-val">+ 2</div><div class="d-lbl">Days Later</div></div>
+                        </div>
+                    </div>
+                `;
+                updateMetrics(state.balance - 3200000, 78, state.esat + 5, state.ltv, "Risk-adjusted strict workflows actively securing €3.2M.");
+            } else {
+                // If they only segmented by size, show the standard journey
+                journeyHTML = `
+                    <div style="text-align: center; font-family: 'Outfit'; font-weight: bold; margin-bottom: 15px; color: #38bdf8;">Standard Relationship Workflow Activated</div>
+                    <div class="j-node">
+                        <div class="j-line"></div>
+                        <div class="j-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div class="j-content">
+                            <div class="j-text"><h3>Friendly Nudge</h3><p>Automated Email</p></div>
+                            <div class="j-delay"><div class="d-val">Day 3</div><div class="d-lbl">After Due</div></div>
+                        </div>
+                    </div>
+                    <div class="j-node">
+                        <div class="j-line"></div>
+                        <div class="j-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <div class="j-content">
+                            <div class="j-text"><h3>Firm Reminder</h3><p>Automated Email</p></div>
+                            <div class="j-delay"><div class="d-val">+ 7</div><div class="d-lbl">Days Later</div></div>
+                        </div>
+                    </div>
+                    <div class="j-node node-esc">
+                        <div class="j-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div class="j-content">
+                            <div class="j-text"><h3 style="color: #ef4444;">Account Escalation</h3><p>Task Assigned to AM</p></div>
+                            <div class="j-delay"><div class="d-val">+ 5</div><div class="d-lbl">Days Later</div></div>
+                        </div>
+                    </div>
+                `;
+                updateMetrics(state.balance - 1500000, 78, state.esat + 5, state.ltv, "Standard automated journeys actively securing €1.5M.");
+            }
+            
+            timeline.innerHTML = journeyHTML;
+            timeline.style.display = 'flex';
+            setTimeout(() => { timeline.style.opacity = '1'; }, 50);
+        }
+
+        // --- SLIDE 4: LANGUAGES & PAYLINKS ---
+        const langData = {
+            'en': { title: "JET Invoice #882", body: "Your account shows an open balance of €4,500. Click below to settle instantly.", btn: "Pay €4,500", dir: "ltr", align: "left" },
+            'nl': { title: "JET Factuur #882", body: "Uw account toont een openstaand saldo van €4.500. Klik hieronder om direct te betalen.", btn: "Betaal €4.500", dir: "ltr", align: "left" },
+            'he': { title: "JET חשבונית #882", body: "החשבון שלך מציג יתרה פתוחה של ₪4,500. לחץ למטה כדי לשלם באופן מיידי.", btn: "₪4,500 שילם", dir: "rtl", align: "right" },
+            'jp': { title: "JET 請求書 #882", body: "お客様のアカウントには ¥600,000 の未払い残高があります。以下のボタンをクリックして即座にお支払いください。", btn: "¥600,000 支払う", dir: "ltr", align: "left" }
+        };
+
+        function setLang(code, btnElement) {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            const d = langData[code];
+            const content = document.getElementById('phone-content');
+            content.dir = d.dir;
+            content.style.textAlign = d.align;
+            
+            document.getElementById('ph-title').innerText = d.title;
+            document.getElementById('ph-body').innerText = d.body;
+            document.getElementById('ph-btn-txt').innerText = d.btn;
+        }
+
+        function capturePayment() {
+            document.getElementById('btn-pay').style.display = 'none';
+            document.getElementById('lang-picker').style.display = 'none';
+            document.getElementById('pay-success').style.display = 'block';
+            updateMetrics(5200000, state.csat, state.esat, state.ltv, "Frictionless localized payments captured.");
+        }
+
+        function showDisputeForm() {
+            document.getElementById('btn-pay').style.display = 'none';
+            document.getElementById('btn-show-dispute').style.display = 'none';
+            document.getElementById('lang-picker').style.opacity = '0';
+            setTimeout(() => document.getElementById('lang-picker').style.display = 'none', 200);
+            
+            document.getElementById('ph-body').style.display = 'none';
+            document.getElementById('dispute-form').style.display = 'block';
+        }
+
+        function submitDispute() {
+            const userText = document.getElementById('dispute-text').value;
+            if(userText.trim() !== '') {
+                // Pipe the text they literally just typed into the next slide
+                document.getElementById('dynamic-dispute-text').innerText = userText;
+            }
+            
+            // Immediately transition to the Inbox
+            nextSlide();
+        }
+
+        // --- SLIDE 5: PORTAL ---
+        function resolvePortal() {
+            document.getElementById('portal-actions').style.display = 'none';
+            document.getElementById('portal-success').style.display = 'block';
+            updateMetrics(3100000, state.csat, state.esat, 12, "Empowered billing experience drives repeat business.");
+        }
+
+        // --- SLIDE 6: INBOX ROUTING ---
+        function openEmail() {
+            document.getElementById('s6-view-list').style.display = 'none';
+            const reader = document.getElementById('s6-view-reader');
+            // Show side-by-side split view
+            reader.style.display = 'flex';
+            setTimeout(() => { reader.style.opacity = '1'; }, 50);
+            
+            setTimeout(() => {
+                const aiBox = document.getElementById('ai-box');
+                aiBox.classList.add('visible');
+                
+                setTimeout(() => {
+                    document.getElementById('ai-header-txt').innerHTML = '<i class="fa-solid fa-shield-halved"></i> Action Recommended';
+                    document.getElementById('ai-header-txt').style.color = '#ef4444';
+                    aiBox.style.borderColor = "rgba(239, 68, 68, 0.3)";
+                    aiBox.style.background = "rgba(239, 68, 68, 0.1)";
+                    
+                    document.getElementById('ai-text').innerText = "Customer is disputing the invoice price. Halt automated reminders immediately to avoid damaging the relationship.";
+                    
+                    const aiTag = document.getElementById('ai-tag');
+                    aiTag.style.display = 'inline-flex';
+                    setTimeout(() => { aiTag.style.opacity = '1'; }, 50);
+                    
+                    const btn = document.getElementById('btn-route');
+                    btn.style.display = 'flex';
+                    btn.style.justifyContent = 'center';
+                    setTimeout(() => { btn.style.opacity = '1'; }, 50);
+
+                }, 2000);
+            }, 600);
+        }
+
+        function routeIssue() {
+            const btn = document.getElementById('btn-route');
+            btn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Dunning Halted. Issue Assigned.';
+            btn.style.background = "#10b981";
+            btn.style.boxShadow = "0 10px 20px -5px rgba(16, 185, 129, 0.4)";
+            btn.style.pointerEvents = 'none';
+            
+            document.getElementById('s6-desc').innerHTML = "<span style='color: #10b981; font-weight: bold;'>Dispute logged and automated reminders successfully blocked.</span> The sales team has been notified to resolve the pricing discrepancy.";
+            
+            // Adjust metrics to reflect relationship save
+            updateMetrics(state.balance, state.csat + 4, 82, state.ltv, "Dunning paused. Internal accountability forced.");
+        }
+
+        // --- SLIDE 7: REPUTATION ---
+        function simulateReputation() {
+            document.getElementById('btn-sim').style.display = 'none';
+            const dots = document.querySelectorAll('.tl-dot');
+            const gauge = document.getElementById('rep-gauge');
+            let score = 72; let dotIndex = 0;
+
+            const interval = setInterval(() => {
+                if(dotIndex >= dots.length) {
+                    clearInterval(interval);
+                    document.getElementById('rep-card').classList.add('strict');
+                    document.getElementById('rep-status').innerText = "High Risk Track";
+                    document.getElementById('rep-status').style.color = "#ef4444";
+                    document.getElementById('strict-ui').style.display = 'flex';
+                    
+                    updateMetrics(150000, 85, 88, state.ltv, "Threat of collection costs clears final hurdle.");
+                    return;
+                }
+                dots[dotIndex].classList.add('bad');
+                score -= 12;
+                gauge.innerText = score;
+                if(score < 50) gauge.classList.add('low');
+                dotIndex++;
+            }, 400);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight' || e.key === 'Space') nextSlide();
+            if(e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
