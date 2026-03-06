@@ -263,3 +263,49 @@ h1 {
         font-size: 0.9rem; 
     }
 }
+
+/* --- FEATURE MINI NAVIGATION (STICKY BOTTOM) --- */
+.feature-mini-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 5%;
+    z-index: 2000;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); /* Safe area for iOS home bar */
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+}
+.mini-nav-btn {
+    color: #94a3b8;
+    text-decoration: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    flex: 1;
+}
+.mini-nav-btn:hover { color: #38bdf8; transform: translateY(-2px); }
+.mini-nav-btn.center-btn { justify-content: center; color: #fff; flex: 0.5; }
+.mini-nav-btn:last-child { justify-content: flex-end; text-align: right; }
+.mini-nav-spacer { flex: 1; }
+
+.mini-nav-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px; /* Prevents long titles from breaking mobile layout */
+}
+
+@media (max-width: 600px) {
+    .mini-nav-btn { font-size: 0.75rem; }
+    .mini-nav-text { max-width: 80px; }
+}

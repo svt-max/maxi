@@ -301,8 +301,10 @@
         @media (max-width: 600px) {
             .logo { width: 140px; margin-bottom: 1rem; }
             .control-deck { gap: 0.8rem; margin-bottom: 2rem; }
-            .module-btn { padding: 0.8rem; justify-content: center; }
-            .module-label { font-size: 0.85rem; }
+            /* FIX: Remove min-width, reduce padding and icon size to prevent edge-touching */
+            .module-btn { padding: 0.8rem 0.5rem; justify-content: center; min-width: 0; }
+            .module-icon { width: 32px; height: 32px; font-size: 1rem; }
+            .module-label { font-size: 0.75rem; white-space: normal; line-height: 1.1; }
             .timeline-icon-box { width: 36px; height: 36px; left: -2.8rem; font-size: 1rem;}
             .timeline { padding-left: 2.8rem; }
             .timeline::before { left: 17px; }

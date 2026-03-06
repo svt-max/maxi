@@ -30,6 +30,296 @@
             </div>
         </section>
 
+        <section id="segmentation" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="smart-segmentation.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">AI Profiling</div>
+                    <h2>Smart Segmentation</h2>
+                    <p id="seg-desc">Raw customer data flows into dynamic buckets based on live risk assessment and geographic region.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="seg-visual" data-step="0">
+                    <div class="seg-container">
+                        <div id="seg-state-1" class="demo-state active-state">
+                            <i class="fa-solid fa-users g-icon"></i>
+                            <div class="g-label" style="text-align: center;">Raw Data &<br>AI Profiling Input</div>
+                        </div>
+                        <div id="seg-state-2" class="demo-state hidden-state">
+                            <div class="bucket-group">
+                                <div class="bucket-title">Risk Profile</div>
+                                <div class="bucket-row">
+                                    <div class="bucket b-red">High Risk</div>
+                                    <div class="bucket b-amber">Med Risk</div>
+                                    <div class="bucket b-green">Low Risk</div>
+                                </div>
+                            </div>
+                            <div class="bucket-group mt-2">
+                                <div class="bucket-title">Region Profiling</div>
+                                <div class="bucket-row">
+                                    <div class="bucket b-blue">EU Flow</div>
+                                    <div class="bucket b-blue">Americas</div>
+                                    <div class="bucket b-blue">APAC</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+        <section id="templates" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="templates.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Hyper-Personalization</div>
+                    <h2>Amazing Templates</h2>
+                    <p id="tpl-desc">Boring, plain-text emails with static PDF attachments get ignored or sent to spam.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="tpl-visual" data-step="0">
+                    <div class="tpl-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <div id="tpl-state-1" class="demo-state active-state">
+                            <div class="tpl-doc tpl-boring">
+                                <div class="tpl-lines"><div class="line w-long"></div><div class="line w-med"></div><div class="line w-short"></div></div>
+                                <i class="fa-solid fa-paperclip"></i> invoice.pdf
+                            </div>
+                        </div>
+                        <div id="tpl-state-2" class="demo-state hidden-state">
+                            <div class="tpl-doc tpl-dynamic">
+                                <div class="tpl-header" style="background: var(--c-netting);">Hi John, let's settle this!</div>
+                                <div class="tpl-body">
+                                    <div class="tpl-lines"><div class="line w-long"></div><div class="line w-med"></div></div>
+                                    <div class="tpl-btn">Pay €500 Now</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reminders" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="auto-reminders.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Zero-Touch Dunning</div>
+                    <h2>Automatic Reminders</h2>
+                    <p id="rem-desc">Manually checking calendars and sending emails one by one is slow and error-prone.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="rem-visual" data-step="0">
+                    <div class="rem-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <div id="rem-state-1" class="demo-state active-state">
+                            <i class="fa-regular fa-calendar-xmark g-icon" style="color: var(--c-legacy);"></i>
+                            <div class="g-label">Manual Calendar Checks</div>
+                        </div>
+                        <div id="rem-state-2" class="demo-state hidden-state">
+                            <div class="timeline">
+                                <div class="tl-node tl-blue"><div class="tl-dot"></div><div class="tl-txt">Day 1<br><span>Gentle Nudge</span></div></div>
+                                <div class="tl-line"></div>
+                                <div class="tl-node tl-amber"><div class="tl-dot"></div><div class="tl-txt">Day 15<br><span>+ Interest Added</span></div></div>
+                                <div class="tl-line"></div>
+                                <div class="tl-node tl-red"><div class="tl-dot"></div><div class="tl-txt">Day 30<br><span>Collection Agency</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="routing" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="smart-routing.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Inbox Automation</div>
+                    <h2>Issue Logging & Routing</h2>
+                    <p id="route-desc">The dunning journey progresses automatically toward collections without context.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="route-visual" data-step="0">
+                    <div class="route-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <div id="route-state-1" class="demo-state active-state">
+                            <div class="tl-node tl-red"><i class="fa-solid fa-forward-fast" style="font-size: 2rem; color: #ef4444;"></i><div class="tl-txt" style="margin-top:10px;">Journey Active<br><span>Heading to Collections</span></div></div>
+                        </div>
+                        <div id="route-state-2" class="demo-state hidden-state">
+                            <div class="email-popup">
+                                <div class="ep-header"><i class="fa-solid fa-reply"></i> "The product was broken!"</div>
+                                <div class="ep-body">
+                                    <div class="ep-action tl-amber"><i class="fa-solid fa-pause"></i> Journey Paused</div>
+                                    <div class="ep-action tl-blue"><i class="fa-solid fa-user-shield"></i> Assigned: Dispute Team</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reputation" class="snap-section">
+            <div class="feature-card feature-link" data-target="reputation.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Predictive Risk</div>
+                    <h2>Payment Reputation</h2>
+                    <p>Live scoring identifies historical behavior. Good payers get gentle nudges; bad payers get strict demands.</p>
+                </div>
+                <div class="visual-cycle generic-cycle stagger-2">
+                    <div class="g-state state-before">
+                        <i class="fa-solid fa-question g-icon"></i>
+                        <div class="g-label">Unknown Risk</div>
+                    </div>
+                    <div class="g-state state-after">
+                        <i class="fa-solid fa-chart-line g-icon" style="color:var(--c-zen)"></i>
+                        <div class="g-label" style="color:var(--c-zen)">Live Reputation Score</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="paylinks" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="paylinks.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Frictionless Pay</div>
+                    <h2>Instant Payment Links</h2>
+                    <p id="pay-desc">Customers manually type IBANs and references, leading to errors and delays.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="pay-visual" data-step="0">
+                    <div class="pay-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <div id="pay-state-1" class="demo-state active-state">
+                            <i class="fa-solid fa-building-columns g-icon"></i>
+                            <div class="g-label">Waiting for Bank Transfer...</div>
+                        </div>
+                        <div id="pay-state-2" class="demo-state hidden-state">
+                            <div class="pay-success-ui">
+                                <button class="pay-btn"><i class="fa-solid fa-link"></i> Pay Now €500</button>
+                                <div class="pay-stats">
+                                    <div class="p-stat"><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> DSO: 12 Days <span style="text-decoration: line-through; color:#64748b; font-size: 0.65rem;">(was 45)</span></div>
+                                    <div class="p-stat"><i class="fa-solid fa-fingerprint" style="color: #10b981;"></i> Trace ID Matched</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+        <section id="import" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="import.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Real-Time Sync</div>
+                    <h2>Import & Analyse Data</h2>
+                    <p id="import-desc">Raw ledger data is instantly ingested and transformed into actionable financial intelligence.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="import-visual" data-step="0">
+                    <div class="import-container">
+                        <div id="import-state-1" class="demo-state active-state">
+                            <i class="fa-solid fa-database g-icon pulse-icon"></i>
+                            <div class="g-label">Ingesting Database...</div>
+                            <div class="progress-track"><div class="progress-fill"></div></div>
+                        </div>
+                        <div id="import-state-2" class="demo-state hidden-state">
+                            <div class="stats-grid">
+                                <div class="stat-box"><span class="stat-lbl">Total Invoices</span><span class="stat-val">1,204</span></div>
+                                <div class="stat-box"><span class="stat-lbl">Total Debtors</span><span class="stat-val">482</span></div>
+                                <div class="stat-box"><span class="stat-lbl">Outstanding</span><span class="stat-val val-blue">€ 845k</span></div>
+                                <div class="stat-box"><span class="stat-lbl">Invoices Due</span><span class="stat-val val-red">312</span></div>
+                                <div class="stat-box"><span class="stat-lbl">Not Due</span><span class="stat-val val-green">892</span></div>
+                                <div class="stat-box"><span class="stat-lbl">Avg. Payment</span><span class="stat-val">34 Days</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+        </section>
+
+        <section id="match" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="reconciliation.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Smart Reconciliation</div>
+                    <h2>Payment Matching</h2>
+                    <p id="match-desc">Open invoices sit idle while bank payments arrive without clear references.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="match-visual" data-step="0">
+                    <div class="match-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <div id="match-state-1" class="demo-state active-state">
+                            <div class="match-row">
+                                <div class="m-box m-red">Invoice<br><span>€450</span></div>
+                                <i class="fa-solid fa-question m-icon" style="color:#64748b;"></i>
+                                <div class="m-box m-grey">Bank Feed<br><span>€450</span></div>
+                            </div>
+                        </div>
+                        <div id="match-state-2" class="demo-state hidden-state">
+                            <div class="match-row">
+                                <div class="m-box m-green">Invoice<br><span style="text-decoration:line-through;">€450</span></div>
+                                <i class="fa-solid fa-link m-icon" style="color:var(--c-success);"></i>
+                                <div class="m-box m-green">Bank Feed<br><span>Matched</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+        <section id="forecast" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="forecasting.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Cashflow Oracle</div>
+                    <h2>Payment Forecasting</h2>
+                    <p id="fore-desc">Relying on guesswork leaves you blind to cashflow dips and working capital needs.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="fore-visual" data-step="0">
+                    <div class="fore-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <div id="fore-state-1" class="demo-state active-state">
+                            <i class="fa-solid fa-cloud-bolt g-icon" style="color: #64748b;"></i>
+                            <div class="g-label">Unpredictable Cashflow</div>
+                        </div>
+                        <div id="fore-state-2" class="demo-state hidden-state">
+                            <div class="chart-mock mt-2" style="border-bottom: 2px solid var(--c-netting);">
+                                <div class="bar-col"><div class="bar" style="height: 30%; background: var(--c-netting);"></div></div>
+                                <div class="bar-col"><div class="bar" style="height: 50%; background: var(--c-netting);"></div></div>
+                                <div class="bar-col"><div class="bar" style="height: 80%; background: var(--c-netting);"></div></div>
+                                <div class="bar-col"><div class="bar" style="height: 100%; background: var(--c-success); opacity: 0.5; border: 1px dashed var(--c-success);"></div></div>
+                            </div>
+                            <div class="g-label" style="margin-top: 10px; color: var(--c-success);">+€125k Expected Friday</div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        </section>
+
+        <section id="dashboard" class="snap-section">
+            <div class="feature-card wide-card feature-link" data-target="dashboard.html">
+                <div class="card-text stagger-1">
+                    <div class="badge-pill">Command Center</div>
+                    <h2>Interactive Dashboard</h2>
+                    <p id="dash-desc">Transform raw data into visual heatmaps to instantly spot bottlenecks and prioritize team efforts.</p>
+                </div>
+                <div class="visual-cycle custom-demo stagger-2" id="dash-visual" data-step="0">
+                    <div class="dash-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <div id="dash-state-1" class="demo-state active-state">
+                            <div class="heatmap-grid">
+                                <div class="hm-lbl">0-30 Days</div><div class="hm-lbl">31-60 Days</div><div class="hm-lbl">60+ Days</div>
+                                <div class="hm-cell hm-green">142</div><div class="hm-cell hm-amber">45</div><div class="hm-cell hm-red">12</div>
+                            </div>
+                            <div class="chart-mock mt-2">
+                                <div class="bar-col"><div class="bar" style="height: 40%;"></div></div>
+                                <div class="bar-col"><div class="bar" style="height: 70%;"></div></div>
+                                <div class="bar-col"><div class="bar" style="height: 100%; background: var(--c-legacy);"></div></div>
+                                <div class="bar-col"><div class="bar" style="height: 30%;"></div></div>
+                                <div class="bar-col"><div class="bar" style="height: 50%;"></div></div>
+                            </div>
+                        </div>
+                        <div id="dash-state-2" class="demo-state hidden-state">
+                            <div class="spreadsheet-mock">
+                                <div class="cell header">Inv ID</div><div class="cell header">Status</div><div class="cell header">Age</div>
+                                <div class="cell">#1024</div><div class="cell">Open</div><div class="cell">45d</div>
+                                <div class="cell">#1025</div><div class="cell">Pending</div><div class="cell">62d</div>
+                                <div class="cell">#1026</div><div class="cell">Dispute</div><div class="cell">94d</div>
+                            </div>
+                            <div class="g-label" style="margin-top: 15px;">Static Rows of Data</div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
         <section id="interest" class="snap-section">
             <div class="feature-card wide-card feature-link" data-target="negative-interest-before-after.html">
                 <div class="card-text stagger-1">
@@ -87,336 +377,6 @@
                         <div class="shield-note">AUTOMATICALLY SUPPRESSED</div>
                     </div>
                 </div>
-
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to view detail</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="segmentation" class="snap-section">
-            <div class="feature-card wide-card feature-link" data-target="smart-segmentation.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">AI Profiling</div>
-                    <h2>Smart Segmentation</h2>
-                    <p id="seg-desc">Raw customer data flows into dynamic buckets based on live risk assessment and geographic region.</p>
-                </div>
-                <div class="visual-cycle custom-demo stagger-2" id="seg-visual" data-step="0">
-                    <div class="seg-container">
-                        <div id="seg-state-1" class="demo-state active-state">
-                            <i class="fa-solid fa-users g-icon"></i>
-                            <div class="g-label" style="text-align: center;">Raw Data &<br>AI Profiling Input</div>
-                        </div>
-                        <div id="seg-state-2" class="demo-state hidden-state">
-                            <div class="bucket-group">
-                                <div class="bucket-title">Risk Profile</div>
-                                <div class="bucket-row">
-                                    <div class="bucket b-red">High Risk</div>
-                                    <div class="bucket b-amber">Med Risk</div>
-                                    <div class="bucket b-green">Low Risk</div>
-                                </div>
-                            </div>
-                            <div class="bucket-group mt-2">
-                                <div class="bucket-title">Region Profiling</div>
-                                <div class="bucket-row">
-                                    <div class="bucket b-blue">EU Flow</div>
-                                    <div class="bucket b-blue">Americas</div>
-                                    <div class="bucket b-blue">APAC</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to segment</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="templates" class="snap-section">
-            <div class="feature-card wide-card feature-link" data-target="templates.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">Hyper-Personalization</div>
-                    <h2>Amazing Templates</h2>
-                    <p id="tpl-desc">Boring, plain-text emails with static PDF attachments get ignored or sent to spam.</p>
-                </div>
-                <div class="visual-cycle custom-demo stagger-2" id="tpl-visual" data-step="0">
-                    <div class="tpl-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                        <div id="tpl-state-1" class="demo-state active-state">
-                            <div class="tpl-doc tpl-boring">
-                                <div class="tpl-lines"><div class="line w-long"></div><div class="line w-med"></div><div class="line w-short"></div></div>
-                                <i class="fa-solid fa-paperclip"></i> invoice.pdf
-                            </div>
-                        </div>
-                        <div id="tpl-state-2" class="demo-state hidden-state">
-                            <div class="tpl-doc tpl-dynamic">
-                                <div class="tpl-header" style="background: var(--c-netting);">Hi John, let's settle this!</div>
-                                <div class="tpl-body">
-                                    <div class="tpl-lines"><div class="line w-long"></div><div class="line w-med"></div></div>
-                                    <div class="tpl-btn">Pay €500 Now</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to upgrade template</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="reminders" class="snap-section">
-            <div class="feature-card wide-card feature-link" data-target="auto-reminders.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">Zero-Touch Dunning</div>
-                    <h2>Automatic Reminders</h2>
-                    <p id="rem-desc">Manually checking calendars and sending emails one by one is slow and error-prone.</p>
-                </div>
-                <div class="visual-cycle custom-demo stagger-2" id="rem-visual" data-step="0">
-                    <div class="rem-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                        <div id="rem-state-1" class="demo-state active-state">
-                            <i class="fa-regular fa-calendar-xmark g-icon" style="color: var(--c-legacy);"></i>
-                            <div class="g-label">Manual Calendar Checks</div>
-                        </div>
-                        <div id="rem-state-2" class="demo-state hidden-state">
-                            <div class="timeline">
-                                <div class="tl-node tl-blue"><div class="tl-dot"></div><div class="tl-txt">Day 1<br><span>Gentle Nudge</span></div></div>
-                                <div class="tl-line"></div>
-                                <div class="tl-node tl-amber"><div class="tl-dot"></div><div class="tl-txt">Day 15<br><span>+ Interest Added</span></div></div>
-                                <div class="tl-line"></div>
-                                <div class="tl-node tl-red"><div class="tl-dot"></div><div class="tl-txt">Day 30<br><span>Collection Agency</span></div></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to automate journey</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="routing" class="snap-section">
-            <div class="feature-card wide-card feature-link" data-target="smart-routing.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">Inbox Automation</div>
-                    <h2>Issue Logging & Routing</h2>
-                    <p id="route-desc">The dunning journey progresses automatically toward collections without context.</p>
-                </div>
-                <div class="visual-cycle custom-demo stagger-2" id="route-visual" data-step="0">
-                    <div class="route-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                        <div id="route-state-1" class="demo-state active-state">
-                            <div class="tl-node tl-red"><i class="fa-solid fa-forward-fast" style="font-size: 2rem; color: #ef4444;"></i><div class="tl-txt" style="margin-top:10px;">Journey Active<br><span>Heading to Collections</span></div></div>
-                        </div>
-                        <div id="route-state-2" class="demo-state hidden-state">
-                            <div class="email-popup">
-                                <div class="ep-header"><i class="fa-solid fa-reply"></i> "The product was broken!"</div>
-                                <div class="ep-body">
-                                    <div class="ep-action tl-amber"><i class="fa-solid fa-pause"></i> Journey Paused</div>
-                                    <div class="ep-action tl-blue"><i class="fa-solid fa-user-shield"></i> Assigned: Dispute Team</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to log issue</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="reputation" class="snap-section">
-            <div class="feature-card feature-link" data-target="reputation.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">Predictive Risk</div>
-                    <h2>Payment Reputation</h2>
-                    <p>Live scoring identifies historical behavior. Good payers get gentle nudges; bad payers get strict demands.</p>
-                </div>
-                <div class="visual-cycle generic-cycle stagger-2">
-                    <div class="g-state state-before">
-                        <i class="fa-solid fa-question g-icon"></i>
-                        <div class="g-label">Unknown Risk</div>
-                    </div>
-                    <div class="g-state state-after">
-                        <i class="fa-solid fa-chart-line g-icon" style="color:var(--c-zen)"></i>
-                        <div class="g-label" style="color:var(--c-zen)">Live Reputation Score</div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to view details</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="paylinks" class="snap-section">
-            <div class="feature-card wide-card feature-link" data-target="paylinks.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">Frictionless Pay</div>
-                    <h2>Instant Payment Links</h2>
-                    <p id="pay-desc">Customers manually type IBANs and references, leading to errors and delays.</p>
-                </div>
-                <div class="visual-cycle custom-demo stagger-2" id="pay-visual" data-step="0">
-                    <div class="pay-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                        <div id="pay-state-1" class="demo-state active-state">
-                            <i class="fa-solid fa-building-columns g-icon"></i>
-                            <div class="g-label">Waiting for Bank Transfer...</div>
-                        </div>
-                        <div id="pay-state-2" class="demo-state hidden-state">
-                            <div class="pay-success-ui">
-                                <button class="pay-btn"><i class="fa-solid fa-link"></i> Pay Now €500</button>
-                                <div class="pay-stats">
-                                    <div class="p-stat"><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> DSO: 12 Days <span style="text-decoration: line-through; color:#64748b; font-size: 0.65rem;">(was 45)</span></div>
-                                    <div class="p-stat"><i class="fa-solid fa-fingerprint" style="color: #10b981;"></i> Trace ID Matched</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to add PayLink</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="import" class="snap-section">
-            <div class="feature-card wide-card feature-link" data-target="import.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">Real-Time Sync</div>
-                    <h2>Import & Analyse Data</h2>
-                    <p id="import-desc">Raw ledger data is instantly ingested and transformed into actionable financial intelligence.</p>
-                </div>
-                <div class="visual-cycle custom-demo stagger-2" id="import-visual" data-step="0">
-                    <div class="import-container">
-                        <div id="import-state-1" class="demo-state active-state">
-                            <i class="fa-solid fa-database g-icon pulse-icon"></i>
-                            <div class="g-label">Ingesting Database...</div>
-                            <div class="progress-track"><div class="progress-fill"></div></div>
-                        </div>
-                        <div id="import-state-2" class="demo-state hidden-state">
-                            <div class="stats-grid">
-                                <div class="stat-box"><span class="stat-lbl">Total Invoices</span><span class="stat-val">1,204</span></div>
-                                <div class="stat-box"><span class="stat-lbl">Total Debtors</span><span class="stat-val">482</span></div>
-                                <div class="stat-box"><span class="stat-lbl">Outstanding</span><span class="stat-val val-blue">€ 845k</span></div>
-                                <div class="stat-box"><span class="stat-lbl">Invoices Due</span><span class="stat-val val-red">312</span></div>
-                                <div class="stat-box"><span class="stat-lbl">Not Due</span><span class="stat-val val-green">892</span></div>
-                                <div class="stat-box"><span class="stat-lbl">Avg. Payment</span><span class="stat-val">34 Days</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to process data</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="match" class="snap-section">
-            <div class="feature-card wide-card feature-link" data-target="reconciliation.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">Smart Reconciliation</div>
-                    <h2>Payment Matching</h2>
-                    <p id="match-desc">Open invoices sit idle while bank payments arrive without clear references.</p>
-                </div>
-                <div class="visual-cycle custom-demo stagger-2" id="match-visual" data-step="0">
-                    <div class="match-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                        <div id="match-state-1" class="demo-state active-state">
-                            <div class="match-row">
-                                <div class="m-box m-red">Invoice<br><span>€450</span></div>
-                                <i class="fa-solid fa-question m-icon" style="color:#64748b;"></i>
-                                <div class="m-box m-grey">Bank Feed<br><span>€450</span></div>
-                            </div>
-                        </div>
-                        <div id="match-state-2" class="demo-state hidden-state">
-                            <div class="match-row">
-                                <div class="m-box m-green">Invoice<br><span style="text-decoration:line-through;">€450</span></div>
-                                <i class="fa-solid fa-link m-icon" style="color:var(--c-success);"></i>
-                                <div class="m-box m-green">Bank Feed<br><span>Matched</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to reconcile</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="forecast" class="snap-section">
-            <div class="feature-card wide-card feature-link" data-target="forecasting.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">Cashflow Oracle</div>
-                    <h2>Payment Forecasting</h2>
-                    <p id="fore-desc">Relying on guesswork leaves you blind to cashflow dips and working capital needs.</p>
-                </div>
-                <div class="visual-cycle custom-demo stagger-2" id="fore-visual" data-step="0">
-                    <div class="fore-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                        <div id="fore-state-1" class="demo-state active-state">
-                            <i class="fa-solid fa-cloud-bolt g-icon" style="color: #64748b;"></i>
-                            <div class="g-label">Unpredictable Cashflow</div>
-                        </div>
-                        <div id="fore-state-2" class="demo-state hidden-state">
-                            <div class="chart-mock mt-2" style="border-bottom: 2px solid var(--c-netting);">
-                                <div class="bar-col"><div class="bar" style="height: 30%; background: var(--c-netting);"></div></div>
-                                <div class="bar-col"><div class="bar" style="height: 50%; background: var(--c-netting);"></div></div>
-                                <div class="bar-col"><div class="bar" style="height: 80%; background: var(--c-netting);"></div></div>
-                                <div class="bar-col"><div class="bar" style="height: 100%; background: var(--c-success); opacity: 0.5; border: 1px dashed var(--c-success);"></div></div>
-                            </div>
-                            <div class="g-label" style="margin-top: 10px; color: var(--c-success);">+€125k Expected Friday</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to forecast</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="dashboard" class="snap-section">
-            <div class="feature-card wide-card feature-link" data-target="dashboard.html">
-                <div class="card-text stagger-1">
-                    <div class="badge-pill">Command Center</div>
-                    <h2>Interactive Dashboard</h2>
-                    <p id="dash-desc">Transform raw data into visual heatmaps to instantly spot bottlenecks and prioritize team efforts.</p>
-                </div>
-                <div class="visual-cycle custom-demo stagger-2" id="dash-visual" data-step="0">
-                    <div class="dash-container" style="width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                        <div id="dash-state-1" class="demo-state active-state">
-                            <div class="heatmap-grid">
-                                <div class="hm-lbl">0-30 Days</div><div class="hm-lbl">31-60 Days</div><div class="hm-lbl">60+ Days</div>
-                                <div class="hm-cell hm-green">142</div><div class="hm-cell hm-amber">45</div><div class="hm-cell hm-red">12</div>
-                            </div>
-                            <div class="chart-mock mt-2">
-                                <div class="bar-col"><div class="bar" style="height: 40%;"></div></div>
-                                <div class="bar-col"><div class="bar" style="height: 70%;"></div></div>
-                                <div class="bar-col"><div class="bar" style="height: 100%; background: var(--c-legacy);"></div></div>
-                                <div class="bar-col"><div class="bar" style="height: 30%;"></div></div>
-                                <div class="bar-col"><div class="bar" style="height: 50%;"></div></div>
-                            </div>
-                        </div>
-                        <div id="dash-state-2" class="demo-state hidden-state">
-                            <div class="spreadsheet-mock">
-                                <div class="cell header">Inv ID</div><div class="cell header">Status</div><div class="cell header">Age</div>
-                                <div class="cell">#1024</div><div class="cell">Open</div><div class="cell">45d</div>
-                                <div class="cell">#1025</div><div class="cell">Pending</div><div class="cell">62d</div>
-                                <div class="cell">#1026</div><div class="cell">Dispute</div><div class="cell">94d</div>
-                            </div>
-                            <div class="g-label" style="margin-top: 15px;">Static Rows of Data</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to visualize</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
             </div>
         </section>
 
@@ -443,12 +403,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-tap-hint stagger-3">
-                    <span>Tap to certify</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
+               
             </div>
         </section>
+
+        
 
     </main>
 

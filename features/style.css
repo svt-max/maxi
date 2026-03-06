@@ -316,6 +316,50 @@ body { background: var(--bg-dark); color: #fff; font-family: var(--font-body); m
 
 /* --- CUSTOM DEMOS (Import & Seg) --- */
 .custom-demo { background: #0f172a; border-radius: 24px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden; height: auto; min-height: 260px; display: flex; align-items: center; justify-content: center; width: 100%; }
+/* Intuitive Interactive Overlay (Real DOM Element) */
+.detail-nav-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s var(--ease-elastic);
+    z-index: 50;
+    text-decoration: none;
+}
+
+.visual-cycle:hover .detail-nav-btn {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+}
+
+.detail-nav-btn:hover {
+    background: #38bdf8;
+    color: #0f172a;
+    transform: scale(1.1) !important;
+}
+
+@media (max-width: 768px) {
+    /* Always visible on mobile to indicate navigation */
+    .detail-nav-btn {
+        opacity: 0.9;
+        transform: scale(1);
+        top: 10px;
+        right: 10px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+}
 .import-container, .seg-container { width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
 .demo-state { position: absolute; inset: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.5s var(--ease-elastic); opacity: 0; transform: scale(0.9); pointer-events: none; padding: 1.5rem; box-sizing: border-box; }
 .demo-state.active-state { opacity: 1; transform: scale(1); pointer-events: all; }
@@ -446,11 +490,11 @@ body { background: var(--bg-dark); color: #fff; font-family: var(--font-body); m
     .nav-toggle { padding: 8px; }
     
     .feature-card, .wide-card {
-        padding: 2rem 1.5rem; /* More top/bottom padding */
+        padding: 1.5rem 1.25rem; /* Reduced padding to maximize internal screen space */
         width: 100%; margin: 0; border-radius: 24px;
-        height: auto; /* Let it grow naturally */
-        min-height: 50vh; /* Minimum height */
-        max-height: 75vh;
+        height: auto; 
+        min-height: 50vh; 
+        max-height: 88vh; /* Increased from 75vh to prevent bottom cut-offs */
         overflow-y: auto; overflow-x: hidden;
         display: flex; flex-direction: column; justify-content: space-between;
     }
@@ -460,13 +504,13 @@ body { background: var(--bg-dark); color: #fff; font-family: var(--font-body); m
 
     /* 2. FULL BLEED VISUALS (Negative Margin Hack) */
     .visual-cycle, .interest-demo {
-        width: calc(100% + 3rem); /* Stretch to cover padding */
-        margin-left: -1.5rem; 
-        margin-right: -1.5rem;
+        width: calc(100% + 2.5rem); /* Adjusted stretch to match new padding */
+        margin-left: -1.25rem; 
+        margin-right: -1.25rem;
         border-radius: 0; 
         border-left: none; border-right: none;
-        padding-left: 1.5rem; padding-right: 1.5rem; /* Restore internal padding */
-        margin-bottom: 1rem;
+        padding-left: 1.25rem; padding-right: 1.25rem; /* Restore internal padding */
+        margin-bottom: 0.5rem;
         background: rgba(0,0,0,0.3);
     }
     
@@ -480,9 +524,7 @@ body { background: var(--bg-dark); color: #fff; font-family: var(--font-body); m
     .s-badge { padding: 8px; }
     .s-badge span { font-size: 0.7rem; }
     .r-value { font-size: 2.5rem; }
-    
-    /* 3. Sticky CTA & Hints */
-    .card-tap-hint { padding-top: 1rem; margin-top: 0.5rem; }
+
 
     .mobile-sticky-cta {
         position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);

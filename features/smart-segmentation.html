@@ -221,6 +221,48 @@
         body.mode-segmented .smart-card { border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 0 60px -10px rgba(56, 189, 248, 0.15); }
         body.mode-segmented .status-bar { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-top: 1px solid rgba(56, 189, 248, 0.2); }
 
+        /* --- DYNAMIC MATRIX STYLES --- */
+        .matrix-toggles { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; width: 100%; transition: opacity 0.3s; }
+        .ui-toggle {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: all 0.3s; color: #94a3b8; font-family: 'Outfit', sans-serif;
+        }
+        .ui-toggle:hover { background: rgba(255,255,255,0.1); }
+        .ui-toggle.active { background: rgba(56, 189, 248, 0.15); border-color: #38bdf8; color: #fff; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+        
+        .matrix-grid {
+            display: grid; gap: 10px; width: 100%; max-width: 400px; margin: 0 auto;
+            transition: all 0.4s var(--ease-elastic);
+        }
+        .grid-1 { grid-template-columns: 1fr; }
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .grid-4 { grid-template-columns: 1fr 1fr; } /* 2x2 grid */
+        
+        .seg-box {
+            background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 6px;
+            animation: popIn 0.4s var(--ease-elastic);
+        }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        .seg-box-title { font-size: 0.65rem; font-weight: 800; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
+        .cust-pill {
+            display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+            background: rgba(255,255,255,0.03); border-radius: 6px; font-size: 0.75rem;
+            color: #fff; font-weight: 500; border-left: 3px solid transparent; transition: all 0.3s;
+        }
+        .cust-pill.risk-hi { border-left-color: var(--c-legacy); background: rgba(239, 68, 68, 0.05); }
+        .cust-pill.risk-lo { border-left-color: var(--c-success); background: rgba(16, 185, 129, 0.05); }
+        .cust-flag { font-size: 0.9rem; }
+
+        @media (max-width: 600px) {
+            .cust-pill { font-size: 0.65rem; padding: 4px 6px; gap: 4px; }
+            .seg-box { padding: 6px; }
+            .matrix-toggles { gap: 0.5rem; }
+            .ui-toggle { padding: 6px 10px; font-size: 0.75rem; }
+        }
+
         /* --- THE STAGE --- */
         .stage-area {
             perspective: 1000px;
@@ -527,8 +569,10 @@
         @media (max-width: 600px) {
             .logo { width: 140px; margin-bottom: 1rem; }
             .control-deck { gap: 0.8rem; margin-bottom: 2rem; }
-            .module-btn { padding: 0.8rem; justify-content: center; }
-            .module-label { font-size: 0.85rem; }
+            /* FIX: Remove min-width, reduce padding and icon size to prevent edge-touching */
+            .module-btn { padding: 0.8rem 0.5rem; justify-content: center; min-width: 0; }
+            .module-icon { width: 32px; height: 32px; font-size: 1rem; }
+            .module-label { font-size: 0.75rem; white-space: normal; line-height: 1.1; }
             .timeline-icon-box { width: 36px; height: 36px; left: -2.8rem; font-size: 1rem;}
             .timeline { padding-left: 2.8rem; }
             .timeline::before { left: 17px; }
@@ -545,19 +589,19 @@
     </header>
 
     <div class="control-deck">
-        <div class="module-btn active-netting" id="btn-unsorted" onclick="setMode('unsorted')">
-            <div class="module-icon"><i class="fa-solid fa-users"></i></div>
+        <div class="module-btn active-netting" id="btn-db" onclick="setMode('db')">
+            <div class="module-icon"><i class="fa-solid fa-layer-group"></i></div>
             <div class="module-info">
-                <span class="module-label">Raw Data</span>
-                <span class="module-status" id="status-unsorted">Active</span>
+                <span class="module-label">Data Matrix</span>
+                <span class="module-status" id="status-db">Overview</span>
             </div>
         </div>
 
-        <div class="module-btn pulse-guide" id="btn-segmented" onclick="setMode('segmented')">
-            <div class="module-icon"><i class="fa-solid fa-users-gear"></i></div>
+        <div class="module-btn pulse-guide" id="btn-personal" onclick="setMode('personal')">
+            <div class="module-icon"><i class="fa-solid fa-language"></i></div>
             <div class="module-info">
-                <span class="module-label">AI Profiling</span>
-                <span class="module-status" id="status-segmented">Disabled</span>
+                <span class="module-label">Deep Localize</span>
+                <span class="module-status" id="status-personal">Tanaka Corp</span>
             </div>
         </div>
     </div>
@@ -565,25 +609,45 @@
     <div class="stage-area">
         <div class="smart-card">
             <div class="seg-wrapper" id="seg-stage">
-                <i class="fa-solid fa-users g-icon-large" id="main-icon"></i>
-                <h2 style="font-family: 'Outfit', sans-serif; margin: 0; color: #fff; font-size: 1.5rem;" id="main-label">Unsorted Global Debtors</h2>
-                <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;" id="sub-label">Awaiting processing...</p>
-
-                <div class="bucket-group" id="group-1">
-                    <div class="bucket-title">Live Risk Profile</div>
-                    <div class="bucket-row">
-                        <div class="bucket b-red">High Risk</div>
-                        <div class="bucket b-amber">Med Risk</div>
-                        <div class="bucket b-green">Low Risk</div>
+                
+                <div id="matrix-view" style="width: 100%;">
+                    
+                    <div class="matrix-toggles" id="matrix-toggles">
+                        <div class="ui-toggle" id="tog-size" onclick="toggleFilter('size')"><i class="fa-solid fa-building"></i> Segment by Size</div>
+                        <div class="ui-toggle" id="tog-risk" onclick="toggleFilter('risk')"><i class="fa-solid fa-heart-pulse"></i> Segment by Risk</div>
                     </div>
+
+                    <div id="grid-container" class="matrix-grid grid-1">
+                        </div>
+
                 </div>
 
-                <div class="bucket-group" id="group-2">
-                    <div class="bucket-title">Geographic Profiling</div>
-                    <div class="bucket-row">
-                        <div class="bucket b-blue">EU Flow</div>
-                        <div class="bucket b-blue">Americas</div>
-                        <div class="bucket b-blue">APAC</div>
+                <div id="segmented-view" style="display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s; width: 100%;">
+                    
+                    <div class="filter-path" style="margin-bottom: 1.5rem; display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        <span class="bucket b-amber" style="padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; border-left: 3px solid #f59e0b;"><i class="fa-solid fa-building"></i> Enterprise</span>
+                        <span class="bucket b-red" style="padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; border-left: 3px solid #ff4747;"><i class="fa-solid fa-heart-pulse"></i> High Risk</span>
+                        <i class="fa-solid fa-arrow-right" style="color: #64748b; font-size: 0.8rem;"></i>
+                        <span class="bucket b-blue" style="padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;"><i class="fa-solid fa-language"></i> Japanese (日本語)</span>
+                    </div>
+                    
+                    <div class="email-mockup" style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; text-align: left; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-width: 100%;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; color: #94a3b8; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-envelope"></i> <span>お支払い状況のご確認 <span style="font-size: 0.7rem; opacity: 0.7;">(Payment Status)</span></span>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div style="font-weight: 700; font-size: 1.2rem; margin-bottom: 12px; color: #fff;">田中 様 <span style="font-size: 0.85rem; font-weight: normal; color: #94a3b8;">(Dear Mr./Ms. Tanaka)</span></div>
+                            
+                            <div style="background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 8px; margin-bottom: 1.2rem;">
+                                <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0 0 5px 0;">Invoice: <strong style="color: #fff;">#INV-2026</strong></p>
+                                <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Product: <strong style="color: #fff;">Global SaaS License</strong></p>
+                            </div>
+                            
+                            <button style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); color: #ff4747; padding: 12px 15px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; font-weight: 700; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; margin-bottom: 6px;">
+                                <i class="fa-solid fa-hand-paper"></i> 不備・異議申し立てはこちら
+                            </button>
+                            <div style="text-align: center; font-size: 0.7rem; color: #64748b;">(Report an error/dispute here)</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -599,88 +663,195 @@
         <div class="narrative-box">
             <div class="narrative-title" id="narrative-title">The "One Size Fits All" Trap</div>
             <div class="narrative-text" id="narrative-text">
-                Without segmentation, every customer receives the exact same workflow. High-risk accounts aren't escalated fast enough, while VIP customers are annoyed by generic, strict reminders.
+                Without segmentation, every customer receives the exact same generic workflow. 8 diverse global customers are all treated identically.
             </div>
         </div>
     </div>
 
     <script src="global.js"></script>
     <script>
-    // Your feature-specific javascript starts here...
-        
-        const btnUnsorted = document.getElementById('btn-unsorted');
-        const btnSegmented = document.getElementById('btn-segmented');
+        const btnDb = document.getElementById('btn-db');
+        const btnPersonal = document.getElementById('btn-personal');
         const body = document.body;
         
-        // Dynamic Elements
-        const mainIcon = document.getElementById('main-icon');
-        const mainLabel = document.getElementById('main-label');
-        const subLabel = document.getElementById('sub-label');
-        const group1 = document.getElementById('group-1');
-        const group2 = document.getElementById('group-2');
-        const actionBar = document.getElementById('action-bar');
+        const matrixView = document.getElementById('matrix-view');
+        const segmentedView = document.getElementById('segmented-view');
+        const gridContainer = document.getElementById('grid-container');
+        const togSize = document.getElementById('tog-size');
+        const togRisk = document.getElementById('tog-risk');
         
+        const actionBar = document.getElementById('action-bar');
         const narrativeTitle = document.getElementById('narrative-title');
         const narrativeText = document.getElementById('narrative-text');
 
-        let isSegmented = false;
+        let isModePersonal = false;
+        let filterSize = false;
+        let filterRisk = false;
 
-        function setMode(mode) {
-            if (mode === 'unsorted' && isSegmented) {
-                isSegmented = false;
-                updateState();
-            } else if (mode === 'segmented' && !isSegmented) {
-                isSegmented = true;
-                updateState();
+        // The 8 Diverse Customers
+        const customers = [
+            { name: "Tanaka Corp", flag: "🇯🇵", size: "lg", risk: "hi" },
+            { name: "Global GmbH", flag: "🇩🇪", size: "lg", risk: "hi" },
+            { name: "Acme Ltd", flag: "🇺🇸", size: "lg", risk: "lo" },
+            { name: "Tech SA", flag: "🇫🇷", size: "lg", risk: "lo" },
+            { name: "Local LLC", flag: "🇬🇧", size: "sm", risk: "hi" },
+            { name: "Retail Co", flag: "🇮🇹", size: "sm", risk: "hi" },
+            { name: "Studio BV", flag: "🇳🇱", size: "sm", risk: "lo" },
+            { name: "Dev Inc", flag: "🇨🇦", size: "sm", risk: "lo" }
+        ];
+
+        // Initialize the view on load
+        renderGrid();
+
+        function toggleFilter(type) {
+            if (type === 'size') filterSize = !filterSize;
+            if (type === 'risk') filterRisk = !filterRisk;
+            renderGrid();
+        }
+
+        function createBoxHtml(title, matchFn) {
+            const matched = customers.filter(matchFn);
+            if (matched.length === 0) return '';
+            
+            let html = `<div class="seg-box"><div class="seg-box-title">${title}</div>`;
+            matched.forEach(c => {
+                let riskClass = filterRisk ? (c.risk === 'hi' ? 'risk-hi' : 'risk-lo') : '';
+                html += `<div class="cust-pill ${riskClass}">
+                            <span class="cust-flag">${c.flag}</span>
+                            <span>${c.name}</span>
+                         </div>`;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+        function renderGrid() {
+            gridContainer.innerHTML = ''; // Clear current grid
+
+            // Update UI Toggles visual state
+            togSize.className = filterSize ? "ui-toggle active" : "ui-toggle";
+            togRisk.className = filterRisk ? "ui-toggle active" : "ui-toggle";
+
+            // State 4: BOTH Size & Risk Selected (2x2 Matrix)
+            if (filterSize && filterRisk) {
+                gridContainer.className = "matrix-grid grid-4";
+                gridContainer.innerHTML += createBoxHtml('<i class="fa-solid fa-building"></i> Enterprise - High Risk', c => c.size === 'lg' && c.risk === 'hi');
+                gridContainer.innerHTML += createBoxHtml('<i class="fa-solid fa-building"></i> Enterprise - Low Risk', c => c.size === 'lg' && c.risk === 'lo');
+                gridContainer.innerHTML += createBoxHtml('<i class="fa-solid fa-store"></i> SMB - High Risk', c => c.size === 'sm' && c.risk === 'hi');
+                gridContainer.innerHTML += createBoxHtml('<i class="fa-solid fa-store"></i> SMB - Low Risk', c => c.size === 'sm' && c.risk === 'lo');
+                
+                updateNarrative('multi');
+            } 
+            // State 2: Size Only
+            else if (filterSize && !filterRisk) {
+                gridContainer.className = "matrix-grid grid-2";
+                gridContainer.innerHTML += createBoxHtml('<i class="fa-solid fa-building"></i> Enterprise Accounts', c => c.size === 'lg');
+                gridContainer.innerHTML += createBoxHtml('<i class="fa-solid fa-store"></i> SMB Accounts', c => c.size === 'sm');
+                
+                updateNarrative('size');
+            } 
+            // State 3: Risk Only
+            else if (!filterSize && filterRisk) {
+                gridContainer.className = "matrix-grid grid-2";
+                gridContainer.innerHTML += createBoxHtml('<i class="fa-solid fa-heart-pulse" style="color:#ff4747;"></i> High Risk Accounts', c => c.risk === 'hi');
+                gridContainer.innerHTML += createBoxHtml('<i class="fa-solid fa-shield" style="color:#10b981;"></i> Low Risk Accounts', c => c.risk === 'lo');
+                
+                updateNarrative('risk');
+            } 
+            // State 1: Raw / Nothing selected
+            else {
+                gridContainer.className = "matrix-grid grid-1";
+                gridContainer.innerHTML += createBoxHtml('<i class="fa-solid fa-users"></i> Unsorted Global Database', c => true);
+                
+                updateNarrative('raw');
             }
         }
 
-        function updateState() {
-            if (!isSegmented) {
-                // Raw Data State
-                body.className = '';
-                btnUnsorted.classList.add('active-netting');
-                btnUnsorted.classList.remove('pulse-guide');
-                btnSegmented.classList.remove('active-netting');
-                btnSegmented.classList.add('pulse-guide');
-                
-                document.getElementById('status-unsorted').innerText = "Active";
-                document.getElementById('status-segmented').innerText = "Disabled";
+        function updateNarrative(state) {
+            if (isModePersonal) return; // Don't override the text if we are showing the Japanese email demo
 
-                mainIcon.style.display = "block";
-                mainLabel.style.display = "block";
-                subLabel.style.display = "block";
-                group1.classList.remove('visible');
-                group2.classList.remove('visible');
-
+            if (state === 'raw') {
                 actionBar.className = "status-bar s-legacy";
                 actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-triangle-exclamation"></i>&nbsp; Status</span><span style="opacity:0.7; font-size:0.75rem">Inefficient Bulk Processing</span></div>';
-                
                 narrativeTitle.innerText = 'The "One Size Fits All" Trap';
-                narrativeText.innerText = 'Without segmentation, every customer receives the exact same workflow. High-risk accounts aren\'t escalated fast enough, while VIP customers are annoyed by generic, strict reminders.';
-            } else {
-                // Segmented State
-                body.className = 'mode-segmented';
-                btnSegmented.classList.add('active-netting');
-                btnSegmented.classList.remove('pulse-guide');
-                btnUnsorted.classList.remove('active-netting');
+                narrativeText.innerText = 'Without segmentation, 8 completely diverse global customers are lumped into a single bucket and receive the exact same generic workflow.';
+            } else if (state === 'size') {
+                actionBar.className = "status-bar s-netting";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-filter"></i>&nbsp; Status</span><span style="opacity:0.7; font-size:0.75rem">Split by Invoice Value</span></div>';
+                narrativeTitle.innerText = 'Segmenting by Size';
+                narrativeText.innerText = 'We separate Enterprise VIPs from standard SMB accounts. This is a good start, but we still treat good payers and chronic late payers identically.';
+            } else if (state === 'risk') {
+                actionBar.className = "status-bar s-netting";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-filter"></i>&nbsp; Status</span><span style="opacity:0.7; font-size:0.75rem">Split by Behavior Score</span></div>';
+                narrativeTitle.innerText = 'Segmenting by Risk';
+                narrativeText.innerText = 'We separate historical late payers from reliable clients. Excellent for predicting cashflow, but ignores the monetary value of the account.';
+            } else if (state === 'multi') {
+                actionBar.className = "status-bar s-netting";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-layer-group"></i>&nbsp; Status</span><span style="opacity:0.7; font-size:0.75rem">Multi-Dimensional Profiles</span></div>';
+                narrativeTitle.innerText = 'Multi-Dimensional Profiling';
+                narrativeText.innerText = 'Now we have distinct quadrants. We know exactly who needs an aggressive legal escalation (SMB High Risk) and who needs white-glove mediation (Enterprise High Risk).';
                 
-                document.getElementById('status-unsorted').innerText = "Processed";
-                document.getElementById('status-segmented').innerText = "Active";
+                // Pulse the 'Deep Localize' button to prompt the user to click it
+                btnPersonal.classList.add('pulse-guide');
+            }
+        }
 
-                mainIcon.style.display = "none";
-                mainLabel.style.display = "none";
-                subLabel.style.display = "none";
+        function setMode(mode) {
+            if (mode === 'db' && isModePersonal) {
+                // Switch back to Matrix View
+                isModePersonal = false;
+                body.className = '';
                 
-                // Staggered animation
-                setTimeout(() => group1.classList.add('visible'), 100);
-                setTimeout(() => group2.classList.add('visible'), 300);
+                btnDb.classList.add('active-netting');
+                btnDb.classList.remove('pulse-guide');
+                btnPersonal.classList.remove('active-netting');
+                if(filterSize && filterRisk) btnPersonal.classList.add('pulse-guide');
+                
+                document.getElementById('status-db').innerText = "Active";
+                document.getElementById('status-personal').innerText = "Tanaka Corp";
+
+                segmentedView.style.opacity = "0";
+                segmentedView.style.transform = "translateY(20px)";
+                setTimeout(() => {
+                    segmentedView.style.display = "none";
+                    matrixView.style.display = "block";
+                    setTimeout(() => { matrixView.style.opacity = "1"; }, 50);
+                }, 300);
+
+                // Restore narrative based on matrix state
+                let currentState = 'raw';
+                if(filterSize && filterRisk) currentState = 'multi';
+                else if(filterSize) currentState = 'size';
+                else if(filterRisk) currentState = 'risk';
+                updateNarrative(currentState);
+
+            } else if (mode === 'personal' && !isModePersonal) {
+                // Switch to Japanese Email View
+                isModePersonal = true;
+                body.className = 'mode-segmented';
+                
+                btnPersonal.classList.add('active-netting');
+                btnPersonal.classList.remove('pulse-guide');
+                btnDb.classList.remove('active-netting');
+                
+                document.getElementById('status-db').innerText = "Processed";
+                document.getElementById('status-personal').innerText = "Active";
+
+                matrixView.style.opacity = "0";
+                setTimeout(() => {
+                    matrixView.style.display = "none";
+                    segmentedView.style.display = "block";
+                    setTimeout(() => { 
+                        segmentedView.style.opacity = "1"; 
+                        segmentedView.style.transform = "translateY(0)";
+                    }, 50);
+                }, 300);
 
                 actionBar.className = "status-bar";
-                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-users-gear"></i>&nbsp; Action: Routed</span><span style="opacity:0.7; font-size:0.75rem">Dynamic Workflows Assigned</span></div>';
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-language"></i>&nbsp; Action: Localized</span><span style="opacity:0.7; font-size:0.75rem">Dynamic UI & Dispute Path applied</span></div>';
 
-                narrativeTitle.innerText = 'Precision Workflows';
-                narrativeText.innerText = 'Raw data is instantly categorized. High-risk accounts are put on tight, aggressive timelines, while trusted clients get specialized, white-glove communication templates.';
+                narrativeTitle.innerText = 'The Deep Localization Experience';
+                narrativeText.innerHTML = 'We drill down into the <strong>Enterprise / High Risk</strong> quadrant. A specialized Japanese workflow is dynamically generated for Tanaka Corp, complete with formal business etiquette and a dedicated dispute button.';
             }
         }
     </script>

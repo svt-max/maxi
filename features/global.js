@@ -42,11 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="nav-columns">
                 <div class="nav-col">
                     <h3>Logic Core</h3>
-                    <a href="negative-interest-before-after.html" class="nav-item"><i class="fa-solid fa-microchip"></i> Interest Engine</a>
                     <a href="smart-segmentation.html" class="nav-item"><i class="fa-solid fa-users-gear"></i> Segmentation</a>
                     <a href="analyze-risk.html" class="nav-item"><i class="fa-solid fa-heart-pulse"></i> Analyze Risk</a>
                     <a href="smart-routing.html" class="nav-item"><i class="fa-solid fa-arrow-right-arrow-left"></i> Smart Routing</a>
                     <a href="reconciliation.html" class="nav-item"><i class="fa-solid fa-check-double"></i> Reconciliation</a>
+                    <a href="negative-interest-before-after.html" class="nav-item"><i class="fa-solid fa-microchip"></i> Interest Engine</a>
                 </div>
                 <div class="nav-col">
                     <h3>Engagement</h3>
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <a href="benchmark.html" class="nav-item"><i class="fa-solid fa-globe"></i> Benchmark</a>
                     <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
                     <a href="reputation.html" class="nav-item"><i class="fa-solid fa-star-half-stroke"></i> Reputation</a>
-                    <a href="forecasting.html" class="nav-item"><i class="fa-solid fa-crystal-ball"></i> Forecasting</a>
+                    <a href="forecasting.html" class="nav-item"><i class="fa-solid fa-money-bill-trend-up"></i> Forecasting</a>
                 </div>
             </div>
         </div>
@@ -109,5 +109,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 spans[2].style.transform = "none";
             }
         });
+    }
+
+    // --- 5. INJECT FEATURE MINI NAVIGATION ---
+    // Extract the current filename
+    const pathArray = window.location.pathname.split('/');
+    const currentPage = pathArray[pathArray.length - 1];
+
+    // Only inject if we are on a feature page (not index or empty root)
+    if (currentPage && currentPage !== 'index.html' && currentPage !== '') {
+        const features = [
+            { title: 'Segmentation', url: 'smart-segmentation.html' },
+            { title: 'Templates', url: 'templates.html' },
+            { title: 'Auto-Reminders', url: 'auto-reminders.html' },
+            { title: 'Routing', url: 'smart-routing.html' },
+            { title: 'Reputation', url: 'reputation.html' },
+            { title: 'PayLinks', url: 'paylinks.html' },
+            { title: 'Import Data', url: 'import.html' },
+            { title: 'Reconciliation', url: 'reconciliation.html' },
+            { title: 'Forecasting', url: 'forecasting.html' },
+            { title: 'Dashboard', url: 'dashboard.html' },
+            { title: 'Interest Engine', url: 'negative-interest-before-after.html' },
+            { title: 'Legal Email', url: 'legal-email.html' }
+        ];
+
+        const currentIndex = features.findIndex(f => f.url === currentPage);
+        
+        if (currentIndex !== -1) {
+            const prevFeature = currentIndex > 0 ? features[currentIndex - 1] : null;
+            const nextFeature = currentIndex < features.length - 1 ? features[currentIndex + 1] : null;
+
+            let navHTML = `<div class="feature-mini-nav">`;
+            
+            // Previous Button
+            if (prevFeature) {
+                navHTML += `<a href="${prevFeature.url}" class="mini-nav-btn"><i class="fa-solid fa-arrow-left"></i> <span class="mini-nav-text">${prevFeature.title}</span></a>`;
+            } else {
+                navHTML += `<div class="mini-nav-spacer"></div>`;
+            }
+
+            // Overview (Center) Button
+            navHTML += `<a href="index.html" class="mini-nav-btn center-btn" title="Back to Overview"><i class="fa-solid fa-house"></i></a>`;
+
+            // Next Button
+            if (nextFeature) {
+                navHTML += `<a href="${nextFeature.url}" class="mini-nav-btn"><span class="mini-nav-text">${nextFeature.title}</span> <i class="fa-solid fa-arrow-right"></i></a>`;
+            } else {
+                navHTML += `<div class="mini-nav-spacer"></div>`;
+            }
+
+            navHTML += `</div>`;
+            
+            // Push it to the bottom of the body
+            document.body.insertAdjacentHTML('beforeend', navHTML);
+            
+            // Add some padding to the body so the footer isn't covered by the fixed nav
+            document.body.style.paddingBottom = "80px";
+        }
     }
 });

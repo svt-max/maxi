@@ -468,3 +468,28 @@ featureLinks.forEach(card => {
         card.style.setProperty('--y', `${y}px`);
     });
 });
+
+/* --- DYNAMIC DETAIL BUTTON INJECTION --- */
+// Automatically add a clickable "arrow" button to the visual area of each card
+featureLinks.forEach(card => {
+    const targetUrl = card.getAttribute('data-target');
+    const visualArea = card.querySelector('.visual-cycle');
+    
+    if (visualArea && targetUrl) {
+        // Create the link element
+        const detailBtn = document.createElement('a');
+        detailBtn.href = targetUrl;
+        detailBtn.className = 'detail-nav-btn';
+        detailBtn.innerHTML = '<i class="fa-solid fa-arrow-right"></i>'; // Arrow right implies "continue to details"
+        detailBtn.title = "View Feature Details";
+        
+        // Prevent the visual area from consuming the click (which would trigger the animation instead)
+        detailBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            // The browser will now natively follow the href in the same tab
+        });
+        
+        // Add it into the visual box
+        visualArea.appendChild(detailBtn);
+    }
+});
