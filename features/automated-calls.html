@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MaxCredible | Automated AI Calls</title>
+
+    <link rel="stylesheet" href="global.css">
+
+    <style>
+        /* --- THE CARD --- */
+        .smart-card {
+            width: 100%;
+            background: var(--card-bg);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 25px 50px -12px rgba(0,0,0,0.5);
+            border-radius: 24px;
+            position: relative;
+            transition: all 0.6s var(--ease-elastic);
+            transform-style: preserve-3d;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
+        }
+
+        .card-content {
+            padding: 2rem;
+            flex-grow: 1;
+            position: relative;
+        }
+
+        /* --- CALL UI (TRANSCRIPT) --- */
+        .call-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            min-height: 240px;
+            transition: opacity 0.5s ease;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease-out;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            position: relative;
+        }
+        .chat-bubble.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chat-agent {
+            align-self: flex-start;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-bottom-left-radius: 4px;
+            color: #e2e8f0;
+        }
+
+        .chat-customer {
+            align-self: flex-end;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-bottom-right-radius: 4px;
+            color: #fff;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 16px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            width: fit-content;
+        }
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* --- TICKET / ISSUE OVERLAY --- */
+        .issue-ticket {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid var(--c-success);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 40px rgba(16, 185, 129, 0.15);
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 85%;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s var(--ease-elastic);
+        }
+        .issue-ticket.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .ticket-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+            color: var(--c-success);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .ticket-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .t-lbl { color: #64748b; }
+        .t-val { color: #fff; font-weight: 600; }
+
+        /* --- Result Section --- */
+        .result-section {
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            transition: opacity 1s;
+        }
+
+        .result-left { display: flex; flex-direction: column; justify-content: flex-end;}
+        .total-lbl { font-size: 0.7rem; text-transform: uppercase; color: #64748b; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 6px; display: block;}
+        
+        .total-amount {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 3rem; 
+            line-height: 0.9;
+            transition: color 0.4s;
+            font-variant-numeric: tabular-nums;
+            color: var(--c-legacy);
+        }
+
+        /* --- ACTION STATUS BAR --- */
+        .status-bar {
+            width: 100%;
+            padding: 16px 2rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.4s;
+            margin-top: auto; 
+            box-sizing: border-box;
+            min-height: 80px; 
+            position: relative;
+            z-index: 30;
+        }
+
+        .status-content { display: flex; flex-direction: column; gap: 4px; }
+
+        .status-bar.s-legacy { background: rgba(239, 68, 68, 0.1); color: var(--c-legacy); border-top: 1px solid rgba(239, 68, 68, 0.2); }
+        .status-bar.s-netting { background: rgba(56, 189, 248, 0.1); color: var(--c-netting); border-top: 1px solid rgba(56, 189, 248, 0.2); }
+        .status-bar.s-success { background: rgba(16, 185, 129, 0.1); color: var(--c-success); border-top: 1px solid rgba(16, 185, 129, 0.2); }
+
+        /* --- DYNAMIC BODY STATES --- */
+        body.mode-netting .smart-card {
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 60px -10px rgba(56, 189, 248, 0.15);
+        }
+        body.mode-netting .total-amount { color: var(--c-netting); }
+
+        body.mode-success .smart-card {
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 60px -10px rgba(16, 185, 129, 0.2);
+        }
+        body.mode-success .total-amount { color: var(--c-success); }
+        
+        /* Updated: No blur, just slight transparency to keep transcript readable */
+        body.mode-success .call-container { opacity: 0.8; pointer-events: none; transition: 0.5s; }
+
+        /* Desktop specific adjustments */
+        @media (min-width: 768px) {
+            .call-container { min-height: 380px; }
+            .chat-bubble { font-size: 1rem; padding: 14px 20px; }
+            .total-amount { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>AI Voice Agent</h1>
+    </header>
+
+    <div class="control-deck">
+        <div class="module-btn pulse-guide" id="btn-ai" onclick="toggleAI()">
+            <div class="module-icon"><i class="fa-solid fa-robot"></i></div>
+            <div class="module-info">
+                <span class="module-label">Deploy AI Caller</span>
+                <span class="module-status" id="status-ai">Manual Mode</span>
+            </div>
+        </div>
+
+        <div class="module-btn" id="btn-logging" onclick="toggleLogging()">
+            <div class="module-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="module-info">
+                <span class="module-label">Auto-Log Issues</span>
+                <span class="module-status" id="status-logging">Disabled</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stage-area">
+        <div class="smart-card">
+            
+            <div class="card-content">
+                
+                <div class="call-container" id="transcript-area">
+                    <div class="typing-indicator" id="typing"><span></span><span></span><span></span></div>
+                    
+                    <div class="chat-bubble chat-agent visible" id="manual-msg">
+                        <strong style="color: #94a3b8; font-size: 0.75rem; display:block; margin-bottom: 4px;">SYSTEM ALERT</strong>
+                        Call connected to Voicemail. Manual human retry required. Call duration: 45s. Agent notes missing.
+                    </div>
+                </div>
+
+                <div class="issue-ticket" id="issue-ticket">
+                    <div class="ticket-header">
+                        <i class="fa-solid fa-circle-check"></i> Issue Logged Automatically
+                    </div>
+                    <div class="ticket-row"><span class="t-lbl">Ticket ID</span><span class="t-val">#ISU-9921</span></div>
+                    <div class="ticket-row"><span class="t-lbl">Category</span><span class="t-val">Damaged Goods</span></div>
+                    <div class="ticket-row"><span class="t-lbl">Debtor</span><span class="t-val">Acme Corp</span></div>
+                    <div class="ticket-row"><span class="t-lbl">Action</span><span class="t-val" style="color: #f59e0b;">Collection Paused</span></div>
+                    <div style="margin-top: 12px; font-size: 0.75rem; color: #64748b; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                        Transcript automatically attached to ticket for review.
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-left">
+                        <span class="total-lbl">Avg. Labor Cost Per Call</span>
+                        <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;" id="calc-method">Manual Agent Cost</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="total-amount" id="cost-display">€ 5.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-bar s-legacy" id="action-bar">
+                <div class="status-content">
+                    <span><i class="fa-solid fa-headset"></i> &nbsp;Status</span>
+                    <span id="action-text" style="opacity: 0.7; font-size: 0.75rem;">Awaiting Human Agent</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-title" id="narrative-title">The Manual Bottleneck</div>
+            <div class="narrative-text" id="narrative-text">
+                Human agents cost an average of €5.00 to €10.00 per call. They often deviate from the script, fail to take accurate notes, and waste time leaving voicemails.
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        const btnAI = document.getElementById('btn-ai');
+        const btnLogging = document.getElementById('btn-logging');
+        const body = document.body;
+        
+        const costDisplay = document.getElementById('cost-display');
+        const calcMethod = document.getElementById('calc-method');
+        const actionBar = document.getElementById('action-bar');
+        
+        const narrativeTitle = document.getElementById('narrative-title');
+        const narrativeText = document.getElementById('narrative-text');
+
+        const transcriptArea = document.getElementById('transcript-area');
+        const typingIndicator = document.getElementById('typing');
+        const issueTicket = document.getElementById('issue-ticket');
+
+        let aiActive = false;
+        let loggingActive = false;
+        let sequenceTimeouts = [];
+        let chatState = 'manual'; // manual, animating, finished
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const currentVal = (start + (end - start) * progress).toFixed(2);
+                obj.innerHTML = "€ " + currentVal;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function createBubble(text, type, id = null) {
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble chat-${type}`;
+            if(id) bubble.id = id;
+            if(type === 'agent') {
+                bubble.innerHTML = `<strong style="color: #38bdf8; font-size: 0.75rem; display:block; margin-bottom: 4px;"><i class="fa-solid fa-robot"></i> AI AGENT</strong>${text}`;
+            } else {
+                bubble.innerHTML = text;
+            }
+            return bubble;
+        }
+
+        function clearTimeouts() {
+            sequenceTimeouts.forEach(clearTimeout);
+            sequenceTimeouts = [];
+            typingIndicator.style.display = 'none';
+        }
+
+        function fastForwardChat(withLogging) {
+            clearTimeouts();
+            
+            // Clean up old manual messages or incomplete typing
+            const bubbles = transcriptArea.querySelectorAll('.chat-bubble');
+            bubbles.forEach(b => b.remove());
+
+            // Instantly render full chat history
+            transcriptArea.insertBefore(createBubble("Hello, I am calling from MaxCredible on behalf of Acme Corp regarding invoice #1024. Am I speaking to the accounts payable department?", "agent"), typingIndicator);
+            transcriptArea.insertBefore(createBubble("Yes, speaking.", "customer"), typingIndicator);
+            transcriptArea.insertBefore(createBubble("Thank you. I see a balance of €500 is overdue. Is there a specific reason this invoice hasn't been paid yet?", "agent"), typingIndicator);
+            transcriptArea.insertBefore(createBubble("Yes, the delivery arrived, but two of the pallets contained damaged goods. We are waiting for a replacement.", "customer"), typingIndicator);
+
+            const finalMsgText = withLogging ? 
+                "I apologize for the inconvenience. I have logged an issue for 'Damaged Goods' and paused the collection process. A representative will contact you with replacements." :
+                "I understand. Please contact our support team to resolve this. I will note this in your file.";
+            
+            const finalMsg = createBubble(finalMsgText, "agent", "final-msg");
+            transcriptArea.insertBefore(finalMsg, typingIndicator);
+
+            // Make them all visible instantly
+            transcriptArea.querySelectorAll('.chat-bubble').forEach(b => b.classList.add('visible'));
+            
+            chatState = 'finished';
+
+            if(withLogging) issueTicket.classList.add('visible');
+            else issueTicket.classList.remove('visible');
+        }
+
+        function runAiAnimation(withLogging) {
+            clearTimeouts();
+            chatState = 'animating';
+            issueTicket.classList.remove('visible');
+            
+            // Clear manual message
+            transcriptArea.querySelectorAll('.chat-bubble').forEach(b => b.remove());
+
+            typingIndicator.style.display = 'flex';
+
+            const addMsg = (text, type, delay) => {
+                sequenceTimeouts.push(setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    const msg = createBubble(text, type, (type === 'agent' && delay > 8000) ? 'final-msg' : null);
+                    transcriptArea.insertBefore(msg, typingIndicator);
+                    void msg.offsetWidth; // trigger reflow
+                    msg.classList.add('visible');
+
+                    // If more messages are coming, show typing again
+                    if (delay < 10000) {
+                        typingIndicator.style.display = 'flex';
+                        transcriptArea.appendChild(typingIndicator);
+                    } else {
+                        chatState = 'finished';
+                        if(loggingActive) issueTicket.classList.add('visible');
+                    }
+                }, delay));
+            };
+
+            addMsg("Hello, I am calling from MaxCredible on behalf of Acme Corp regarding invoice #1024. Am I speaking to the accounts payable department?", "agent", 1000);
+            
+            sequenceTimeouts.push(setTimeout(() => { typingIndicator.style.display = 'none'; }, 2500));
+            addMsg("Yes, speaking.", "customer", 3000);
+            
+            sequenceTimeouts.push(setTimeout(() => { typingIndicator.style.display = 'flex'; }, 3500));
+            addMsg("Thank you. I see a balance of €500 is overdue. Is there a specific reason this invoice hasn't been paid yet?", "agent", 5000);
+            
+            sequenceTimeouts.push(setTimeout(() => { typingIndicator.style.display = 'none'; }, 7000));
+            addMsg("Yes, the delivery arrived, but two of the pallets contained damaged goods. We are waiting for a replacement.", "customer", 8000);
+
+            // Final Message branching
+            sequenceTimeouts.push(setTimeout(() => { typingIndicator.style.display = 'flex'; }, 8500));
+            if(withLogging) {
+                addMsg("I apologize for the inconvenience. I have logged an issue for 'Damaged Goods' and paused the collection process. A representative will contact you with replacements.", "agent", 10500);
+            } else {
+                addMsg("I understand. Please contact our support team to resolve this. I will note this in your file.", "agent", 10500);
+            }
+        }
+
+        function instantSwap(withLogging) {
+            const finalMsg = document.getElementById('final-msg');
+            if (finalMsg) {
+                finalMsg.innerHTML = `<strong style="color: #38bdf8; font-size: 0.75rem; display:block; margin-bottom: 4px;"><i class="fa-solid fa-robot"></i> AI AGENT</strong>` + 
+                (withLogging ? 
+                    "I apologize for the inconvenience. I have logged an issue for 'Damaged Goods' and paused the collection process. A representative will contact you with replacements." :
+                    "I understand. Please contact our support team to resolve this. I will note this in your file.");
+            }
+            if(withLogging) issueTicket.classList.add('visible');
+            else issueTicket.classList.remove('visible');
+        }
+
+        function toggleAI() {
+            if(loggingActive) {
+                loggingActive = false;
+                aiActive = true; 
+            } else {
+                aiActive = !aiActive;
+            }
+            updateState();
+        }
+
+        function toggleLogging() {
+            loggingActive = !loggingActive;
+            if(loggingActive) aiActive = true; 
+            updateState();
+        }
+
+        function updateState() {
+            // Update Buttons
+            if(aiActive) {
+                btnAI.style.borderColor = "var(--c-netting)";
+                btnAI.classList.remove('pulse-guide');
+                document.getElementById('status-ai').innerText = "Active";
+            } else {
+                btnAI.style.borderColor = "var(--border)";
+                document.getElementById('status-ai').innerText = "Manual Mode";
+            }
+
+            if(loggingActive) {
+                btnLogging.style.borderColor = "var(--c-success)";
+                document.getElementById('status-logging').innerText = "Enabled";
+            } else {
+                btnLogging.style.borderColor = "var(--border)";
+                document.getElementById('status-logging').innerText = "Disabled";
+            }
+
+            // --- STATE 1: MANUAL ---
+            if(!aiActive && !loggingActive) {
+                body.className = '';
+                chatState = 'manual';
+                clearTimeouts();
+                issueTicket.classList.remove('visible');
+                
+                // Reset to default manual message
+                transcriptArea.querySelectorAll('.chat-bubble').forEach(b => b.remove());
+                const manualMsg = createBubble("Call connected to Voicemail. Manual human retry required. Call duration: 45s. Agent notes missing.", "agent", "manual-msg");
+                manualMsg.classList.add('visible');
+                transcriptArea.insertBefore(manualMsg, typingIndicator);
+
+                animateValue(costDisplay, parseFloat(costDisplay.innerText.replace('€ ','')), 5.00, 600);
+                calcMethod.innerText = "Manual Agent Cost";
+
+                actionBar.className = "status-bar s-legacy";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-headset"></i>&nbsp; Status</span><span style="opacity:0.7; font-size:0.75rem">Awaiting Human Agent</span></div>';
+                
+                narrativeTitle.innerText = 'The Manual Bottleneck';
+                narrativeText.innerText = 'Human agents cost an average of €5.00 to €10.00 per call. They often deviate from the script, fail to take accurate notes, and waste time leaving voicemails.';
+            }
+
+            // --- STATE 2: AI AGENT ---
+            else if(aiActive && !loggingActive) {
+                body.className = 'mode-netting';
+
+                if(chatState === 'manual') {
+                    runAiAnimation(false); // Animate it if coming from manual
+                } else if(chatState === 'animating') {
+                    fastForwardChat(false); // Instantly finish if clicked mid-animation
+                } else if(chatState === 'finished') {
+                    instantSwap(false); // Just swap the final text if already done
+                }
+
+                animateValue(costDisplay, parseFloat(costDisplay.innerText.replace('€ ','')), 0.40, 800);
+                calcMethod.innerText = "AI API Cost (92% Reduction)";
+
+                actionBar.className = "status-bar s-netting";
+                actionBar.innerHTML = '<div class="status-content"><span><i class="fa-solid fa-microphone-lines"></i>&nbsp; Action: Script Execution</span><span style="opacity:0.7; font-size:0.75rem">Executing Dynamic Call Script</span></div>';
+
+                narrativeTitle.innerText = 'Flawless Execution';
+                narrativeText.innerText = 'The Voice AI executes your exact script, understands context, and engages the debtor intelligently. Labor costs instantly drop by over 90% while coverage hits 100%.';
+            }
+
+            // --- STATE 3: AUTO-LOGGING ---
+            else if(aiActive && loggingActive) {
+                body.className = 'mode-success';
+                
+                if(chatState === 'manual') {
+                    fastForwardChat(true); // Coming straight from manual? Just show the end result instantly for impact
+                } else if(chatState === 'animating') {
+                    fastForwardChat(true); // Mid-animation? Finish it instantly
+                } else if(chatState === 'finished') {
+                    instantSwap(true); // Already finished? Just swap the end and pop the ticket
+                }
+                
+                animateValue(costDisplay, parseFloat(costDisplay.innerText.replace('€ ','')), 0.40, 400);
+                calcMethod.innerText = "AI + Processing Cost";
+
+                actionBar.className = "status-bar s-success";
+                actionBar.innerHTML = `
+                    <div class="status-content">
+                        <span><i class="fa-solid fa-bolt"></i>&nbsp; Workflow Triggered</span>
+                        <span style="opacity:0.7; font-size:0.75rem">Dispute Automatically Categorized</span>
+                    </div>
+                `;
+
+                narrativeTitle.innerText = 'Zero-Touch Resolution';
+                narrativeText.innerText = 'The AI listens to the response, identifies the "Damaged Goods" dispute, and logs the issue directly into the system. The collections process pauses automatically without a single human click.';
+            }
+        }
+    </script>
+</body>
+</html>
