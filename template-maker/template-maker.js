@@ -108,7 +108,7 @@ function toggleDataMode(mode) {
 
 function addLineItem() {
     const container = document.getElementById('line-items-container');
-    const itemHtml = `<div class="flex gap-2 line-item mt-2"><input type="text" placeholder="Desc" class="item-desc flex-1 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 py-2 focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"><input type="number" placeholder="Qty" class="item-qty w-12 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 text-center focus:border-sky-500 focus:outline-none" value="1" oninput="compileEmailPreview()"><input type="number" placeholder="Price" class="item-price w-20 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 focus:border-sky-500 focus:outline-none" value="0" oninput="compileEmailPreview()"><button onclick="this.parentElement.remove(); compileEmailPreview();" class="text-slate-500 hover:text-red-400 transition-colors"><i class="ph-bold ph-trash"></i></button></div>`;
+    const itemHtml = `<div class="flex gap-2 line-item mt-2"><input type="text" placeholder="Description" class="item-desc flex-1 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 py-2 focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"><input type="number" placeholder="Qty" class="item-qty w-12 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 text-center focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"><input type="number" placeholder="Price" class="item-price w-20 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"><button onclick="this.parentElement.remove(); compileEmailPreview();" class="text-slate-500 hover:text-red-400 transition-colors"><i class="ph-bold ph-trash"></i></button></div>`;
     container.insertAdjacentHTML('beforeend', itemHtml);
 }
 
@@ -198,6 +198,7 @@ function compressImage(file, maxSize) {
 }
 
 // --- EMAIL DISPATCH (UPDATED FOR BACKEND) ---
+// --- EMAIL DISPATCH (WITH LEAD GEN DATA) ---
 async function dispatchEmail() {
     const emailInput = document.getElementById('target-email');
     const sendBtn = emailInput.nextElementSibling;
@@ -224,12 +225,15 @@ async function dispatchEmail() {
             },
             body: JSON.stringify({
                 to: email,
-                subject: `Invoice & Payment Reminder from ${senderName}`,
-                html: rawHTML
+                subject: `Invoice & Payment Reminder from ${senderName || 'Your Company'}`,
+                html: rawHTML,
+                // Pass lead generation data to the backend
+                leadData: {
+                    companyName: senderName
+                }
             })
         });
 
-        // If the response is not OK (e.g., 404 or 500), grab the raw text to see what Vercel is saying
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(`Server returned ${response.status}: ${errorText.substring(0, 100)}...`);
@@ -255,7 +259,7 @@ async function dispatchEmail() {
     }
 }
 
-// --- EMAIL COMPILER (THE CORE ENGINE) ---
+// --- EMAIL COMPILER ---
 function compileEmailPreview() {
     const isMock = appState.dataMode === 'mock';
     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
@@ -268,7 +272,7 @@ function compileEmailPreview() {
     } else {
         const items = document.querySelectorAll('.line-item');
         items.forEach(item => {
-            const desc = item.querySelector('.item-desc').value || 'Item';
+            const desc = item.querySelector('.item-desc').value || '[Description]';
             const qty = parseFloat(item.querySelector('.item-qty').value) || 0;
             const price = parseFloat(item.querySelector('.item-price').value) || 0;
             const lineTotal = qty * price;
@@ -286,18 +290,16 @@ function compileEmailPreview() {
     const vatAmount = subTotal * (vatRate / 100);
     const totalAmount = subTotal + vatAmount;
 
-    // Sender data is always strictly real data regardless of isMock flag
+    // Remove defaults to rely purely on user input or placeholders
     const data = {
-        invNum: isMock ? '[Invoice Number]' : (document.getElementById('invoice-number').value || '#INV-000'),
-        due: isMock ? '[Due Date]' : document.getElementById('invoice-due').value,
-        cName: isMock ? '[Client Name]' : document.getElementById('client-name').value,
-        cEmail: isMock ? '[Client Email]' : document.getElementById('client-email').value,
-        // SENDER DATA BYPASSES MOCK
-        sName: document.getElementById('sender-name') ? document.getElementById('sender-name').value : "MaxCredible Inc.",
-        bName: document.getElementById('bank-name') ? document.getElementById('bank-name').value : "MaxBank",
-        bBic: document.getElementById('bank-bic') ? document.getElementById('bank-bic').value : "MAXBNL2A",
-        bIban: document.getElementById('bank-iban') ? document.getElementById('bank-iban').value : "NL88 MAXB 0123 4567 89",
-        // ---
+        invNum: isMock ? '[Invoice Number]' : (document.getElementById('invoice-number').value || '[Invoice Number]'),
+        due: isMock ? '[Due Date]' : (document.getElementById('invoice-due').value || '[Due Date]'),
+        cName: isMock ? '[Client Name]' : (document.getElementById('client-name').value || '[Client Name]'),
+        cEmail: isMock ? '[Client Email]' : (document.getElementById('client-email').value || '[Client Email]'),
+        sName: isMock ? '[Your Company]' : (document.getElementById('sender-name').value || '[Your Company]'),
+        bName: isMock ? '[Bank Name]' : (document.getElementById('bank-name').value || '[Bank Name]'),
+        bBic: isMock ? '[BIC/SWIFT]' : (document.getElementById('bank-bic').value || '[BIC/SWIFT]'),
+        bIban: isMock ? '[IBAN]' : (document.getElementById('bank-iban').value || '[IBAN]'),
         sub: isMock ? '[Subtotal]' : formatter.format(subTotal),
         vatAmount: isMock ? '[VAT Amount]' : formatter.format(vatAmount),
         vatRate: isMock ? '[VAT %]' : vatRate,
@@ -310,7 +312,6 @@ function compileEmailPreview() {
         ? `<img src="${appState.logoUrl}" alt="Logo" style="max-height: 48px; max-width: 150px; display: block; outline: none; border: none; text-decoration: none;" />`
         : `<div style="width: 48px; height: 48px; background-color: #f8fafc; border-radius: 8px; text-align: center; line-height: 48px; color: #94a3b8; font-size: 12px; font-weight: bold; border: 1px dashed #cbd5e1;">LOGO</div>`;
 
-    // Build Invoice Table or Card Block
     let invoiceBlock = '';
     if (appState.invoiceStyle === 'table') {
         invoiceBlock = `
@@ -348,7 +349,6 @@ function compileEmailPreview() {
         </table>`;
     }
 
-    // Compile Final Email String
     const emailHTML = `
     <div style="background-color: #f1f5f9; padding: 20px 0; font-family: Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
         <table width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
@@ -398,7 +398,22 @@ function compileEmailPreview() {
             </tr>
             <tr>
                 <td style="padding: 24px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
-                    <p style="margin: 0; font-size: 11px; color: #94a3b8;">${data.sName} • System Generated Email</p>
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td align="center" style="padding-bottom: 12px;">
+                                <table border="0" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td style="border-radius: 4px; background-color: #f0f9ff; border: 1px solid #bae6fd;" align="center"><a style="font-size: 11px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0284c7; text-decoration: none; padding: 5px 12px; border-radius: 4px; display: inline-block; font-weight: bold; letter-spacing: 0.3px;" href="https://app.maxcredible.com/signup/" target="_blank" rel="noopener">Free Trial</a></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <p style="margin: 0; font-size: 11px; color: #94a3b8;">${data.sName} • System Generated Email</p>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </table>
