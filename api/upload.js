@@ -8,25 +8,37 @@ module.exports.config = {
 };
 
 module.exports = async function handler(req, res) {
-    // Only allow POST requests
+    // 1. Log that the route was hit
+    console.log(`[API/UPLOAD] Received ${req.method} request`);
+
+    // 2. Reject non-POST requests
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
+        return res.status(405).json({ error: 'Method Not Allowed. Use POST.' });
     }
 
     try {
-        // Grab the filename from the query string (passed by the frontend)
-        const filename = req.query.filename || 'brand-logo.png';
+        // 3. Ensure the token exists
+        const token = process.env.BLOB_READ_WRITE_TOKEN;
+        if (!token) {
+            console.error('[API/UPLOAD] FATAL: BLOB_READ_WRITE_TOKEN is missing from environment variables.');
+            return res.status(500).json({ error: 'Server misconfiguration: Missing Blob Token.' });
+        }
 
-        // Upload the raw request body directly to Vercel Blob
+        // 4. Grab the filename from the query string
+        const filename = req.query.filename || `logo-${Date.now()}.png`;
+        console.log(`[API/UPLOAD] Attempting to upload: ${filename}`);
+
+        // 5. Upload to Vercel Blob
         const blob = await put(filename, req, {
             access: 'public',
+            token: token // Explicitly pass the token
         });
 
-        // Return the blob object, which contains the new public URL
+        console.log(`[API/UPLOAD] Success: Hosted at ${blob.url}`);
         return res.status(200).json(blob);
         
     } catch (error) {
-        console.error("Vercel Blob Upload Error:", error);
-        return res.status(500).json({ error: 'Failed to upload to Vercel Blob.' });
+        console.error("[API/UPLOAD] Vercel Blob Upload Error:", error);
+        return res.status(500).json({ error: 'Failed to upload to Vercel Blob. Check Server Logs.' });
     }
 };
