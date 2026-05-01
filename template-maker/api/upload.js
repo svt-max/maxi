@@ -1,13 +1,13 @@
-import { put } from '@vercel/blob';
+const { put } = require('@vercel/blob');
 
-// We must disable the default body parser to handle raw file streams
-export const config = {
+// Disable the default body parser to handle raw file streams
+module.exports.config = {
     api: {
         bodyParser: false,
     },
 };
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     // Only allow POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         return res.status(200).json(blob);
         
     } catch (error) {
-        console.error(error);
+        console.error("Vercel Blob Upload Error:", error);
         return res.status(500).json({ error: 'Failed to upload to Vercel Blob.' });
     }
-}
+};
