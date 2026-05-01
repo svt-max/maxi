@@ -112,7 +112,7 @@ function addLineItem() {
     container.insertAdjacentHTML('beforeend', itemHtml);
 }
 
-// --- LOGO UPLOAD & API SIMULATION ---
+// --- LOGO UPLOAD & COMPRESSION ---
 async function handleLogoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -121,27 +121,26 @@ async function handleLogoUpload(event) {
     const uploadIcon = document.getElementById('upload-icon');
     const dropzone = document.getElementById('logo-upload-zone');
     
-    uploadText.innerText = "Uploading to server...";
+    uploadText.innerText = "Compressing & uploading...";
     uploadIcon.className = "ph-bold ph-spinner animate-spin text-2xl text-sky-400";
     dropzone.classList.add('border-sky-500', 'bg-sky-500/10');
 
     try {
-        // This is the actual call to your Vercel backend
-        const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+        // 1. Client-Side Image Compression (Max 300px width/height)
+        const compressedBlob = await compressImage(file, 300);
+
+        // 2. Upload the compressed blob to Vercel
+        const response = await fetch(`/api/upload?filename=compressed-${encodeURIComponent(file.name)}`, {
             method: 'POST',
-            body: file, 
+            body: compressedBlob, 
         });
 
-        if (!response.ok) {
-            throw new Error(`Upload failed with status: ${response.status}`);
-        }
-        
+        if (!response.ok) throw new Error(`Upload failed with status: ${response.status}`);
         const data = await response.json();
         
-        // Save the public Vercel Blob URL to state
         appState.logoUrl = data.url; 
 
-        uploadText.innerText = "Logo uploaded successfully!";
+        uploadText.innerText = "Logo optimized and uploaded!";
         uploadText.classList.add('text-emerald-400');
         uploadIcon.className = "ph-bold ph-check-circle text-2xl text-emerald-400";
         dropzone.classList.replace('border-sky-500', 'border-emerald-500');
@@ -155,6 +154,101 @@ async function handleLogoUpload(event) {
         uploadText.classList.add('text-red-400');
         uploadIcon.className = "ph-bold ph-warning text-2xl text-red-400";
         dropzone.classList.replace('border-sky-500', 'border-red-500');
+    }
+}
+
+// Utility function to resize images using HTML5 Canvas (MISSING FROM YOUR CODE)
+function compressImage(file, maxSize) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxSize) {
+                        height *= maxSize / width;
+                        width = maxSize;
+                    }
+                } else {
+                    if (height > maxSize) {
+                        width *= maxSize / height;
+                        height = maxSize;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob((blob) => {
+                    resolve(blob);
+                }, 'image/png', 0.9);
+            };
+            img.onerror = (err) => reject(err);
+        };
+        reader.onerror = (err) => reject(err);
+    });
+}
+
+// --- EMAIL DISPATCH (UPDATED FOR BACKEND) ---
+async function dispatchEmail() {
+    const emailInput = document.getElementById('target-email');
+    const sendBtn = emailInput.nextElementSibling;
+    const email = emailInput.value;
+    
+    if(!email) {
+        alert('Please enter a target email address.');
+        return;
+    }
+
+    const rawHTML = document.getElementById('email-canvas').innerHTML;
+    const senderName = document.getElementById('sender-name') ? document.getElementById('sender-name').value : "MaxCredible";
+
+    // Update UI to show sending state
+    const originalBtnHtml = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Sending...';
+    sendBtn.disabled = true;
+
+    try {
+        const response = await fetch('/api/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                to: email,
+                subject: `Invoice & Payment Reminder from ${senderName}`,
+                html: rawHTML
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            sendBtn.innerHTML = '<i class="ph-bold ph-check"></i> Sent!';
+            sendBtn.classList.replace('bg-blue-600', 'bg-emerald-500');
+            sendBtn.classList.replace('hover:bg-blue-500', 'hover:bg-emerald-400');
+        } else {
+            throw new Error(result.error || 'Failed to send');
+        }
+    } catch (error) {
+        console.error("Dispatch Error:", error);
+        alert(`Error sending email: ${error.message}`);
+        sendBtn.innerHTML = originalBtnHtml;
+    } finally {
+        setTimeout(() => {
+            sendBtn.innerHTML = originalBtnHtml;
+            sendBtn.disabled = false;
+            sendBtn.classList.replace('bg-emerald-500', 'bg-blue-600');
+            sendBtn.classList.replace('hover:bg-emerald-400', 'hover:bg-blue-500');
+        }, 3000);
     }
 }
 
@@ -310,23 +404,3 @@ function compileEmailPreview() {
     document.getElementById('email-canvas').innerHTML = emailHTML;
 }
 
-function dispatchEmail() {
-    const email = document.getElementById('target-email').value;
-    if(!email) {
-        alert('Please enter a target email address.');
-        return;
-    }
-
-    const rawHTML = document.getElementById('email-canvas').innerHTML;
-    const senderName = document.getElementById('sender-name') ? document.getElementById('sender-name').value : "Us";
-
-    const payload = {
-        to: email,
-        subject: `Invoice & Payment Reminder from ${senderName}`,
-        html: rawHTML
-    };
-
-    console.log("=== SENDWORTHY PAYLOAD READY ===");
-    console.log(payload);
-    alert("Check your developer console. The JSON payload containing the strict HTML string is ready to be passed to your email API.");
-}
