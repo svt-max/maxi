@@ -229,18 +229,21 @@ async function dispatchEmail() {
             })
         });
 
+        // If the response is not OK (e.g., 404 or 500), grab the raw text to see what Vercel is saying
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Server returned ${response.status}: ${errorText.substring(0, 100)}...`);
+        }
+
         const result = await response.json();
 
-        if (response.ok) {
-            sendBtn.innerHTML = '<i class="ph-bold ph-check"></i> Sent!';
-            sendBtn.classList.replace('bg-blue-600', 'bg-emerald-500');
-            sendBtn.classList.replace('hover:bg-blue-500', 'hover:bg-emerald-400');
-        } else {
-            throw new Error(result.error || 'Failed to send');
-        }
+        sendBtn.innerHTML = '<i class="ph-bold ph-check"></i> Sent!';
+        sendBtn.classList.replace('bg-blue-600', 'bg-emerald-500');
+        sendBtn.classList.replace('hover:bg-blue-500', 'hover:bg-emerald-400');
+        
     } catch (error) {
         console.error("Dispatch Error:", error);
-        alert(`Error sending email: ${error.message}`);
+        alert(`Error: ${error.message}`);
         sendBtn.innerHTML = originalBtnHtml;
     } finally {
         setTimeout(() => {
