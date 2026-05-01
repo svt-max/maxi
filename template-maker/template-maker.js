@@ -5,7 +5,7 @@ let appState = {
     color: '#0ea5e9', 
     invoiceStyle: 'table',
     isMobilePreviewing: false,
-    logoUrl: '' // Stores the hosted URL
+    logoUrl: '' 
 };
 
 const presetTexts = {
@@ -25,10 +25,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const dueEl = document.getElementById('invoice-due');
     if(dueEl) dueEl.value = dateString;
     
-    // Initialize default mode
     toggleDataMode('real');
     setTimeout(() => toggleStep(1), 100); 
 });
+
+// --- DYNAMIC SELECTORS ---
+function selectColor(hex, btn) {
+    appState.color = hex;
+    document.querySelectorAll('.color-btn').forEach(b => {
+        b.classList.remove('ring-2', 'ring-offset-2', 'ring-offset-slate-900', 'ring-white');
+    });
+    btn.classList.add('ring-2', 'ring-offset-2', 'ring-offset-slate-900', 'ring-white');
+    compileEmailPreview();
+}
+
+function selectTone(tone, btn) {
+    appState.tone = tone;
+    document.querySelectorAll('.tone-btn').forEach(b => {
+        b.classList.remove('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+        b.classList.add('bg-slate-900', 'border-slate-700', 'text-slate-300');
+        b.querySelector('i').classList.replace('text-white', 'text-sky-400');
+    });
+    btn.classList.remove('bg-slate-900', 'border-slate-700', 'text-slate-300');
+    btn.classList.add('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+    btn.querySelector('i').classList.replace('text-sky-400', 'text-white');
+    compileEmailPreview();
+}
+
+function selectStyle(style, btn) {
+    appState.invoiceStyle = style;
+    document.querySelectorAll('.style-btn').forEach(b => {
+        b.classList.remove('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+        b.classList.add('bg-slate-900', 'border-slate-700', 'text-slate-300');
+        b.querySelector('i').classList.replace('text-white', 'text-sky-400');
+        b.querySelector('.subtext').classList.replace('text-sky-200', 'text-slate-500');
+    });
+    btn.classList.remove('bg-slate-900', 'border-slate-700', 'text-slate-300');
+    btn.classList.add('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+    btn.querySelector('i').classList.replace('text-sky-400', 'text-white');
+    btn.querySelector('.subtext').classList.replace('text-slate-500', 'text-sky-200');
+    compileEmailPreview();
+}
 
 // --- MOBILE UI LOGIC ---
 function toggleMobilePreview() {
@@ -42,13 +79,11 @@ function toggleMobilePreview() {
         leftPanel.classList.add('hidden');
         rightPanel.classList.remove('hidden');
         setTimeout(() => rightPanel.classList.remove('opacity-0'), 10);
-        
         toggleBtn.innerHTML = '<i class="ph-bold ph-pencil-simple text-lg"></i> Back to Editing';
     } else {
         rightPanel.classList.add('hidden');
         rightPanel.classList.add('opacity-0');
         leftPanel.classList.remove('hidden');
-        
         toggleBtn.innerHTML = '<i class="ph-bold ph-eye text-lg"></i> View Live Preview';
     }
 }
@@ -57,9 +92,7 @@ function pingMobileButton() {
     const btn = document.getElementById('btn-mobile-toggle');
     if(btn && window.innerWidth < 1024) {
         btn.classList.add('scale-105', 'ring-4', 'ring-sky-500/50');
-        setTimeout(() => {
-            btn.classList.remove('scale-105', 'ring-4', 'ring-sky-500/50');
-        }, 600);
+        setTimeout(() => btn.classList.remove('scale-105', 'ring-4', 'ring-sky-500/50'), 600);
     }
 }
 
@@ -112,7 +145,7 @@ function addLineItem() {
     container.insertAdjacentHTML('beforeend', itemHtml);
 }
 
-// --- LOGO UPLOAD & COMPRESSION ---
+// --- LOGO UPLOAD ---
 async function handleLogoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -126,10 +159,7 @@ async function handleLogoUpload(event) {
     dropzone.classList.add('border-sky-500', 'bg-sky-500/10');
 
     try {
-        // 1. Client-Side Image Compression (Max 300px width/height)
         const compressedBlob = await compressImage(file, 300);
-
-        // 2. Upload the compressed blob to Vercel
         const response = await fetch(`/api/upload?filename=compressed-${encodeURIComponent(file.name)}`, {
             method: 'POST',
             body: compressedBlob, 
@@ -147,7 +177,6 @@ async function handleLogoUpload(event) {
         dropzone.classList.replace('bg-sky-500/10', 'bg-emerald-500/10');
 
         compileEmailPreview();
-
     } catch (error) {
         console.error("Upload error:", error);
         uploadText.innerText = "Upload failed. Try again.";
@@ -157,7 +186,6 @@ async function handleLogoUpload(event) {
     }
 }
 
-// Utility function to resize images using HTML5 Canvas (MISSING FROM YOUR CODE)
 function compressImage(file, maxSize) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -187,9 +215,7 @@ function compressImage(file, maxSize) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                canvas.toBlob((blob) => {
-                    resolve(blob);
-                }, 'image/png', 0.9);
+                canvas.toBlob((blob) => resolve(blob), 'image/png', 0.9);
             };
             img.onerror = (err) => reject(err);
         };
@@ -197,78 +223,20 @@ function compressImage(file, maxSize) {
     });
 }
 
-// --- EMAIL DISPATCH (UPDATED FOR BACKEND) ---
-// --- EMAIL DISPATCH (WITH LEAD GEN DATA) ---
-async function dispatchEmail() {
-    const emailInput = document.getElementById('target-email');
-    const sendBtn = emailInput.nextElementSibling;
-    const email = emailInput.value;
-    
-    if(!email) {
-        alert('Please enter a target email address.');
-        return;
-    }
-
-    const rawHTML = document.getElementById('email-canvas').innerHTML;
-    const senderName = document.getElementById('sender-name') ? document.getElementById('sender-name').value : "MaxCredible";
-
-    // Update UI to show sending state
-    const originalBtnHtml = sendBtn.innerHTML;
-    sendBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Sending...';
-    sendBtn.disabled = true;
-
-    try {
-        const response = await fetch('/api/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                to: email,
-                subject: `Invoice & Payment Reminder from ${senderName || 'Your Company'}`,
-                html: rawHTML,
-                // Pass lead generation data to the backend
-                leadData: {
-                    companyName: senderName
-                }
-            })
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Server returned ${response.status}: ${errorText.substring(0, 100)}...`);
-        }
-
-        const result = await response.json();
-
-        sendBtn.innerHTML = '<i class="ph-bold ph-check"></i> Sent!';
-        sendBtn.classList.replace('bg-blue-600', 'bg-emerald-500');
-        sendBtn.classList.replace('hover:bg-blue-500', 'hover:bg-emerald-400');
-        
-    } catch (error) {
-        console.error("Dispatch Error:", error);
-        alert(`Error: ${error.message}`);
-        sendBtn.innerHTML = originalBtnHtml;
-    } finally {
-        setTimeout(() => {
-            sendBtn.innerHTML = originalBtnHtml;
-            sendBtn.disabled = false;
-            sendBtn.classList.replace('bg-emerald-500', 'bg-blue-600');
-            sendBtn.classList.replace('hover:bg-emerald-400', 'hover:bg-blue-500');
-        }, 3000);
-    }
-}
-
-// --- EMAIL COMPILER ---
+// --- EMAIL COMPILER (THE CORE ENGINE) ---
 function compileEmailPreview() {
     const isMock = appState.dataMode === 'mock';
     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
     
     let subTotal = 0;
-    let itemsHtml = '';
+    let itemsHtmlTable = '';
+    let itemsHtmlBold = '';
+    let itemsHtmlSubtle = '';
     
     if (isMock) {
-        itemsHtml = `<tr><td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #374151; font-size: 14px;">[Item Description] <span style="color:#9ca3af; font-size: 12px;">x[Qty]</span></td><td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #111827; font-size: 14px; text-align: right;">[Amount]</td></tr>`;
+        itemsHtmlTable = `<tr><td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #374151; font-size: 14px;">[Item Description] <span style="color:#9ca3af; font-size: 12px;">x[Qty]</span></td><td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #111827; font-size: 14px; text-align: right;">[Amount]</td></tr>`;
+        itemsHtmlBold = `<tr><td style="padding: 16px; border-bottom: 1px solid #e2e8f0; color: #334155; font-size: 14px; font-weight: bold;">[Item Description] <span style="color:#94a3b8; font-size: 12px; font-weight: normal;">x[Qty]</span></td><td style="padding: 16px; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-size: 14px; text-align: right; font-weight: bold;">[Amount]</td></tr>`;
+        itemsHtmlSubtle = `<tr><td style="padding: 10px 0; border-bottom: 1px dashed #e2e8f0; color: #475569; font-size: 13px;">[Item Description] <span style="color:#94a3b8; font-size: 11px;">x[Qty]</span></td><td style="padding: 10px 0; border-bottom: 1px dashed #e2e8f0; color: #334155; font-size: 13px; text-align: right;">[Amount]</td></tr>`;
     } else {
         const items = document.querySelectorAll('.line-item');
         items.forEach(item => {
@@ -278,9 +246,19 @@ function compileEmailPreview() {
             const lineTotal = qty * price;
             subTotal += lineTotal;
             
-            itemsHtml += `<tr>
+            itemsHtmlTable += `<tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #374151; font-size: 14px;">${desc} <span style="color:#9ca3af; font-size: 12px;">x${qty}</span></td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #111827; font-size: 14px; text-align: right;">${formatter.format(lineTotal)}</td>
+            </tr>`;
+            
+            itemsHtmlBold += `<tr>
+                <td style="padding: 16px; border-bottom: 1px solid #e2e8f0; color: #334155; font-size: 14px; font-weight: bold;">${desc} <span style="color:#94a3b8; font-size: 12px; font-weight: normal;">x${qty}</span></td>
+                <td style="padding: 16px; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-size: 14px; text-align: right; font-weight: bold;">${formatter.format(lineTotal)}</td>
+            </tr>`;
+            
+            itemsHtmlSubtle += `<tr>
+                <td style="padding: 10px 0; border-bottom: 1px dashed #e2e8f0; color: #475569; font-size: 13px;">${desc} <span style="color:#94a3b8; font-size: 11px;">x${qty}</span></td>
+                <td style="padding: 10px 0; border-bottom: 1px dashed #e2e8f0; color: #334155; font-size: 13px; text-align: right;">${formatter.format(lineTotal)}</td>
             </tr>`;
         });
     }
@@ -290,7 +268,6 @@ function compileEmailPreview() {
     const vatAmount = subTotal * (vatRate / 100);
     const totalAmount = subTotal + vatAmount;
 
-    // Remove defaults to rely purely on user input or placeholders
     const data = {
         invNum: isMock ? '[Invoice Number]' : (document.getElementById('invoice-number').value || '[Invoice Number]'),
         due: isMock ? '[Due Date]' : (document.getElementById('invoice-due').value || '[Due Date]'),
@@ -322,7 +299,7 @@ function compileEmailPreview() {
                         <td style="font-size: 12px; color: #6b7280; font-weight: bold; text-transform: uppercase;">Description</td>
                         <td style="font-size: 12px; color: #6b7280; font-weight: bold; text-transform: uppercase; text-align: right;">Amount</td>
                     </tr>
-                    ${itemsHtml}
+                    ${itemsHtmlTable}
                     <tr>
                         <td style="padding-top: 12px; font-size: 12px; color: #6b7280; text-align: right;">Subtotal</td>
                         <td style="padding-top: 12px; font-size: 14px; color: #111827; text-align: right;">${data.sub}</td>
@@ -338,7 +315,7 @@ function compileEmailPreview() {
                 </table>
             </td></tr>
         </table>`;
-    } else {
+    } else if (appState.invoiceStyle === 'card') {
         invoiceBlock = `
         <table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-bottom: 24px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;">
             <tr><td style="padding: 20px;">
@@ -347,6 +324,50 @@ function compileEmailPreview() {
                 <p style="margin: 0; font-size: 12px; color: #6b7280;">Due Date: <span style="color: #ef4444; font-weight: bold;">${data.due}</span></p>
             </td></tr>
         </table>`;
+    } else if (appState.invoiceStyle === 'bold') {
+        invoiceBlock = `
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-bottom: 24px; border: 2px solid #0f172a; border-radius: 8px; overflow: hidden;">
+            <tr>
+                <td style="background-color: #0f172a; padding: 16px; color: #ffffff; font-size: 12px; font-weight: bold; text-transform: uppercase;">Description</td>
+                <td style="background-color: #0f172a; padding: 16px; color: #ffffff; font-size: 12px; font-weight: bold; text-transform: uppercase; text-align: right;">Amount</td>
+            </tr>
+            ${itemsHtmlBold}
+            <tr>
+                <td style="padding: 16px 16px 8px 16px; font-size: 13px; font-weight: bold; color: #64748b; text-align: right; background-color: #f8fafc;">Subtotal</td>
+                <td style="padding: 16px 16px 8px 16px; font-size: 14px; font-weight: bold; color: #0f172a; text-align: right; background-color: #f8fafc;">${data.sub}</td>
+            </tr>
+            <tr>
+                <td style="padding: 0 16px 16px 16px; font-size: 13px; font-weight: bold; color: #64748b; text-align: right; background-color: #f8fafc;">VAT (${data.vatRate}%)</td>
+                <td style="padding: 0 16px 16px 16px; font-size: 14px; font-weight: bold; color: #0f172a; text-align: right; background-color: #f8fafc;">${data.vatAmount}</td>
+            </tr>
+            <tr>
+                <td style="padding: 16px; font-size: 14px; font-weight: bold; color: #ffffff; text-align: right; background-color: ${data.color};">TOTAL DUE</td>
+                <td style="padding: 16px; font-size: 24px; font-weight: bold; color: #ffffff; text-align: right; background-color: ${data.color};">${data.total}</td>
+            </tr>
+        </table>`;
+    } else if (appState.invoiceStyle === 'subtle') {
+        invoiceBlock = `
+        <div style="margin-bottom: 32px;">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td style="font-size: 11px; color: #94a3b8; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Description</td>
+                    <td style="font-size: 11px; color: #94a3b8; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; text-align: right;">Amount</td>
+                </tr>
+                ${itemsHtmlSubtle}
+                <tr>
+                    <td style="padding-top: 16px; font-size: 13px; color: #64748b; text-align: right;">Subtotal</td>
+                    <td style="padding-top: 16px; font-size: 13px; color: #0f172a; text-align: right;">${data.sub}</td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 4px; font-size: 13px; color: #64748b; text-align: right;">VAT (${data.vatRate}%)</td>
+                    <td style="padding-top: 4px; font-size: 13px; color: #0f172a; text-align: right;">${data.vatAmount}</td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 16px; font-size: 14px; font-weight: bold; color: #0f172a; text-align: right;">Total Due</td>
+                    <td style="padding-top: 16px; font-size: 20px; font-weight: bold; color: ${data.color}; text-align: right;">${data.total}</td>
+                </tr>
+            </table>
+        </div>`;
     }
 
     const emailHTML = `
@@ -397,23 +418,20 @@ function compileEmailPreview() {
                 </td>
             </tr>
             <tr>
-                <td style="padding: 24px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
-                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td align="center" style="padding-bottom: 12px;">
-                                <table border="0" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td style="border-radius: 4px; background-color: #f0f9ff; border: 1px solid #bae6fd;" align="center"><a style="font-size: 11px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0284c7; text-decoration: none; padding: 5px 12px; border-radius: 4px; display: inline-block; font-weight: bold; letter-spacing: 0.3px;" href="https://app.maxcredible.com/signup/" target="_blank" rel="noopener">Free Trial</a></td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="center">
-                                <p style="margin: 0; font-size: 11px; color: #94a3b8;">${data.sName} • System Generated Email</p>
-                            </td>
-                        </tr>
-                    </table>
+                <td style="padding: 32px 24px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
+                    <p style="margin: 0 0 24px 0; font-size: 12px; color: #64748b;">${data.sName} • System Generated Email</p>
+                    
+                    <div style="border-top: 1px dashed #cbd5e1; padding-top: 24px; max-width: 300px; margin: 0 auto;">
+                        <p style="margin: 0 0 12px 0; font-size: 14px; font-weight: bold; color: #0f172a; font-family: 'Outfit', sans-serif;">Want to automate your invoicing?</p>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                                <td align="center">
+                                    <a style="font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #ffffff; background-color: #0ea5e9; text-decoration: none; padding: 10px 24px; border-radius: 6px; display: inline-block; font-weight: bold; letter-spacing: 0.3px; box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.2);" href="https://app.maxcredible.com/signup/" target="_blank" rel="noopener">Start Free Trial</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
                 </td>
             </tr>
         </table>
@@ -422,3 +440,61 @@ function compileEmailPreview() {
     document.getElementById('email-canvas').innerHTML = emailHTML;
 }
 
+// --- EMAIL DISPATCH (WITH LEAD GEN DATA) ---
+async function dispatchEmail() {
+    const emailInput = document.getElementById('target-email');
+    const sendBtn = emailInput.nextElementSibling;
+    const email = emailInput.value;
+    
+    if(!email) {
+        alert('Please enter a target email address.');
+        return;
+    }
+
+    const rawHTML = document.getElementById('email-canvas').innerHTML;
+    const senderName = document.getElementById('sender-name') ? document.getElementById('sender-name').value : "MaxCredible";
+
+    const originalBtnHtml = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Sending...';
+    sendBtn.disabled = true;
+
+    try {
+        const response = await fetch('/api/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                to: email,
+                subject: `Invoice & Payment Reminder from ${senderName || 'Your Company'}`,
+                html: rawHTML,
+                leadData: {
+                    companyName: senderName
+                }
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Server returned ${response.status}: ${errorText.substring(0, 100)}...`);
+        }
+
+        const result = await response.json();
+
+        sendBtn.innerHTML = '<i class="ph-bold ph-check"></i> Sent!';
+        sendBtn.classList.replace('bg-blue-600', 'bg-emerald-500');
+        sendBtn.classList.replace('hover:bg-blue-500', 'hover:bg-emerald-400');
+        
+    } catch (error) {
+        console.error("Dispatch Error:", error);
+        alert(`Error: ${error.message}`);
+        sendBtn.innerHTML = originalBtnHtml;
+    } finally {
+        setTimeout(() => {
+            sendBtn.innerHTML = originalBtnHtml;
+            sendBtn.disabled = false;
+            sendBtn.classList.replace('bg-emerald-500', 'bg-blue-600');
+            sendBtn.classList.replace('hover:bg-emerald-400', 'hover:bg-blue-500');
+        }, 3000);
+    }
+}
