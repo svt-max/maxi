@@ -126,9 +126,20 @@ async function handleLogoUpload(event) {
     dropzone.classList.add('border-sky-500', 'bg-sky-500/10');
 
     try {
-        // --- SIMULATION (Replace with actual fetch to Vercel API later) ---
-        await new Promise(resolve => setTimeout(resolve, 1500)); 
-        appState.logoUrl = URL.createObjectURL(file); 
+        // This is the actual call to your Vercel backend
+        const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+            method: 'POST',
+            body: file, 
+        });
+
+        if (!response.ok) {
+            throw new Error(`Upload failed with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Save the public Vercel Blob URL to state
+        appState.logoUrl = data.url; 
 
         uploadText.innerText = "Logo uploaded successfully!";
         uploadText.classList.add('text-emerald-400');
