@@ -55,7 +55,7 @@ module.exports = async function handler(req, res) {
 
         const data = await resend.emails.send({
             // Update this line to use your verified domain
-            from: 'MaxCredible <noreply@maxcredible.com>', 
+            from: 'MaxCredible <noreply@maxi.maxcredible.com>', 
             to: [to], 
             subject: subject,
             html: html,
