@@ -98,3 +98,14 @@ body {
     .nav-controls { gap: 8px; }
     .nav-cta-btn { display: inline-block; padding: 6px 14px; font-size: 0.85rem; white-space: nowrap; }
 }
+
+/* --- UI POLISH: Hide Number Input Spinners --- */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield; /* Firefox */
+}
