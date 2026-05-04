@@ -266,7 +266,7 @@ function compileEmailPreview() {
     
     const formatter = new Intl.NumberFormat(undefined, { 
         style: 'currency', 
-        currency: appState.currency || 'USD' 
+        currency: appState.currency || 'EUR' 
     });
     
     let subTotal = 0;
