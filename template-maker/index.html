@@ -96,7 +96,19 @@
                                             <div class="flex gap-2 line-item"><input type="text" placeholder="Description" class="item-desc flex-1 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 py-2 focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"><input type="number" placeholder="Qty" class="item-qty w-12 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 text-center focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"><input type="number" placeholder="Price" class="item-price w-20 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"></div>
                                         </div>
                                     </div>
-                                    <div class="flex justify-between items-center"><label class="text-[10px] text-slate-500 uppercase font-semibold">Global VAT (%)</label><input type="number" id="invoice-vat" placeholder="0" class="w-16 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 py-2 text-center focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"></div>
+                                    <<div class="grid grid-cols-2 gap-3 items-center">
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] text-slate-500 uppercase font-semibold">Currency</label>
+                                            <select id="currency-selector" onchange="appState.currency = this.value; compileEmailPreview();" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-lg px-2 py-2 focus:border-sky-500 focus:outline-none">
+                                                <!-- Automatically populated by JavaScript Intl API -->
+                                                <option value="EUR">EUR - Euro</option>
+                                            </select>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] text-slate-500 uppercase font-semibold">Global VAT (%)</label>
+                                            <input type="number" id="invoice-vat" placeholder="0" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-lg px-2 py-2 text-center focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()">
+                                        </div>
+                                    </div>
                                     <button onclick="toggleStep(3)" class="w-full mt-2 py-2 text-xs text-sky-400 hover:text-sky-300 flex justify-center items-center gap-1 font-bold">Next Step <i class="ph-bold ph-arrow-right"></i></button>
                                 </div>
                             </div>
@@ -227,6 +239,38 @@
         <button id="btn-mobile-toggle" onclick="toggleMobilePreview()" class="w-full max-w-sm g-cta-btn">
             <i class="ph-bold ph-eye text-lg"></i> View Live Preview
         </button>
+    </div>
+
+<!-- SUCCESS MODAL -->
+    <div id="success-modal" class="fixed inset-0 z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <!-- Blur Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onclick="closeSuccessModal()"></div>
+        
+        <!-- Modal Card -->
+        <div class="relative bg-slate-900 border border-slate-700 shadow-2xl rounded-2xl w-[90%] max-w-md p-6 lg:p-8 transform scale-95 transition-transform duration-300 flex flex-col items-center text-center" id="success-modal-card">
+            
+            <!-- Close 'X' -->
+            <button onclick="closeSuccessModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors focus:outline-none">
+                <i class="ph-bold ph-x text-xl"></i>
+            </button>
+
+            <!-- Icon -->
+            <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mb-5">
+                <i class="ph-bold ph-paper-plane-tilt text-3xl text-emerald-400"></i>
+            </div>
+
+            <h3 class="font-outfit text-2xl font-bold text-white mb-2">Email Sent!</h3>
+            <p class="text-slate-400 text-sm mb-6">Your email has been sent. Please check your inbox.</p>
+            
+            <div class="w-full h-px bg-slate-800 mb-6"></div>
+
+            <p class="font-outfit font-bold text-sky-400 text-lg mb-2">MaxCredible, happy to pay.</p>
+            <p class="text-slate-400 text-xs mb-6 leading-relaxed">Curious about automating your reminders and outstanding invoice management? Start a free MaxCredible trial today.</p>
+            
+            <a href="https://app.maxcredible.com/signup/" target="_blank" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-bold py-3 px-4 rounded-xl transition-colors flex justify-center items-center gap-2">
+                Start Free Trial <i class="ph-bold ph-arrow-right"></i>
+            </a>
+        </div>
     </div>
 
     <script src="template-maker.js"></script>
