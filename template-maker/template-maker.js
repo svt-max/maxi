@@ -29,22 +29,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DYNAMIC GLOBAL CURRENCY POPULATION ---
     const currencySelector = document.getElementById('currency-selector');
     if (currencySelector && Intl.supportedValuesOf) {
-        // Fetch all ~150+ ISO 4217 currency codes built into the browser
         const currencies = Intl.supportedValuesOf('currency');
-        // Use Intl to get the human-readable names (e.g., "US Dollar" instead of just "USD")
         const currencyNames = new Intl.DisplayNames(['en'], { type: 'currency' });
         
         currencySelector.innerHTML = currencies.map(code => {
             let name = code;
             try { name = currencyNames.of(code); } catch(e) {}
-            return `<option value="${code}" ${code === 'USD' ? 'selected' : ''}>${code} - ${name}</option>`;
+            return `<option value="${code}" ${code === 'EUR' ? 'selected' : ''}>${code} - ${name}</option>`;
         }).join('');
     }
     
-    // Initialize default mode
     toggleDataMode('real');
     setTimeout(() => toggleStep(1), 100); 
 });
+
 // --- DYNAMIC SELECTORS ---
 function selectColor(hex, btn) {
     appState.color = hex;
@@ -120,10 +118,12 @@ function toggleStep(stepNumber) {
         const badge = document.getElementById('badge-step-' + i);
         
         if(i === stepNumber) {
-            el.style.maxHeight = '800px';
-            icon.classList.add('rotate-180');
-            badge.classList.remove('bg-slate-700', 'text-slate-300');
-            badge.classList.add('bg-sky-500', 'text-white');
+            if(el) el.style.maxHeight = '800px';
+            if(icon) icon.classList.add('rotate-180');
+            if(badge) {
+                badge.classList.remove('bg-slate-700', 'text-slate-300');
+                badge.classList.add('bg-sky-500', 'text-white');
+            }
         } else {
             if(el) el.style.maxHeight = '0px';
             if(icon) icon.classList.remove('rotate-180');
@@ -139,17 +139,38 @@ function toggleDataMode(mode) {
     appState.dataMode = mode;
     const btnReal = document.getElementById('btn-data-real');
     const btnMock = document.getElementById('btn-data-mock');
+    const btnNextStep1 = document.getElementById('btn-next-step-1');
+    const step2Card = document.getElementById('step-card-2');
+    const step3Card = document.getElementById('step-card-3');
     
     if(mode === 'real') {
         btnReal.classList.add('bg-sky-500', 'text-white');
         btnReal.classList.remove('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
         btnMock.classList.remove('bg-sky-500', 'text-white');
         btnMock.classList.add('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
+        
+        // Show steps 2 and 3 and fix badge numbers
+        step2Card.style.display = 'block';
+        step3Card.style.display = 'block';
+        document.getElementById('badge-step-4').innerText = '4';
+        document.getElementById('badge-step-5').innerText = '5';
+        
+        btnNextStep1.onclick = () => toggleStep(2);
+        setTimeout(() => toggleStep(2), 50);
     } else {
         btnMock.classList.add('bg-sky-500', 'text-white');
         btnMock.classList.remove('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
         btnReal.classList.remove('bg-sky-500', 'text-white');
         btnReal.classList.add('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
+        
+        // Hide steps 2 and 3 and adjust badge numbers
+        step2Card.style.display = 'none';
+        step3Card.style.display = 'none';
+        document.getElementById('badge-step-4').innerText = '2';
+        document.getElementById('badge-step-5').innerText = '3';
+        
+        btnNextStep1.onclick = () => toggleStep(4);
+        setTimeout(() => toggleStep(4), 50);
     }
     compileEmailPreview();
     pingMobileButton();
@@ -240,12 +261,9 @@ function compressImage(file, maxSize) {
 }
 
 // --- EMAIL COMPILER ---
-// --- EMAIL COMPILER ---
 function compileEmailPreview() {
     const isMock = appState.dataMode === 'mock';
     
-    // Passing 'undefined' as the locale uses the user's native system format (commas/decimals),
-    // while strictly applying the math and symbols of the globally selected currency.
     const formatter = new Intl.NumberFormat(undefined, { 
         style: 'currency', 
         currency: appState.currency || 'USD' 
@@ -296,10 +314,11 @@ function compileEmailPreview() {
         due: isMock ? '[Due Date]' : (document.getElementById('invoice-due').value || '[Due Date]'),
         cName: isMock ? '[Client Name]' : (document.getElementById('client-name').value || '[Client Name]'),
         cEmail: isMock ? '[Client Email]' : (document.getElementById('client-email').value || '[Client Email]'),
-        sName: isMock ? '[Your Company]' : (document.getElementById('sender-name').value || '[Your Company]'),
-        bName: isMock ? '[Bank Name]' : (document.getElementById('bank-name').value || '[Bank Name]'),
-        bBic: isMock ? '[BIC/SWIFT]' : (document.getElementById('bank-bic').value || '[BIC/SWIFT]'),
-        bIban: isMock ? '[IBAN]' : (document.getElementById('bank-iban').value || '[IBAN]'),
+        // Your Company Data always pulls real values or a clean fallback - no brackets!
+        sName: document.getElementById('sender-name').value || 'Your Company Name',
+        bName: document.getElementById('bank-name').value || 'Bank Name',
+        bBic: document.getElementById('bank-bic').value || 'BIC/SWIFT',
+        bIban: document.getElementById('bank-iban').value || 'IBAN',
         sub: isMock ? '[Subtotal]' : formatter.format(subTotal),
         vatAmount: isMock ? '[VAT Amount]' : formatter.format(vatAmount),
         vatRate: isMock ? '[VAT %]' : vatRate,
