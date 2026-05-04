@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxCredible - Lead Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { background-color: #0f0c29; color: #fff; font-family: sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6">
+
+    <!-- LOGIN STATE -->
+    <div id="login-container" class="w-full max-w-sm mt-20 bg-slate-900 border border-slate-700 rounded-xl p-8 shadow-2xl">
+        <div class="flex items-center justify-center gap-3 mb-6">
+            <div class="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center font-bold text-white shadow-lg">M</div>
+            <h1 class="text-xl font-bold">Admin Access</h1>
+        </div>
+        <input type="password" id="admin-password" placeholder="Enter master password" class="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-3 mb-4 focus:outline-none focus:border-sky-500">
+        <button onclick="fetchLeads()" id="login-btn" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+            Access Database
+        </button>
+        <p id="login-error" class="text-red-400 text-sm mt-3 text-center hidden">Incorrect password.</p>
+    </div>
+
+    <!-- DASHBOARD STATE (Hidden by default) -->
+    <div id="dashboard-container" class="w-full max-w-5xl mt-10 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold flex items-center gap-2"><i class="ph-bold ph-database text-sky-400"></i> Lead Capture Data</h2>
+            <button onclick="window.location.reload()" class="text-sm bg-slate-800 hover:bg-slate-700 border border-slate-600 px-4 py-2 rounded-lg transition-colors">Logout</button>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-800 border-b border-slate-700">
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date Captured</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Company Name</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Target Email</th>
+                    </tr>
+                </thead>
+                <tbody id="leads-table-body" class="divide-y divide-slate-800/50">
+                    <!-- Data injected via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchLeads() {
+            const password = document.getElementById('admin-password').value;
+            const btn = document.getElementById('login-btn');
+            const errorMsg = document.getElementById('login-error');
+            
+            if (!password) return;
+
+            btn.innerText = "Authenticating...";
+            btn.disabled = true;
+            errorMsg.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/leads', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${password}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Unauthorized');
+                }
+
+                const data = await response.json();
+                renderTable(data.leads);
+
+                // Switch UI states
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('dashboard-container').classList.remove('hidden');
+
+            } catch (error) {
+                errorMsg.classList.remove('hidden');
+                btn.innerText = "Access Database";
+                btn.disabled = false;
+            }
+        }
+
+        function renderTable(leads) {
+            const tbody = document.getElementById('leads-table-body');
+            
+            if (!leads || leads.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-8 text-center text-slate-500">No leads captured yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = leads.map(lead => {
+                // Format the Postgres timestamp
+                const dateObj = new Date(lead.created_at);
+                const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                return `
+                    <tr class="hover:bg-slate-800/30 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">${formattedDate}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-white">${lead.company_name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-sky-400">${lead.target_email}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
