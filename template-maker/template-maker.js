@@ -5,7 +5,8 @@ let appState = {
     color: '#0ea5e9', 
     invoiceStyle: 'table',
     isMobilePreviewing: false,
-    logoUrl: '' 
+    logoUrl: '',
+    currency: 'EUR'
 };
 
 const presetTexts = {
@@ -24,11 +25,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const dateString = date.toISOString().split('T')[0];
     const dueEl = document.getElementById('invoice-due');
     if(dueEl) dueEl.value = dateString;
+
+    // --- DYNAMIC GLOBAL CURRENCY POPULATION ---
+    const currencySelector = document.getElementById('currency-selector');
+    if (currencySelector && Intl.supportedValuesOf) {
+        // Fetch all ~150+ ISO 4217 currency codes built into the browser
+        const currencies = Intl.supportedValuesOf('currency');
+        // Use Intl to get the human-readable names (e.g., "US Dollar" instead of just "USD")
+        const currencyNames = new Intl.DisplayNames(['en'], { type: 'currency' });
+        
+        currencySelector.innerHTML = currencies.map(code => {
+            let name = code;
+            try { name = currencyNames.of(code); } catch(e) {}
+            return `<option value="${code}" ${code === 'USD' ? 'selected' : ''}>${code} - ${name}</option>`;
+        }).join('');
+    }
     
+    // Initialize default mode
     toggleDataMode('real');
     setTimeout(() => toggleStep(1), 100); 
 });
-
 // --- DYNAMIC SELECTORS ---
 function selectColor(hex, btn) {
     appState.color = hex;
@@ -223,10 +239,17 @@ function compressImage(file, maxSize) {
     });
 }
 
-// --- EMAIL COMPILER (THE CORE ENGINE) ---
+// --- EMAIL COMPILER ---
+// --- EMAIL COMPILER ---
 function compileEmailPreview() {
     const isMock = appState.dataMode === 'mock';
-    const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    
+    // Passing 'undefined' as the locale uses the user's native system format (commas/decimals),
+    // while strictly applying the math and symbols of the globally selected currency.
+    const formatter = new Intl.NumberFormat(undefined, { 
+        style: 'currency', 
+        currency: appState.currency || 'USD' 
+    });
     
     let subTotal = 0;
     let itemsHtmlTable = '';
@@ -379,8 +402,8 @@ function compileEmailPreview() {
                     <table width="100%" border="0" cellpadding="0" cellspacing="0">
                         <tr>
                             <td>
-                                <h1 style="margin: 0 0 4px 0; font-size: 24px; color: #111827; text-transform: uppercase; font-family: 'Outfit', sans-serif;">INVOICE</h1>
-                                <p style="margin: 0; font-size: 14px; color: #6b7280;">${data.invNum}</p>
+                                <h1 style="margin: 0 0 4px 0; font-size: 24px; color: #111827; text-transform: uppercase; font-family: 'Outfit', sans-serif;">REMINDER</h1>
+                                <p style="margin: 0; font-size: 14px; color: #6b7280;">Invoice: ${data.invNum}</p>
                             </td>
                             <td align="right">
                                 ${logoHtml}
@@ -440,7 +463,24 @@ function compileEmailPreview() {
     document.getElementById('email-canvas').innerHTML = emailHTML;
 }
 
-// --- EMAIL DISPATCH (WITH LEAD GEN DATA) ---
+// --- MODAL CONTROLS ---
+function openSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    const card = document.getElementById('success-modal-card');
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    card.classList.remove('scale-95');
+    card.classList.add('scale-100');
+}
+
+function closeSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    const card = document.getElementById('success-modal-card');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    card.classList.remove('scale-100');
+    card.classList.add('scale-95');
+}
+
+// --- EMAIL DISPATCH (WITH LEAD GEN DATA & MODAL) ---
 async function dispatchEmail() {
     const emailInput = document.getElementById('target-email');
     const sendBtn = emailInput.nextElementSibling;
@@ -481,20 +521,19 @@ async function dispatchEmail() {
 
         const result = await response.json();
 
+        // Revert button text and trigger the success modal
         sendBtn.innerHTML = '<i class="ph-bold ph-check"></i> Sent!';
-        sendBtn.classList.replace('bg-blue-600', 'bg-emerald-500');
-        sendBtn.classList.replace('hover:bg-blue-500', 'hover:bg-emerald-400');
+        openSuccessModal();
         
     } catch (error) {
         console.error("Dispatch Error:", error);
         alert(`Error: ${error.message}`);
         sendBtn.innerHTML = originalBtnHtml;
     } finally {
+        // Reset the button after 3 seconds regardless of outcome
         setTimeout(() => {
             sendBtn.innerHTML = originalBtnHtml;
             sendBtn.disabled = false;
-            sendBtn.classList.replace('bg-emerald-500', 'bg-blue-600');
-            sendBtn.classList.replace('hover:bg-emerald-400', 'hover:bg-blue-500');
         }, 3000);
     }
 }
