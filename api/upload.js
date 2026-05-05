@@ -31,7 +31,8 @@ module.exports = async function handler(req, res) {
         // 5. Upload to Vercel Blob
         const blob = await put(filename, req, {
             access: 'public',
-            token: token // Explicitly pass the token
+            token: token, // Explicitly pass the token
+            addRandomSuffix: true // Automatically appends a unique string to prevent overwrites
         });
 
         console.log(`[API/UPLOAD] Success: Hosted at ${blob.url}`);
