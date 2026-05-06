@@ -7,8 +7,8 @@ let appState = {
     isMobilePreviewing: false,
     logoUrl: '',
     currency: 'EUR',
-    fontFamily: 'Inter, sans-serif',
-    headerStyle: 'classic' 
+    fontFamily: 'Helvetica, Arial, sans-serif', // NEW
+    headerStyle: 'classic' // NEW
 };
 
 const presetTexts = {
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dueEl = document.getElementById('invoice-due');
     if(dueEl) dueEl.value = dateString;
 
+    // --- DYNAMIC GLOBAL CURRENCY POPULATION ---
     const currencySelector = document.getElementById('currency-selector');
     if (currencySelector && Intl.supportedValuesOf) {
         const currencies = Intl.supportedValuesOf('currency');
@@ -48,66 +49,66 @@ document.addEventListener('DOMContentLoaded', () => {
 function selectColor(hex, btn) {
     appState.color = hex;
     document.querySelectorAll('.color-btn').forEach(b => {
-        b.classList.remove('ring-2', 'ring-offset-2', 'ring-offset-slate-50', 'ring-mc-blue');
+        b.classList.remove('ring-2', 'ring-offset-2', 'ring-offset-slate-900', 'ring-white');
     });
-    btn.classList.add('ring-2', 'ring-offset-2', 'ring-offset-slate-50', 'ring-mc-blue');
+    btn.classList.add('ring-2', 'ring-offset-2', 'ring-offset-slate-900', 'ring-white');
     compileEmailPreview();
 }
 
 function selectTone(tone, btn) {
     appState.tone = tone;
     document.querySelectorAll('.tone-btn').forEach(b => {
-        b.classList.remove('bg-sky-50', 'border-mc-blue', 'text-mc-blue', 'ring-1', 'ring-mc-blue');
-        b.classList.add('bg-white', 'border-slate-200', 'text-slate-600');
-        b.querySelector('i').classList.replace('text-mc-blue', 'text-slate-400');
+        b.classList.remove('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+        b.classList.add('bg-slate-900', 'border-slate-700', 'text-slate-300');
+        b.querySelector('i').classList.replace('text-white', 'text-sky-400');
     });
-    btn.classList.remove('bg-white', 'border-slate-200', 'text-slate-600');
-    btn.classList.add('bg-sky-50', 'border-mc-blue', 'text-mc-blue', 'ring-1', 'ring-mc-blue');
-    btn.querySelector('i').classList.replace('text-slate-400', 'text-mc-blue');
+    btn.classList.remove('bg-slate-900', 'border-slate-700', 'text-slate-300');
+    btn.classList.add('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+    btn.querySelector('i').classList.replace('text-sky-400', 'text-white');
     compileEmailPreview();
 }
 
 function selectStyle(style, btn) {
     appState.invoiceStyle = style;
     document.querySelectorAll('.style-btn').forEach(b => {
-        b.classList.remove('bg-sky-50', 'border-mc-blue', 'text-mc-blue', 'ring-1', 'ring-mc-blue');
-        b.classList.add('bg-white', 'border-slate-200', 'text-slate-600');
-        b.querySelector('i').classList.replace('text-mc-blue', 'text-slate-400');
-        b.querySelector('.subtext').classList.replace('text-sky-700', 'text-slate-500');
+        b.classList.remove('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+        b.classList.add('bg-slate-900', 'border-slate-700', 'text-slate-300');
+        b.querySelector('i').classList.replace('text-white', 'text-sky-400');
+        b.querySelector('.subtext').classList.replace('text-sky-200', 'text-slate-500');
     });
-    btn.classList.remove('bg-white', 'border-slate-200', 'text-slate-600');
-    btn.classList.add('bg-sky-50', 'border-mc-blue', 'text-mc-blue', 'ring-1', 'ring-mc-blue');
-    btn.querySelector('i').classList.replace('text-slate-400', 'text-mc-blue');
-    btn.querySelector('.subtext').classList.replace('text-slate-500', 'text-sky-700');
+    btn.classList.remove('bg-slate-900', 'border-slate-700', 'text-slate-300');
+    btn.classList.add('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+    btn.querySelector('i').classList.replace('text-sky-400', 'text-white');
+    btn.querySelector('.subtext').classList.replace('text-slate-500', 'text-sky-200');
     compileEmailPreview();
 }
 
 function selectFont(font, btn) {
     appState.fontFamily = font;
     document.querySelectorAll('.font-btn').forEach(b => {
-        b.classList.remove('bg-sky-50', 'border-mc-blue', 'text-mc-blue', 'ring-1', 'ring-mc-blue');
-        b.classList.add('bg-white', 'border-slate-200', 'text-slate-600');
-        b.querySelector('.font-check').classList.replace('text-mc-blue', 'text-transparent');
+        b.classList.remove('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+        b.classList.add('bg-slate-900', 'border-slate-700', 'text-slate-300');
+        b.querySelector('.font-check').classList.replace('text-white', 'text-transparent');
     });
-    btn.classList.remove('bg-white', 'border-slate-200', 'text-slate-600');
-    btn.classList.add('bg-sky-50', 'border-mc-blue', 'text-mc-blue', 'ring-1', 'ring-mc-blue');
-    btn.querySelector('.font-check').classList.replace('text-transparent', 'text-mc-blue');
+    btn.classList.remove('bg-slate-900', 'border-slate-700', 'text-slate-300');
+    btn.classList.add('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+    btn.querySelector('.font-check').classList.replace('text-transparent', 'text-white');
     compileEmailPreview();
 }
 
 function selectHeader(style, btn) {
     appState.headerStyle = style;
     document.querySelectorAll('.header-btn').forEach(b => {
-        b.classList.remove('bg-sky-50', 'border-mc-blue', 'text-mc-blue', 'ring-1', 'ring-mc-blue');
-        b.classList.add('bg-white', 'border-slate-200', 'text-slate-600');
+        b.classList.remove('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+        b.classList.add('bg-slate-900', 'border-slate-700', 'text-slate-300');
         if(b.querySelector('i.icon-active')) {
-            b.querySelector('i').classList.replace('text-mc-blue', 'text-slate-400');
+            b.querySelector('i').classList.replace('text-white', 'text-sky-400');
             b.querySelector('i').classList.replace('icon-active', 'icon-inactive');
         }
     });
-    btn.classList.remove('bg-white', 'border-slate-200', 'text-slate-600');
-    btn.classList.add('bg-sky-50', 'border-mc-blue', 'text-mc-blue', 'ring-1', 'ring-mc-blue');
-    btn.querySelector('i').classList.replace('text-slate-400', 'text-mc-blue');
+    btn.classList.remove('bg-slate-900', 'border-slate-700', 'text-slate-300');
+    btn.classList.add('bg-sky-500/20', 'border-sky-500', 'text-white', 'ring-1', 'ring-sky-500');
+    btn.querySelector('i').classList.replace('text-sky-400', 'text-white');
     btn.querySelector('i').classList.replace('icon-inactive', 'icon-active');
     compileEmailPreview();
 }
@@ -149,18 +150,18 @@ function toggleStep(stepNumber) {
         const badge = document.getElementById('badge-step-' + i);
         
         if(i === stepNumber) {
-            if(el) el.style.maxHeight = '1500px'; 
+            if(el) el.style.maxHeight = '1500px'; // Increased from 800px to 1500px
             if(icon) icon.classList.add('rotate-180');
             if(badge) {
-                badge.classList.remove('bg-slate-200', 'text-slate-600');
-                badge.classList.add('bg-mc-blue', 'text-white');
+                badge.classList.remove('bg-slate-700', 'text-slate-300');
+                badge.classList.add('bg-sky-500', 'text-white');
             }
         } else {
             if(el) el.style.maxHeight = '0px';
             if(icon) icon.classList.remove('rotate-180');
             if(badge) {
-                badge.classList.add('bg-slate-200', 'text-slate-600');
-                badge.classList.remove('bg-mc-blue', 'text-white');
+                badge.classList.add('bg-slate-700', 'text-slate-300');
+                badge.classList.remove('bg-sky-500', 'text-white');
             }
         }
     }
@@ -175,11 +176,12 @@ function toggleDataMode(mode) {
     const step3Card = document.getElementById('step-card-3');
     
     if(mode === 'real') {
-        btnReal.classList.add('bg-slate-800', 'text-white', 'shadow-sm');
-        btnReal.classList.remove('bg-transparent', 'text-slate-500');
-        btnMock.classList.remove('bg-slate-800', 'text-white', 'shadow-sm');
-        btnMock.classList.add('bg-transparent', 'text-slate-500');
+        btnReal.classList.add('bg-sky-500', 'text-white');
+        btnReal.classList.remove('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
+        btnMock.classList.remove('bg-sky-500', 'text-white');
+        btnMock.classList.add('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
         
+        // Show steps 2 and 3 and fix badge numbers
         step2Card.style.display = 'block';
         step3Card.style.display = 'block';
         document.getElementById('badge-step-4').innerText = '4';
@@ -188,11 +190,12 @@ function toggleDataMode(mode) {
         btnNextStep1.onclick = () => toggleStep(2);
         setTimeout(() => toggleStep(2), 50);
     } else {
-        btnMock.classList.add('bg-slate-800', 'text-white', 'shadow-sm');
-        btnMock.classList.remove('bg-transparent', 'text-slate-500');
-        btnReal.classList.remove('bg-slate-800', 'text-white', 'shadow-sm');
-        btnReal.classList.add('bg-transparent', 'text-slate-500');
+        btnMock.classList.add('bg-sky-500', 'text-white');
+        btnMock.classList.remove('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
+        btnReal.classList.remove('bg-sky-500', 'text-white');
+        btnReal.classList.add('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
         
+        // Hide steps 2 and 3 and adjust badge numbers
         step2Card.style.display = 'none';
         step3Card.style.display = 'none';
         document.getElementById('badge-step-4').innerText = '2';
@@ -207,7 +210,7 @@ function toggleDataMode(mode) {
 
 function addLineItem() {
     const container = document.getElementById('line-items-container');
-    const itemHtml = `<div class="flex gap-2 line-item mt-2"><input type="text" placeholder="Description" class="item-desc flex-1 bg-white border border-slate-200 text-slate-900 text-xs rounded px-2 py-2 focus:border-mc-blue focus:ring-1 focus:ring-mc-blue focus:outline-none" oninput="compileEmailPreview()"><input type="number" placeholder="Qty" class="item-qty w-12 bg-white border border-slate-200 text-slate-900 text-xs rounded px-2 text-center focus:border-mc-blue focus:ring-1 focus:ring-mc-blue focus:outline-none" oninput="compileEmailPreview()"><input type="number" placeholder="Price" class="item-price w-20 bg-white border border-slate-200 text-slate-900 text-xs rounded px-2 focus:border-mc-blue focus:ring-1 focus:ring-mc-blue focus:outline-none" oninput="compileEmailPreview()"><button onclick="this.parentElement.remove(); compileEmailPreview();" class="text-slate-400 hover:text-red-500 transition-colors"><i class="ph-bold ph-trash"></i></button></div>`;
+    const itemHtml = `<div class="flex gap-2 line-item mt-2"><input type="text" placeholder="Description" class="item-desc flex-1 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 py-2 focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"><input type="number" placeholder="Qty" class="item-qty w-12 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 text-center focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"><input type="number" placeholder="Price" class="item-price w-20 bg-slate-900 border border-slate-700 text-white text-xs rounded px-2 focus:border-sky-500 focus:outline-none" oninput="compileEmailPreview()"><button onclick="this.parentElement.remove(); compileEmailPreview();" class="text-slate-500 hover:text-red-400 transition-colors"><i class="ph-bold ph-trash"></i></button></div>`;
     container.insertAdjacentHTML('beforeend', itemHtml);
 }
 
@@ -221,8 +224,8 @@ async function handleLogoUpload(event) {
     const dropzone = document.getElementById('logo-upload-zone');
     
     uploadText.innerText = "Compressing & uploading...";
-    uploadIcon.className = "ph-bold ph-spinner animate-spin text-2xl text-mc-blue";
-    dropzone.classList.add('border-mc-blue', 'bg-sky-50');
+    uploadIcon.className = "ph-bold ph-spinner animate-spin text-2xl text-sky-400";
+    dropzone.classList.add('border-sky-500', 'bg-sky-500/10');
 
     try {
         const compressedBlob = await compressImage(file, 300);
@@ -237,18 +240,18 @@ async function handleLogoUpload(event) {
         appState.logoUrl = data.url; 
 
         uploadText.innerText = "Logo optimized and uploaded!";
-        uploadText.classList.add('text-emerald-600');
-        uploadIcon.className = "ph-bold ph-check-circle text-2xl text-emerald-500";
-        dropzone.classList.replace('border-mc-blue', 'border-emerald-500');
-        dropzone.classList.replace('bg-sky-50', 'bg-emerald-50');
+        uploadText.classList.add('text-emerald-400');
+        uploadIcon.className = "ph-bold ph-check-circle text-2xl text-emerald-400";
+        dropzone.classList.replace('border-sky-500', 'border-emerald-500');
+        dropzone.classList.replace('bg-sky-500/10', 'bg-emerald-500/10');
 
         compileEmailPreview();
     } catch (error) {
         console.error("Upload error:", error);
         uploadText.innerText = "Upload failed. Try again.";
-        uploadText.classList.add('text-red-500');
-        uploadIcon.className = "ph-bold ph-warning text-2xl text-red-500";
-        dropzone.classList.replace('border-mc-blue', 'border-red-500');
+        uploadText.classList.add('text-red-400');
+        uploadIcon.className = "ph-bold ph-warning text-2xl text-red-400";
+        dropzone.classList.replace('border-sky-500', 'border-red-500');
     }
 }
 
@@ -343,6 +346,7 @@ function compileEmailPreview() {
         due: isMock ? '[Due Date]' : (document.getElementById('invoice-due').value || '[Due Date]'),
         cName: isMock ? '[Client Name]' : (document.getElementById('client-name').value || '[Client Name]'),
         cEmail: isMock ? '[Client Email]' : (document.getElementById('client-email').value || '[Client Email]'),
+        // Your Company Data always pulls real values or a clean fallback - no brackets!
         sName: document.getElementById('sender-name').value || 'Your Company Name',
         bName: document.getElementById('bank-name').value || 'Bank Name',
         bBic: document.getElementById('bank-bic').value || 'BIC/SWIFT',
@@ -440,6 +444,7 @@ function compileEmailPreview() {
         </div>`;
     }
 
+    // --- BUILD DYNAMIC HEADER ---
     let headerBlockHTML = '';
     
     if (appState.headerStyle === 'classic') {
@@ -490,6 +495,7 @@ function compileEmailPreview() {
                 </td>
             </tr>`;
     } else if (appState.headerStyle === 'block') {
+        // Solid block header with inverted text
         headerBlockHTML = `
             <tr>
                 <td style="padding: 32px; background-color: ${data.color};">
@@ -510,6 +516,8 @@ function compileEmailPreview() {
             </tr>`;
     }
 
+    // --- ASSEMBLE FINAL HTML ---
+    // Notice the font-family is now injected dynamically at the very top div
     const emailHTML = `
     <div style="background-color: #f1f5f9; padding: 20px 0; font-family: ${appState.fontFamily}; -webkit-font-smoothing: antialiased;">
         <table width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
@@ -549,7 +557,7 @@ function compileEmailPreview() {
                     <p style="margin: 0 0 24px 0; font-size: 12px; color: #64748b;">${data.sName} • System Generated Email</p>
                     
                     <div style="border-top: 1px dashed #cbd5e1; padding-top: 24px; max-width: 300px; margin: 0 auto;">
-                        <p style="margin: 0 0 12px 0; font-size: 14px; font-weight: bold; color: #0f172a;">Want to automate your invoicing?</p>
+                        <p style="margin: 0 0 12px 0; font-size: 14px; font-weight: bold; color: #0f172a;">Want to automate your reminders?</p>
                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
                             <tr>
                                 <td align="center">
@@ -625,6 +633,7 @@ async function dispatchEmail() {
 
         const result = await response.json();
 
+        // Revert button text and trigger the success modal
         sendBtn.innerHTML = '<i class="ph-bold ph-check"></i> Sent!';
         openSuccessModal();
         
@@ -633,6 +642,7 @@ async function dispatchEmail() {
         alert(`Error: ${error.message}`);
         sendBtn.innerHTML = originalBtnHtml;
     } finally {
+        // Reset the button after 3 seconds regardless of outcome
         setTimeout(() => {
             sendBtn.innerHTML = originalBtnHtml;
             sendBtn.disabled = false;
